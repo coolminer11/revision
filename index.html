@@ -1,0 +1,94 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Révisions</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#1d1d1f;--mut:#667;--b:#1f6feb;--line:#e1e6ee}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1318;--card:#1a2029;--tx:#e8ecf2;--mut:#9aa6b5;--b:#4c8dff;--line:#2a3340}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx);padding:24px 16px}
+.w{max-width:900px;margin:auto}h1{font-size:2em;margin:0 0 4px}.sub{color:var(--mut);margin-bottom:18px}
+input{width:100%;font-size:1.05em;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);margin-bottom:22px}
+h2{font-size:1.15em;margin:26px 0 10px;display:flex;gap:8px;align-items:center}
+.n{font-size:.75em;background:var(--line);border-radius:10px;padding:1px 8px;color:var(--mut)}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+a.c{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;color:var(--tx);transition:.15s}
+a.c:hover{border-color:var(--b);transform:translateY(-2px)}
+.e{font-size:1.6em}.t{font-weight:600;margin:6px 0 2px}.f{font-size:.8em;color:var(--mut);word-break:break-all}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;color:var(--mut)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.btn{font-size:.9em;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--tx);cursor:pointer}
+.btn.p{background:var(--b);color:#fff;border-color:var(--b)}
+.admin{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:20px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:22px;text-align:center;color:var(--mut);cursor:pointer;margin-top:10px}
+.drop.on{border-color:var(--b);color:var(--b)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:160px}
+select,.admin input{font-size:1em;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--tx);margin:0}
+.c{position:relative}.del{position:absolute;top:8px;right:8px;border:0;background:#c0392b;color:#fff;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8em}
+.log{font-size:.9em;margin-top:10px;color:var(--mut)}
+</style></head><body><div class="w">
+<div class="top"><div><h1>📚 Révisions</h1><div class="sub">Clique sur un quiz pour le lancer. Tout fonctionne dans ton navigateur.</div></div><button class="btn" id="admBtn" onclick="toggleAdmin()">⚙️ Gérer</button></div>
+<div class="admin" id="adm" hidden></div>
+<input id="q" placeholder="🔍 Chercher un quiz…" oninput="draw()">
+<div id="out"><div class="msg">Chargement…</div></div></div>
+<script>
+// Liste automatiquement tous les .html du dossier /quiz du dépôt GitHub (un sous-dossier = une matière).
+let items=[];
+function repo(){const h=location.hostname,p=location.pathname.split("/").filter(Boolean);
+  if(!h.endsWith(".github.io"))return null;const user=h.split(".")[0];
+  const name=(p[0]&&!p[0].endsWith(".html"))?p[0]:h;return{user,name};}
+function emoji(s){s=s.toLowerCase();return s.includes("fiche")?"📘":s.includes("entrain")?"🏋️":s.includes("quiz")?"🎯":s.includes("flash")?"🃏":"📄";}
+function pretty(f){return f.replace(/\.html?$/i,"").replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase());}
+async function load(){const r=repo(),out=document.getElementById("out");
+  if(!r){out.innerHTML='<div class="msg">Cette page liste les quiz automatiquement une fois en ligne sur GitHub Pages.</div>';return;}
+  let tree=null;
+  for(const br of ["main","master"]){try{const res=await fetch(`https://api.github.com/repos/${r.user}/${r.name}/git/trees/${br}?recursive=1`);if(res.ok){tree=await res.json();break;}}catch(e){}}
+  if(!tree){out.innerHTML='<div class="msg">Impossible de lire la liste des quiz (réessaie dans une minute).</div>';return;}
+  items=tree.tree.filter(x=>x.type==="blob"&&/^quiz\/.+\.html?$/i.test(x.path)).map(x=>{const parts=x.path.split("/");const file=parts.pop();
+    return{path:x.path,sha:x.sha,file,subject:parts.length>1?parts.slice(1).join(" / "):"Divers",title:pretty(file)}});
+  draw();
+  await Promise.all(items.map(async it=>{try{const t=await (await fetch(it.path)).text();const m=t.match(/<title>([^<]*)<\/title>/i);if(m&&m[1].trim())it.title=m[1].trim();}catch(e){}}));
+  draw();}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function draw(){const q=document.getElementById("q").value.toLowerCase(),out=document.getElementById("out");
+  if(!items.length){if(repo())out.innerHTML='<div class="msg">Aucun quiz pour l\'instant. Ajoute des fichiers .html dans le dossier <b>quiz/</b>.</div>';return;}
+  const list=items.filter(i=>(i.title+i.file+i.subject).toLowerCase().includes(q));
+  const g={};list.forEach(i=>(g[i.subject]=g[i.subject]||[]).push(i));
+  out.innerHTML=Object.keys(g).sort().map(s=>`<h2>${esc(s)} <span class="n">${g[s].length}</span></h2><div class="g">${g[s].sort((a,b)=>a.title.localeCompare(b.title)).map(i=>`<a class="c" href="${encodeURI(i.path)}">${admin()?`<button class="del" title="Supprimer" onclick="del('${i.path.replace(/'/g,"\\'")}',event)">✕</button>`:""}<div class="e">${emoji(i.file+i.title)}</div><div class="t">${esc(i.title)}</div><div class="f">${esc(i.file)}</div></a>`).join("")}</div>`).join("")||'<div class="msg">Aucun résultat.</div>';}
+
+/* ===== MODE GESTION : ajouter / supprimer (clé GitHub gardée seulement dans CE navigateur) ===== */
+let TOKEN=null;try{TOKEN=localStorage.getItem("gh_token");}catch(e){}
+if(location.hash.startsWith("#t=")){TOKEN=decodeURIComponent(location.hash.slice(3));try{localStorage.setItem("gh_token",TOKEN);}catch(e){}history.replaceState(null,"",location.pathname);}
+const admin=()=>!!TOKEN;
+async function gh(method,url,body){const r=repo();const res=await fetch(`https://api.github.com/repos/${r.user}/${r.name}${url}`,{method,headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+  if(!res.ok)throw new Error((await res.json().catch(()=>({}))).message||res.status);return res.status===204?null:res.json();}
+function toggleAdmin(){const a=document.getElementById("adm");a.hidden=!a.hidden;renderAdmin();}
+function renderAdmin(){const a=document.getElementById("adm");
+  if(!admin()){a.innerHTML=`<b>Connexion propriétaire</b><p class="sub" style="margin:6px 0">Colle ta clé GitHub (elle reste seulement dans ce navigateur). Les visiteurs ne voient pas ce mode.</p>
+   <div class="row"><input id="tok" type="password" placeholder="github_pat_…"><button class="btn p" style="flex:0" onclick="login()">Connexion</button></div><div class="log" id="lg"></div>`;return;}
+  const subs=[...new Set(items.map(i=>i.subject))].sort();
+  a.innerHTML=`<div class="row" style="justify-content:space-between"><b>✅ Mode gestion activé</b><button class="btn" style="flex:0" onclick="logout()">Déconnexion</button></div>
+   <div class="row" style="margin-top:10px"><select id="sub">${subs.map(s=>`<option>${esc(s)}</option>`).join("")}<option value="__new">➕ Nouvelle matière…</option></select><input id="newsub" placeholder="Nom de la nouvelle matière" hidden></div>
+   <div class="drop" id="drop">📥 Glisse tes fichiers .html ici (ou clique pour choisir)</div><input type="file" id="fi" accept=".html,.htm" multiple hidden>
+   <div class="log" id="lg">Pour supprimer : clique le ✕ rouge sur un quiz.</div>`;
+  const sel=document.getElementById("sub"),ns=document.getElementById("newsub");sel.onchange=()=>ns.hidden=sel.value!=="__new";if(!subs.length){sel.value="__new";ns.hidden=false;}
+  const d=document.getElementById("drop"),fi=document.getElementById("fi");d.onclick=()=>fi.click();fi.onchange=()=>upload([...fi.files]);
+  d.ondragover=e=>{e.preventDefault();d.classList.add("on")};d.ondragleave=()=>d.classList.remove("on");d.ondrop=e=>{e.preventDefault();d.classList.remove("on");upload([...e.dataTransfer.files]);};}
+async function login(){TOKEN=document.getElementById("tok").value.trim();const lg=document.getElementById("lg");lg.textContent="Vérification…";
+  try{const info=await gh("GET","");if(!info.permissions||!info.permissions.push)throw new Error("cette clé ne peut pas modifier ce dépôt");try{localStorage.setItem("gh_token",TOKEN);}catch(e){}renderAdmin();draw();}
+  catch(e){TOKEN=null;lg.textContent="❌ "+e.message;}}
+function logout(){TOKEN=null;try{localStorage.removeItem("gh_token");}catch(e){}renderAdmin();draw();}
+const b64=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(",")[1]);r.onerror=ko;r.readAsDataURL(f);});
+async function upload(files){const lg=document.getElementById("lg");const sel=document.getElementById("sub").value;
+  const subject=(sel==="__new"?document.getElementById("newsub").value:sel).trim().replace(/[\\/]+/g,"-");
+  if(!subject){lg.textContent="❌ Donne un nom à la matière.";return;}
+  for(const f of files){if(!/\.html?$/i.test(f.name)){lg.textContent=`⏭️ ${f.name} ignoré (pas un .html)`;continue;}
+    const p=`quiz/${subject}/${f.name.replace(/\s+/g,"_")}`;lg.textContent=`⏳ Envoi de ${f.name}…`;
+    try{const old=items.find(i=>i.path===p);const body={message:`Ajout ${p}`,content:await b64(f)};if(old&&old.sha)body.sha=old.sha;
+      const r=await gh("PUT","/contents/"+encodeURI(p),body);const it={path:p,file:p.split("/").pop(),subject,title:pretty(p.split("/").pop()),sha:r.content.sha};
+      const t=(await f.text()).match(/<title>([^<]*)<\/title>/i);if(t&&t[1].trim())it.title=t[1].trim();
+      items=items.filter(i=>i.path!==p).concat(it);draw();lg.textContent=`✅ ${f.name} ajouté! (en ligne dans ~1 min)`;}
+    catch(e){lg.textContent=`❌ ${f.name} : ${e.message}`;}}
+  renderAdmin();document.getElementById("lg").textContent="✅ Terminé. Les nouveaux quiz s'ouvrent après ~1 min (le temps que GitHub publie).";}
+async function del(path,ev){ev.preventDefault();ev.stopPropagation();const it=items.find(i=>i.path===path);if(!confirm(`Supprimer « ${it.title} » ?`))return;
+  try{await gh("DELETE","/contents/"+encodeURI(path),{message:`Suppression ${path}`,sha:it.sha});items=items.filter(i=>i.path!==path);draw();if(!document.getElementById("adm").hidden)renderAdmin();}
+  catch(e){alert("Erreur : "+e.message);}}
+load();
+</script></body></html>
