@@ -1,0 +1,184 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz — Économie</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f4f6fa;color:#1d1d1f;margin:0;padding:16px}
+.box{max-width:680px;margin:auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0001}
+.top{display:flex;justify-content:space-between;font-size:.9em;color:#555;flex-wrap:wrap;gap:6px}
+.bar{height:6px;background:#e3e8ef;border-radius:3px;margin:8px 0 16px}.bar div{height:100%;background:#1f6feb;border-radius:3px;transition:.3s}
+.ch{display:inline-block;background:#e6ebf2;border-radius:10px;padding:2px 8px;font-size:.8em}
+h2{font-size:1.2em;margin:.5em 0 1em}
+input{width:100%;box-sizing:border-box;font-size:1.05em;padding:10px;border:2px solid #ccd;border-radius:8px}
+button{font-size:1em;padding:9px 14px;border:0;border-radius:8px;cursor:pointer;margin:10px 6px 0 0}
+.p{background:#1f6feb;color:#fff}.s{background:#e6ebf2}
+.fb{margin-top:12px;padding:10px;border-radius:8px}.ok{background:#e3f6e8;border-left:4px solid #2e8b57}.no{background:#fdecea;border-left:4px solid #c0392b}
+.hint{color:#666;font-size:.85em;margin-top:6px}
+li{margin:4px 0}
+</style></head><body><div class="box" id="app"></div>
+<script>
+// k: liste de groupes; chaque groupe = synonymes (au moins un doit apparaître). Tous les groupes requis.
+const Q=[
+["Intro","L'économie est une science qui porte directement sur qui/quoi?",[["humain","personne","individu","societe"]],"Sur l'être humain (science humaine)"],
+["Intro","Nomme 2 enjeux étudiés par la science économique.",[["chomage","inegalit","climat","justice","intelligence artificielle","ia","sante mentale"]],"Chômage, inégalités sociales, changements climatiques / justice sociale, intelligence artificielle, santé mentale"],
+["Intro","L'économie est la science des ______.",[["choix"]],"Des choix"],
+["Intro","Qu'est-ce que le problème économique (problème de rareté)? Complète : ressources ______ vs besoins ______.",[["limit"],["illimit"]],"Ressources LIMITÉES pour satisfaire des besoins ILLIMITÉS"],
+["Intro","Comment s'appelle le problème des ressources limitées face à des besoins illimités?",[["raret"]],"La rareté"],
+["Intro","Nomme les 2 branches de l'économie.",[["micro"],["macro"]],"Microéconomie et macroéconomie"],
+["Intro","Quelle branche étudie les choix des individus et des entreprises et leur réaction aux incitatifs?",[["micro"]],"Microéconomie"],
+["Intro","Quelle branche étudie les effets agrégés des choix sur l'économie nationale et mondiale?",[["macro"]],"Macroéconomie"],
+["Intro","Nomme 2 sujets étudiés en macroéconomie.",[["inflation","chomage","production globale","pib","production"]],"Inflation, chômage, production globale"],
+["Intro","Un incitatif peut prendre 2 formes (image). Lesquelles?",[["carotte","recompense"],["baton","punition","sanction"]],"La carotte (récompense) ou le bâton (punition)"],
+["Intro","Étudier comment une hausse du prix de l'essence change les habitudes d'un ménage : micro ou macro?",[["micro"]],"Microéconomie (choix d'un agent)"],
+["Intro","Étudier le taux de chômage au Canada : micro ou macro?",[["macro"]],"Macroéconomie (effet agrégé)"],
+["Intro","Quelles sont les 3 questions économiques fondamentales?",[["quoi"],["comment"],["pour qui"]],"Quoi produire? Comment produire? Pour qui produire?"],
+["Intro","Nomme les 4 agents économiques.",[["menage","consommat","individu"],["entreprise"],["etat","gouvernement"],["reste du monde","exterieur","etranger"]],"Ménages, entreprises, État (gouvernement), reste du monde"],
+["Biens","Un bien qui sert à fabriquer un autre bien (ex. farine pour une boulangerie) est un bien ______.",[["intermediaire"]],"Intermédiaire"],
+["Biens","Un bien qui arrive au consommateur ou à l'entreprise pour être utilisé tel quel est un bien ______.",[["final"]],"Final"],
+["Biens","Le bien final se divise en 2 types. Lesquels?",[["consommation"],["investissement"]],"Bien de consommation et bien d'investissement"],
+["Biens","Une machine achetée par une usine pour produire est un bien de ______.",[["investissement"]],"Bien d'investissement (bien final)"],
+["Biens","Des biens qui peuvent se remplacer l'un l'autre (café/thé) sont des biens ______.",[["substitu"]],"Substituts"],
+["Biens","Des biens dont la consommation entraîne celle d'un autre (auto/essence) sont des biens ______.",[["complementaire"]],"Complémentaires"],
+["Biens","Bien dont la demande AUGMENTE quand le revenu augmente?",[["normal"]],"Bien normal"],
+["Biens","Bien dont la demande augmente PLUS QUE PROPORTIONNELLEMENT à la hausse du revenu?",[["superieur","luxe"]],"Bien supérieur (ex. produits de luxe)"],
+["Biens","Bien dont la demande DIMINUE quand le revenu augmente?",[["inferieur"]],"Bien inférieur (ex. nouilles instantanées, marque générique)"],
+["Biens","Ton revenu double et tu achètes moins de Kraft Dinner. C'est quel type de bien?",[["inferieur"]],"Bien inférieur"],
+["Biens","Ton revenu augmente de 10 % et tu achètes 40 % plus de voyages. C'est quel type de bien?",[["superieur","luxe"]],"Bien supérieur"],
+["Environnement","Nomme les étapes de l'économie linéaire (au moins 4).",[["extraction","extraire"],["transformation","transformer","fabrication"],["distribution"],["utilisation","consommation"]],"Extraction → transformation → distribution → utilisation → gaspillage/déchets (pollution, surconsommation des ressources)"],
+["Environnement","Nomme 2 conséquences de l'économie linéaire.",[["gaspill","pollution","dechet","surconsommation"]],"Gaspillage, pollution et déchets, surconsommation des ressources"],
+["Environnement","Qu'est-ce qu'une externalité négative?",[["consommation","production","activite"],["negati","nuit","bien-etre","bien etre","autre","tiers"]],"Quand la consommation ou la production d'un agent a une influence négative sur le bien-être d'autres agents (sans compensation)"],
+["Environnement","Donne 2 exemples d'externalités négatives.",[["pollution","chimique","deforestation","bruit","cours d'eau"]],"Pollution de l'air en ville, déversement de produits chimiques dans les cours d'eau, déforestation, bruit excessif"],
+["Environnement","Comment s'appelle le fait de faire payer à l'agent le coût de son externalité?",[["internalis"]],"L'internalisation"],
+["Environnement","Nomme le principe d'internalisation où celui qui pollue paie.",[["pollueur"]],"Pollueur-payeur"],
+["Environnement","Qu'est-ce qui freine l'internalisation?",[["consommateur","yeux","ferm","ignor"]],"Les consommateurs préfèrent garder les yeux fermés sur le sujet"],
+["Environnement","⭐ Qu'est-ce que l'économie circulaire?",[["repenser","concevoir","conception","recycl","biodegradable","reutilis"]],"Repenser comment produire : écoconception, s'assurer que le produit est recyclable ou biodégradable (la boucle se referme au lieu de finir en déchet)"],
+["Environnement","⭐ Comment s'appelle le fait de concevoir un produit en pensant à son impact environnemental dès le départ?",[["ecoconception","eco-conception","eco conception"]],"L'écoconception"],
+["Environnement","⭐ Donne 2 caractéristiques d'un produit conçu selon l'économie circulaire.",[["recycl","biodegradable","reparable","reutilis","durable"]],"Recyclable, biodégradable (aussi : réparable, réutilisable)"],
+["Environnement","Différence principale entre économie linéaire et circulaire?",[["dechet","boucle","recycl","jeter","fin"]],"Linéaire : extraire → produire → jeter (déchets). Circulaire : on repense la production pour recycler/réutiliser, en boucle"],
+["Ressources","Nomme les 3 types de ressources (facteurs de production) vus en classe.",[["naturel","terre"],["humain","travail"],["infrastructure","capital"]],"Naturelles, humaines, infrastructures (capital)"],
+["Rareté","Qu'est-ce que le coût de renonciation?",[["renonc","sacrifi","abandon","perd"]],"Le coût de ce à quoi on renonce en prenant une décision donnée (la meilleure option sacrifiée)"],
+["Rareté","Donne les 2 autres noms du coût de renonciation.",[["opportunit"],["option"]],"Coût d'opportunité et coût d'option"],
+["Rareté","Tu choisis d'étudier ce soir au lieu de travailler 4 h à 15 $/h. Ton coût de renonciation?",[["60"]],"60 $ (le salaire sacrifié)"],
+["CPP","Que veut dire CPP?",[["courbe"],["possibilit"],["production"]],"Courbe des possibilités de production"],
+["CPP","Nomme les 2 hypothèses du modèle de la CPP.",[["ressource","toutes"],["varie pas","constant","fixe","court terme","ne change"]],"1) Toutes les ressources servent à produire 2 biens; 2) la quantité de ressources ne varie pas (court terme)"],
+["CPP","L'analyse de la CPP se fait à court ou à long terme?",[["court"]],"Court terme"],
+["CPP","Formule du coût de renonciation?",[["renonc","sacrifi"],["gain","gagn","supplementaire"]],"Coût de renonciation = quantité renoncée (unités sacrifiées) ÷ unités gagnées"],
+["CPP","Pour produire 4 voitures de plus, on doit renoncer à 20 vélos. Coût de renonciation d'une voiture? (juste le nombre)",[["5"]],"20 ÷ 4 = 5 vélos par voiture"],
+["CPP","On passe de 10 à 12 unités de blé et la production de maïs passe de 30 à 24. Coût de renonciation d'une unité de blé?",[["3"]],"(30−24) ÷ (12−10) = 6 ÷ 2 = 3 unités de maïs"],
+["CPP","On renonce à 15 chandails pour produire 5 pantalons de plus. Coût de renonciation d'un pantalon?",[["3"]],"15 ÷ 5 = 3 chandails"],
+["CPP","Le coût de renonciation peut être de 2 types. Lesquels?",[["constant"],["croissant"]],"Constant (CPP droite) ou croissant (CPP courbée/bombée)"],
+["CPP","Les coûts de renonciation sont généralement ______ à court terme.",[["croissant"]],"Croissants"],
+["CPP","Pourquoi les coûts de renonciation sont-ils croissants? (2 raisons)",[["productiv","pas egal","pas aussi","specialis","adapt"]],"Les ressources ne sont pas également productives dans toutes les productions, et on utilise d'abord les ressources les plus productives"],
+["CPP","Qu'est-ce qui provoque un déplacement de la CPP?",[["ressource","facteur"]],"Une modification des ressources (facteurs de production)"],
+["CPP","Nomme les 4 facteurs qui déplacent la CPP.",[["capital"],["travail"],["terre"],["technolog"]],"Capital, travail, terre, technologie"],
+["CPP","Une nouvelle technologie fait déplacer la CPP vers où?",[["droite","exterieur","haut","augment","agrand"]],"Vers l'extérieur (droite) = croissance économique"],
+["CPP","Nomme les 5 concepts que la CPP permet d'expliquer.",[["raret"],["choix"],["cout","option","renonc"],["sous-emploi","sous emploi","chomage"],["croissance"]],"Rareté, choix, coût d'option, sous-emploi des ressources, croissance économique"],
+["CPP","Un point À L'INTÉRIEUR de la CPP représente quoi?",[["sous-emploi","sous emploi","inefficac","chomage","pas utilis","gaspill"]],"Le sous-emploi des ressources (inefficacité)"],
+["CPP","Un point À L'EXTÉRIEUR de la CPP représente quoi?",[["impossible","inatteignable","pas atteignable","pas possible"]],"Une production impossible à atteindre (rareté)"],
+["CPP","Un point SUR la CPP représente quoi?",[["efficac","plein","toutes","maximum","optimal"]],"Utilisation efficace de toutes les ressources (plein emploi)"],
+["CPP","Quel concept est illustré par le fait qu'on doit choisir UN point sur la courbe?",[["choix"]],"Le choix"],
+["Marché","Définis un marché.",[["achet","demand"],["vend","offr","produc"],["echang"]],"Ensemble qui réunit des acheteurs (demandeurs) et des producteurs (offreurs) pour leur permettre d'échanger"],
+["Marché","Nomme les 4 structures de marché.",[["parfaite"],["monopolistique"],["oligopole"],["monopole"]],"Concurrence parfaite, concurrence monopolistique, oligopole, monopole"],
+["Marché","Dans quelle structure personne ne peut influencer le prix car il y a énormément d'acheteurs et de vendeurs?",[["parfaite"]],"Concurrence parfaite"],
+["Marché","Structure avec UN seul producteur?",[["monopole"]],"Monopole"],
+["Marché","Structure avec QUELQUES gros producteurs (ex. Bell, Rogers, Telus)?",[["oligopole"]],"Oligopole"],
+["Marché","Structure avec beaucoup de producteurs de produits différenciés (ex. restaurants)?",[["monopolistique"]],"Concurrence monopolistique"],
+["Demande","Définis la demande.",[["quantit"],["consommat","achet"],["prix"]],"Les diverses quantités que les consommateurs veulent acheter à différents prix"],
+["Demande","Que veut dire ceteris paribus?",[["toutes choses","toute chose","autre","egal"]],"Toutes choses étant égales par ailleurs"],
+["Demande","Sur le graphique du marché, qu'est-ce qu'on met sur l'axe vertical et sur l'axe horizontal?",[["prix"],["quantit"]],"Prix sur l'axe vertical (en haut à gauche), quantité sur l'axe horizontal (en bas à droite)"],
+["Demande","Qu'est-ce que la quantité demandée?",[["quantit"],["prix"]],"Une quantité spécifique associée à un prix spécifique"],
+["Demande","Qu'est-ce qui provoque une variation de la QUANTITÉ demandée?",[["prix"]],"Une variation du prix du bien lui-même (déplacement SUR la courbe)"],
+["Demande","Nomme les 2 facteurs qui font varier la DEMANDE (vus en classe).",[["revenu"],["apparent","substitu","complementaire","autre"]],"Le revenu des consommateurs et le prix des biens apparentés (substituts et complémentaires)"],
+["Demande","Variation de la quantité demandée = mouvement SUR la courbe ou déplacement DE la courbe?",[["sur","le long","mouvement"]],"Mouvement sur (le long de) la courbe"],
+["Demande","Variation de la demande = mouvement SUR la courbe ou déplacement DE la courbe?",[["deplac","de la courbe","shift"]],"Déplacement de la courbe au complet"],
+["Demande","Le prix du café augmente beaucoup. Qu'arrive-t-il à la demande de thé (substitut)?",[["augment","hausse","monte"]],"Elle augmente (les gens se tournent vers le substitut)"],
+["Demande","Le prix des imprimantes baisse. Qu'arrive-t-il à la demande d'encre (complémentaire)?",[["augment","hausse","monte"]],"Elle augmente (plus d'imprimantes = plus d'encre)"],
+["Demande","Le prix de l'essence explose. Qu'arrive-t-il à la demande de VUS (complémentaire)?",[["diminu","baisse"]],"Elle diminue"],
+["Demande","Le revenu des ménages augmente. Qu'arrive-t-il à la demande d'un bien normal?",[["augment","hausse","monte"]],"Elle augmente (courbe vers la droite)"],
+["Demande","Le prix du riz augmente. La DEMANDE de riz change-t-elle? (oui/non et pourquoi)",[["non","quantit"]],"Non! C'est la QUANTITÉ demandée qui diminue (mouvement sur la courbe). La demande ne bouge pas."],
+["Offre","Définis l'offre.",[["quantit"],["producteur","vend","offr"],["prix"]],"Les diverses quantités que les producteurs veulent et peuvent offrir à différents prix"],
+["Offre","Si le prix d'un bien augmente, la quantité OFFERTE ______.",[["augment","hausse","monte"]],"Augmente"],
+["Offre","Si le prix d'un bien diminue, la quantité offerte ______.",[["diminu","baisse"]],"Diminue"],
+["Offre","Qu'est-ce qui provoque une variation de l'OFFRE (déplacement de la courbe)?",[["autre","facteur"]],"Une variation des facteurs AUTRES que le prix du bien"],
+["Offre","Nomme au moins 4 facteurs qui font varier l'offre.",[["cout"],["nombre","producteur"],["productiv","technolog"],["anticipation","climat","desordre","apparent"]],"Coûts de production, nombre de producteurs, productivité (technologie), anticipations, désordres climatiques, prix des biens apparentés"],
+["Offre","Les coûts de production AUGMENTENT. Qu'arrive-t-il à l'offre?",[["diminu","baisse"]],"L'offre diminue (courbe vers la gauche)"],
+["Offre","Les coûts de production DIMINUENT. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente (courbe vers la droite)"],
+["Offre","Une nouvelle technologie rend les usines plus productives. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente"],
+["Offre","Une sécheresse détruit les récoltes de café. Qu'arrive-t-il à l'offre de café?",[["diminu","baisse"]],"L'offre diminue (désordre climatique)"],
+["Offre","Plusieurs nouveaux producteurs entrent sur le marché. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente"],
+["Offre","Le salaire minimum augmente pour les employés d'une usine. Qu'arrive-t-il à l'offre?",[["diminu","baisse"]],"L'offre diminue (hausse des coûts de production)"],
+["Offre","Le prix du blé augmente. L'OFFRE de blé change-t-elle? (oui/non et pourquoi)",[["non","quantit"]],"Non! C'est la QUANTITÉ offerte qui augmente (mouvement sur la courbe)."],
+];
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];for(let j=1;j<=b.length;j++)m[i][j]=i?Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)):j;}return m[a.length][b.length];}
+function has(a,kk){
+ if(a.includes(kk))return true;
+ if(kk.includes(" ")||kk.length<5)return false;
+ const tol=kk.length>=8?2:1;
+ return a.split(/[^a-z0-9-]+/).some(w=>{for(let L=kk.length-1;L<=kk.length+1;L++){if(w.length>=L-1&&lev(w.slice(0,L),kk)<=tol)return true;}return false;});
+}
+function check(q,a){
+ a=norm(a).replace(/\bil+imit/g,"illimit").replace(/\bdecentrali/g,"decentrali");
+ const noIll=a.replace(/illimit\w*/g,""), noDec=a.replace(/decentralis\w*/g,"");
+ return q[2].every(g=>g.some(k=>{const kk=norm(k);
+   if(/^\d+$/.test(kk))return new RegExp("(^|\\D)"+kk+"(\\D|$)").test(a);
+   if(kk==="limit")return /limit/.test(noIll);
+   if(kk==="centralisation")return has(noDec,kk);
+   if(kk==="illimit")return /illimit/.test(a);
+   if(["micro","macro","officieuse"].includes(kk))return a.includes(kk.slice(0,5));
+   return has(a,kk);}));
+}
+const TRUC={
+"Qu'est-ce que le problème économique":"🧠 Ressources <b>limitées</b>, besoins <b>illimités</b> → on doit faire des <b>choix</b>. (⚠️ Ton document dit « ressources ilimitées » : c'est une erreur, c'est LIMITÉES.)",
+"Nomme les 2 branches":"🧠 <b>Micro</b> = petit (1 personne, 1 entreprise). <b>Macro</b> = gros (tout le pays, le monde).",
+"Quelles sont les 3 questions":"🧠 <b>Quoi? Comment? Pour qui?</b>",
+"Nomme les 4 agents":"🧠 <b>M-E-E-R</b> = « <i>la MER</i> » → Ménages, Entreprises, État, Reste du monde.",
+"Bien dont la demande AUGMENTE":"🧠 Normal = plus d'argent → j'en achète plus (normal!). Supérieur = BEAUCOUP plus (luxe). Inférieur = j'en achète MOINS (je passe à mieux).",
+"Nomme les étapes de l'économie linéaire":"🧠 « <i>Extrais, Transforme, Distribue, Utilise… Jette</i> » → une ligne droite qui finit à la poubelle.",
+"⭐ Qu'est-ce que l'économie circulaire":"🧠 Circulaire = un <b>cercle</b> : rien ne finit à la poubelle. Mots-clés : <b>écoconception, recyclable, biodégradable</b>.",
+"Nomme les 3 types de ressources":"🧠 <b>N-H-I</b> : Naturelles, Humaines, Infrastructures.",
+"Donne les 2 autres noms":"🧠 Les 3 noms : coût de <b>renonciation</b> = coût d'<b>opportunité</b> = coût d'<b>option</b>.",
+"Formule du coût de renonciation":"🧠 <b>Ce que je PERDS ÷ ce que je GAGNE</b> (sacrifié sur gagné).",
+"Nomme les 4 facteurs qui déplacent la CPP":"🧠 <b>C-T-T-T</b> : Capital, Travail, Terre, Technologie.",
+"Nomme les 5 concepts":"🧠 « <i>Rare Choix Coûte Sous Croissance</i> » → Rareté, Choix, Coût d'option, Sous-emploi, Croissance.",
+"Pourquoi les coûts de renonciation sont-ils croissants":"🧠 On prend d'abord les meilleurs joueurs pour chaque job; ensuite il reste juste ceux qui sont moins bons → ça coûte de plus en plus cher.",
+"Nomme les 4 structures":"🧠 Du plus de vendeurs au moins : <b>Parfaite → Monopolistique → Oligopole → Monopole</b> (oligo = peu, mono = un).",
+"Qu'est-ce qui provoque une variation de la QUANTITÉ demandée":"🧠 <b>Le prix du bien lui-même bouge → on glisse SUR la courbe</b>. Autre chose bouge → la courbe au complet se déplace.",
+"Le prix du riz augmente. La DEMANDE":"🧠 Piège classique : le prix du bien lui-même = <b>quantité</b> demandée, jamais « la demande ».",
+"Le prix du blé augmente. L'OFFRE":"🧠 Même piège qu'à la demande : prix du bien = <b>quantité</b> offerte.",
+"Nomme au moins 4 facteurs qui font varier l'offre":"🧠 « <i>Coûte Nombreux Produits Anticipés Climatiques Apparentés</i> » → Coûts, Nombre de producteurs, Productivité, Anticipations, Climat, biens Apparentés.",
+"Les coûts de production AUGMENTENT":"🧠 Coûts ↑ = offre ↓ (c'est l'inverse!). Produire coûte plus cher → on produit moins.",
+"Qu'est-ce qu'une externalité négative":"🧠 Quelqu'un d'autre paie pour ton activité (ex. l'usine pollue, les voisins toussent)."
+};
+const truc=q=>{for(const k in TRUC)if(q[1].startsWith(k))return TRUC[k];return"";};
+let order,i,score,wrong,done,round=1;
+function start(list){order=list.slice().sort(()=>Math.random()-.5);i=0;score=0;wrong=[];render();}
+const app=document.getElementById('app');
+function render(){
+ if(i>=order.length)return end();
+ const q=order[i];done=false;
+ app.innerHTML=`<div class="top"><span>Question ${i+1}/${order.length} ${round>1?"(reprise des erreurs)":""}</span><span>Score : ${score}</span></div>
+ <div class="bar"><div style="width:${i/order.length*100}%"></div></div>
+ <span class="ch">${q[0]}</span><h2>${q[1]}</h2>
+ <input id="a" autocomplete="off" placeholder="Écris ta réponse…">
+ <div class="hint">Entrée = valider · accents, majuscules et petites fautes d'orthographe acceptés</div>
+ <div id="f"></div><div id="b"><button class="p" onclick="sub()">Valider</button><button class="s" onclick="sub(true)">Je sais pas</button></div>`;
+ const inp=document.getElementById('a');inp.focus();
+ inp.onkeydown=e=>{if(e.key==="Enter"){done?next():sub()}};
+}
+window.sub=function(skip){if(done)return;done=true;const q=order[i],a=document.getElementById('a').value;
+ const ok=!skip&&a.trim()&&check(q,a);if(ok)score++;else wrong.push(q);
+ document.getElementById('f').innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅ Bonne réponse!':'❌ Pas tout à fait.'}<br><b>Réponse :</b> ${q[3]}${truc(q)?'<div style="margin-top:6px">'+truc(q)+'</div>':''}</div>`;
+ document.getElementById('b').innerHTML=`<button class="p" onclick="next()">Suivante →</button>${ok?'':(a.trim()?'<button class="s" onclick="override()">J\'avais raison</button>':'')}`;
+ document.getElementById('a').focus();
+};
+window.hint=function(){const t=truc(order[i]);document.getElementById('f').innerHTML=`<div class="fb" style="background:#fff8db;border-left:4px solid #d4a017">${t}</div>`;document.getElementById('a').focus();};
+window.override=function(){score++;wrong.pop();next();};
+window.next=function(){i++;render();};
+function end(){const pct=Math.round(score/order.length*100);
+ app.innerHTML=`<h2>Terminé! ${score}/${order.length} (${pct} %)</h2>
+ <p>${pct>=90?'🔥 T\'es prêt.':pct>=70?'👍 Bon, révise les erreurs ci-dessous.':'📖 Relis la fiche pour les sujets manqués, puis refais les erreurs.'}</p>
+ ${wrong.length?`<h3>À revoir :</h3><ul>${wrong.map(q=>`<li><b>${q[1]}</b><br>→ ${q[3]}${truc(q)?'<br><small>'+truc(q)+'</small>':''}</li>`).join('')}</ul>
+ <button class="p" onclick="retry()">Refaire seulement mes erreurs (${wrong.length})</button>`:''}
+ <button class="s" onclick="round=1;start(Q)">Recommencer tout</button>`;}
+window.retry=function(){round++;start(wrong);};
+start(Q);
+</script></body></html>
