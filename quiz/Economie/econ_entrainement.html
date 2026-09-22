@@ -1,0 +1,371 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Économie — Salle d'entraînement</title>
+<style>
+:root{--b:#1f6feb;--ok:#2e8b57;--no:#c0392b}
+body{font-family:system-ui,sans-serif;background:#f4f6fa;color:#1d1d1f;margin:0;padding:12px}
+.wrap{max-width:760px;margin:auto}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;position:sticky;top:0;background:#f4f6fa;padding:6px 0;z-index:5}
+nav button{background:#fff;border:1px solid #ccd;border-radius:20px;padding:7px 12px;cursor:pointer;font-size:.9em}
+nav button.on{background:var(--b);color:#fff;border-color:var(--b)}
+.card,.box{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 10px #0001;margin-bottom:12px}
+h2{font-size:1.2em;margin:.3em 0 .8em}h3{margin:.8em 0 .3em;color:#1f3b57}
+button{font-size:1em;padding:9px 14px;border:0;border-radius:8px;cursor:pointer;margin:6px 6px 0 0}
+.p{background:var(--b);color:#fff}.s{background:#e6ebf2}
+input,textarea{width:100%;box-sizing:border-box;font-size:1.05em;padding:10px;border:2px solid #ccd;border-radius:8px;font-family:inherit}
+.fb{margin-top:12px;padding:10px;border-radius:8px}.ok{background:#e3f6e8;border-left:4px solid var(--ok)}.no{background:#fdecea;border-left:4px solid var(--no)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border:2px solid #ccd;border-radius:8px;padding:9px;cursor:pointer;background:#fff;font-size:.95em;user-select:none}
+.tile.sel{border-color:var(--b);background:#eaf1ff}.tile.done{border-color:var(--ok);background:#e3f6e8;cursor:default;opacity:.7}.tile.bad{border-color:var(--no);background:#fdecea}
+.opts button{background:#eef2f7;border:1px solid #ccd}
+.mn{background:#e8f4ea;border-left:4px solid var(--ok);padding:8px 10px;margin:8px 0;border-radius:4px}
+.story{line-height:1.7}.story b{background:#fff3a8;padding:0 2px}
+.top{display:flex;justify-content:space-between;color:#555;font-size:.9em;flex-wrap:wrap}
+.bar{height:6px;background:#e3e8ef;border-radius:3px;margin:8px 0 16px}.bar div{height:100%;background:var(--b);border-radius:3px;transition:.3s}
+.ch{display:inline-block;background:#e6ebf2;border-radius:10px;padding:2px 8px;font-size:.8em}.hint{color:#666;font-size:.85em;margin-top:6px}
+table{border-collapse:collapse;margin:8px 0}td,th{border:1px solid #ccd;padding:5px 10px;text-align:center}
+.miss{color:var(--no)}.hit{color:var(--ok)}
+.timer{font-size:2em;font-weight:700;text-align:center;margin:6px 0}
+svg text{font-family:system-ui;font-size:12px}
+@media(max-width:500px){.grid{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<nav id="nav"></nav>
+<div id="v-plan"></div><div id="v-histoire" hidden></div><div id="v-blurt" hidden></div><div id="v-assoc" hidden></div>
+<div id="v-graph" hidden></div><div id="v-trier" hidden></div><div id="v-cpp" hidden></div><div id="v-quiz" hidden><div class="box" id="app"></div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const nrm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const TABS=[["plan","① Méthode"],["histoire","② L'histoire"],["blurt","③ Vide-cerveau"],["assoc","④ Associer"],["graph","⑤ Graphique O/D"],["trier","⑥ Trier"],["cpp","⑦ Calculs CPP"],["quiz","⑧ Quiz final"]];
+function show(t){TABS.forEach(([k])=>{$("v-"+k).hidden=k!==t;});[...$("nav").children].forEach(b=>b.classList.toggle("on",b.dataset.t===t));window.scrollTo(0,0);}
+$("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}" onclick="show('${k}')">${l}</button>`).join("");
+
+/* ① MÉTHODE */
+$("v-plan").innerHTML=`<div class="card"><h2>🎯 Comment apprendre VITE (fais les onglets dans l'ordre)</h2>
+<p>Relire ses notes donne l'impression de savoir, mais ça rentre mal. Ce qui marche vraiment, c'est <b>forcer ton cerveau à sortir l'info</b> (rappel actif) et <b>faire des liens</b>. Chaque onglet utilise une technique prouvée :</p>
+<table style="width:100%;text-align:left"><tr><th>Onglet</th><th>Technique</th><th>Temps</th></tr>
+<tr><td>② L'histoire</td><td><b>Chaîne logique</b> : tout est relié en 1 histoire. Un concept rappelle le suivant.</td><td>5 min</td></tr>
+<tr><td>③ Vide-cerveau</td><td><b>Blurting</b> : écris tout ce que tu sais sans regarder, puis vois ce qui manque. La technique #1 pour trouver tes trous.</td><td>5 min / thème</td></tr>
+<tr><td>④ Associer</td><td><b>Discrimination</b> : distinguer des notions qui se ressemblent (normal/supérieur/inférieur…).</td><td>10 min</td></tr>
+<tr><td>⑤ Graphique</td><td><b>Double codage</b> : mot + image. Tu vois la courbe bouger → tu t'en souviens.</td><td>10 min</td></tr>
+<tr><td>⑥ Trier</td><td><b>Entrelacement</b> : questions mélangées, comme à l'exam.</td><td>10 min</td></tr>
+<tr><td>⑦ Calculs</td><td><b>Pratique répétée</b> : même formule, chiffres différents, jusqu'à l'automatisme.</td><td>5 min</td></tr>
+<tr><td>⑧ Quiz</td><td><b>Test final + refaire ses erreurs</b> jusqu'à 0 erreur.</td><td>20 min</td></tr></table>
+<h3>5 règles d'or</h3>
+<ol><li><b>Ne regarde pas la réponse avant d'avoir essayé.</b> Te tromper puis voir la bonne réponse = ça reste 2× mieux.</li>
+<li><b>Dis-le à voix haute</b> comme si tu l'expliquais à un ami de 12 ans (technique Feynman). Si tu bloques, c'est un trou.</li>
+<li><b>Refais tes erreurs</b> 10 min plus tard, puis une dernière fois avant l'exam (répétition espacée).</li>
+<li><b>Pauses de 5 min</b> toutes les 25 min (Pomodoro). Pas de téléphone pendant la pause.</li>
+<li><b>Dors</b> la veille : le cerveau consolide la mémoire pendant le sommeil. Une nuit blanche fait perdre plus que ce qu'elle rapporte.</li></ol>
+<button class="p" onclick="show('histoire')">Commencer → L'histoire</button></div>`;
+
+/* ② HISTOIRE */
+$("v-histoire").innerHTML=`<div class="card story"><h2>📖 Toute la matière en une histoire</h2>
+<p>Lis-la 2 fois, puis ferme les yeux et <b>raconte-la à voix haute</b>. Chaque paragraphe mène au suivant.</p>
+<h3>1. Le problème de départ</h3>
+<p>L'économie est une <b>science humaine</b> (chômage, inégalités, climat, IA, santé mentale). Le problème de base : les <b>ressources sont limitées</b> (naturelles, humaines, infrastructures) mais les <b>besoins sont illimités</b> → c'est la <b>RARETÉ</b>. Donc on doit faire des <b>CHOIX</b> : l'économie est la <b>science des choix</b>. Tout pays doit répondre à : <b>Quoi produire? Comment? Pour qui?</b></p>
+<h3>2. Qui fait ces choix?</h3>
+<p>Les <b>4 agents</b> (la MER) : Ménages, Entreprises, État, Reste du monde. Si on étudie UN agent et sa réaction aux <b>incitatifs</b> (carotte/bâton) → <b>MICRO</b>. Si on étudie l'effet de TOUS ensemble (inflation, chômage, production globale) → <b>MACRO</b>.</p>
+<h3>3. Chaque choix a un prix caché</h3>
+<p>Choisir, c'est renoncer. Ce qu'on sacrifie = <b>coût de renonciation</b> (= coût d'opportunité = coût d'option). On le voit avec la <b>CPP</b> : on produit 2 biens avec toutes nos ressources, à court terme. <b>Coût = ce que je perds ÷ ce que je gagne</b>. Il est souvent <b>croissant</b> (courbe bombée), car on utilise d'abord les ressources les plus productives. La CPP montre 5 idées : <b>rareté</b> (on ne peut pas aller dehors), <b>choix</b> (un point sur la courbe), <b>coût d'option</b> (glisser sur la courbe), <b>sous-emploi</b> (point à l'intérieur), <b>croissance</b> (la courbe se déplace vers l'extérieur grâce au Capital, Travail, Terre, Technologie).</p>
+<h3>4. Ce qu'on produit : les biens</h3>
+<p>Un bien est <b>intermédiaire</b> (sert à fabriquer autre chose) ou <b>final</b> (consommation ou investissement). Entre eux, ils sont <b>substituts</b> (se remplacent) ou <b>complémentaires</b> (vont ensemble). Selon le revenu : <b>normal</b> (revenu↑ → achat↑), <b>supérieur</b> (achat↑↑, le luxe), <b>inférieur</b> (achat↓).</p>
+<h3>5. Où on échange : le marché</h3>
+<p>Le <b>marché</b> réunit acheteurs (demandeurs) et producteurs (offreurs). Du plus de vendeurs au moins : <b>concurrence parfaite → monopolistique → oligopole → monopole</b>. Sur le graphique : <b>Prix en vertical, Quantité en horizontal</b>, <i>ceteris paribus</i>.</p>
+<h3>6. Les deux forces : demande et offre</h3>
+<p><b>Demande</b> ↘ : prix↑ = on achète moins. <b>Offre</b> ↗ : prix↑ = on produit plus. <b>RÈGLE D'OR :</b> si c'est le <b>prix du bien lui-même</b> qui change → on <b>glisse SUR la courbe</b> (quantité demandée/offerte). Si c'est <b>autre chose</b> → la <b>courbe au complet se déplace</b>. Demande bouge avec : revenu, prix des biens apparentés. Offre bouge avec : coûts, nombre de producteurs, technologie, anticipations, climat, biens apparentés. Coûts↑ → offre↓.</p>
+<h3>7. Le côté sombre : l'environnement</h3>
+<p>L'<b>économie linéaire</b> = Extraire → Transformer → Distribuer → Utiliser → Jeter (gaspillage, pollution, surconsommation). Ça crée des <b>externalités négatives</b> : mon activité nuit au bien-être des autres (pollution, produits chimiques, déforestation, bruit). Solution : l'<b>internalisation</b> (<b>pollueur-payeur</b>), freinée par les consommateurs qui ferment les yeux. Meilleure solution ⭐ : l'<b>économie circulaire</b> : repenser la production (<b>écoconception</b>, recyclable, biodégradable). La ligne devient un cercle.</p>
+<div class="mn">🧠 La chaîne en 10 mots : <b>Rareté → Choix → Renonciation → CPP → Biens → Marché → Demande → Offre → Externalités → Circulaire</b>. Récite-la 3 fois.</div>
+<button class="p" onclick="show('blurt')">Suivant → Vide-cerveau</button></div>`;
+
+/* ③ BLURTING */
+const BL={
+"Tout (la chaîne complète)":["rarete","choix","renonciation","cpp","micro","macro","menage","entreprise","etat","reste du monde","quoi","comment","pour qui","intermediaire","final","substitut","complementaire","normal","superieur","inferieur","marche","offre","demande","ceteris paribus","externalite","pollueur","circulaire","lineaire","ecoconception"],
+"Introduction (rareté, micro/macro, agents)":["humain","choix","rarete","limit","illimit","micro","macro","incitatif","inflation","chomage","quoi","comment","pour qui","menage","entreprise","etat","reste du monde"],
+"Types de biens":["intermediaire","final","consommation","investissement","substitut","complementaire","normal","superieur","inferieur","revenu"],
+"CPP et coût de renonciation":["renonciation","opportunite","option","courbe","possibilite","production","court terme","perd","gagn","constant","croissant","productiv","capital","travail","terre","technologie","sous-emploi","croissance","rarete","choix"],
+"Marché, demande, offre":["acheteur","producteur","echange","parfaite","monopolistique","oligopole","monopole","prix","quantite","ceteris paribus","revenu","substitut","complementaire","cout","nombre","technologie","anticipation","climat","deplace"],
+"Environnement":["extraction","transformation","distribution","utilisation","gaspillage","pollution","surconsommation","externalite","bien-etre","deforestation","bruit","internalisation","pollueur-payeur","consommateur","circulaire","ecoconception","recycl","biodegradable"]};
+let bt=null;
+$("v-blurt").innerHTML=`<div class="card"><h2>🧠 Vide-cerveau (blurting)</h2>
+<p>1) Choisis un thème. 2) Pendant <b>3 minutes</b>, écris <b>TOUT</b> ce dont tu te souviens, sans regarder, en vrac (mots-clés, définitions, exemples). 3) Clique « Vérifier » : tu vois ce qui te manque. 4) Relis juste ce qui manque, puis recommence le même thème. Vise 100 %.</p>
+<select id="bth" style="font-size:1em;padding:8px;width:100%;margin-bottom:8px">${Object.keys(BL).map(k=>`<option>${k}</option>`).join("")}</select>
+<div class="timer" id="btm">3:00</div>
+<textarea id="bta" rows="9" placeholder="Écris tout ce que tu sais ici…"></textarea>
+<button class="s" onclick="btStart()">▶ Démarrer le chrono</button><button class="p" onclick="btCheck()">Vérifier</button><button class="s" onclick="$('bta').value='';$('btr').innerHTML=''">Effacer</button>
+<div id="btr"></div></div>`;
+window.btStart=function(){clearInterval(bt);let s=180;$("bta").focus();bt=setInterval(()=>{s--;$("btm").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(s<=0){clearInterval(bt);$("btm").textContent="⏰ Temps!";btCheck();}},1000);};
+window.btCheck=function(){clearInterval(bt);const t=nrm($("bta").value),k=BL[$("bth").value];const hit=k.filter(w=>t.includes(nrm(w))),miss=k.filter(w=>!t.includes(nrm(w)));const pct=Math.round(hit.length/k.length*100);
+$("btr").innerHTML=`<div class="fb ${pct>=80?'ok':'no'}"><b>${pct} %</b> des mots-clés (${hit.length}/${k.length})<br><span class="hit">✔ ${hit.join(", ")||"—"}</span><br><span class="miss">✘ Il te manque : <b>${miss.join(", ")||"rien! 🔥"}</b></span><br><small>Va relire ces mots-là dans « L'histoire », puis recommence ce thème.</small></div>`;};
+
+/* ④ ASSOCIER */
+const AS={
+"Types de biens":[["Bien intermédiaire","Sert à fabriquer un autre bien (farine → pain)"],["Bien final","Utilisé tel quel par le consommateur ou l'entreprise"],["Bien d'investissement","Bien final qu'une entreprise achète pour produire (machine)"],["Biens substituts","Se remplacent l'un l'autre (café / thé)"],["Biens complémentaires","Consommés ensemble (auto / essence)"],["Bien normal","Revenu ↑ → demande ↑"],["Bien supérieur","Revenu ↑ → demande ↑ plus que proportionnellement"],["Bien inférieur","Revenu ↑ → demande ↓"]],
+"Structures de marché":[["Concurrence parfaite","Tellement de vendeurs/acheteurs que personne n'influence le prix"],["Concurrence monopolistique","Beaucoup de vendeurs, produits différenciés (restos)"],["Oligopole","Quelques gros vendeurs (Bell, Rogers, Telus)"],["Monopole","Un seul vendeur"],["Marché","Réunit acheteurs et offreurs pour échanger"],["Ceteris paribus","Toutes choses étant égales par ailleurs"]],
+"Concepts clés":[["Rareté","Ressources limitées vs besoins illimités"],["Coût de renonciation","Ce à quoi on renonce en prenant une décision"],["Microéconomie","Choix des individus/entreprises face aux incitatifs"],["Macroéconomie","Effets agrégés : inflation, chômage, production globale"],["Externalité négative","Mon activité nuit au bien-être des autres"],["Internalisation","Faire payer le coût de l'externalité (pollueur-payeur)"],["Économie linéaire","Extraire → produire → jeter"],["Économie circulaire","Écoconception : recyclable, biodégradable"]],
+"La CPP":[["Point à l'intérieur","Sous-emploi des ressources"],["Point sur la courbe","Utilisation efficace (plein emploi)"],["Point à l'extérieur","Impossible à atteindre (rareté)"],["Courbe qui se déplace vers l'extérieur","Croissance économique"],["Courbe droite","Coût de renonciation constant"],["Courbe bombée","Coût de renonciation croissant"],["Glisser d'un point à l'autre","Coût d'option"],["Formule","Quantité renoncée ÷ unités gagnées"]],
+"Demande vs Offre":[["Quantité demandée varie","Le prix du bien lui-même change (glisse sur la courbe)"],["La demande varie","Revenu ou prix d'un bien apparenté change"],["Coûts de production ↑","Offre ↓"],["Nouvelle technologie","Offre ↑"],["Demande","Quantités que les consommateurs VEULENT acheter à différents prix"],["Offre","Quantités que les producteurs VEULENT ET PEUVENT offrir à différents prix"]]};
+let asSel=null,asSet,asErr;
+function asRender(name){asSet=name;asSel=null;asErr=0;const pairs=AS[name];
+ const L=shuf(pairs.map((p,i)=>({t:p[0],i,s:"L"}))),R=shuf(pairs.map((p,i)=>({t:p[1],i,s:"R"})));
+ $("asb").innerHTML=`<div class="grid"><div>${L.map(x=>`<div class="tile" data-i="${x.i}" data-s="L" onclick="asClick(this)">${x.t}</div>`).join("<div style='height:8px'></div>")}</div><div>${R.map(x=>`<div class="tile" data-i="${x.i}" data-s="R" onclick="asClick(this)">${x.t}</div>`).join("<div style='height:8px'></div>")}</div></div><div id="asr"></div>`;}
+window.asClick=function(el){if(el.classList.contains("done"))return;
+ if(!asSel||asSel.dataset.s===el.dataset.s){if(asSel)asSel.classList.remove("sel");asSel=el;el.classList.add("sel");return;}
+ const a=asSel;asSel=null;a.classList.remove("sel");
+ if(a.dataset.i===el.dataset.i){a.classList.add("done");el.classList.add("done");
+   if(document.querySelectorAll("#asb .tile:not(.done)").length===0)$("asr").innerHTML=`<div class="fb ${asErr?'no':'ok'}">Terminé avec <b>${asErr}</b> erreur(s). ${asErr?'Recommence jusqu\'à 0 erreur.':'Parfait 🔥'} <button class="s" onclick="asRender(asSet)">Recommencer</button></div>`;}
+ else{asErr++;[a,el].forEach(x=>{x.classList.add("bad");setTimeout(()=>x.classList.remove("bad"),600);});}};
+$("v-assoc").innerHTML=`<div class="card"><h2>🔗 Associer</h2><p>Clique un terme à gauche, puis sa définition à droite. Refais chaque série jusqu'à <b>0 erreur</b>.</p>
+<div>${Object.keys(AS).map(k=>`<button class="s" onclick="asRender('${k}')">${k}</button>`).join("")}</div><div id="asb" style="margin-top:12px"></div></div>`;
+asRender("Types de biens");
+
+/* ⑤ GRAPHIQUE O/D */
+const OD=[
+["Le prix du thé augmente. Effet sur le marché du CAFÉ?","D+","Thé et café sont substituts : les gens passent au café."],
+["Le revenu des ménages augmente. Marché des restaurants (bien normal)?","D+","Bien normal : revenu ↑ → demande ↑."],
+["Le revenu des ménages augmente. Marché des nouilles instantanées (bien inférieur)?","D-","Bien inférieur : revenu ↑ → demande ↓."],
+["Le revenu baisse. Marché des voyages (bien supérieur)?","D-","Revenu ↓ → demande ↓ (encore plus fort pour un bien supérieur)."],
+["Le prix des consoles baisse. Marché des JEUX VIDÉO?","D+","Complémentaires : plus de consoles → plus de jeux."],
+["Le prix de l'essence explose. Marché des VUS?","D-","Complémentaires : essence chère → moins de VUS."],
+["Le prix du beurre d'arachide monte. Marché de la confiture (complémentaire)?","D-","Complémentaires : on achète moins des deux."],
+["Le prix du riz augmente. Marché du RIZ, côté acheteurs?","M","Prix du bien lui-même → on glisse SUR la courbe : la quantité demandée baisse. La courbe ne bouge pas!"],
+["Une sécheresse détruit les récoltes de blé. Marché du blé?","O-","Désordre climatique → offre ↓."],
+["Une nouvelle technologie rend les usines de chocolat 2× plus productives.","O+","Productivité ↑ → offre ↑."],
+["Le salaire minimum augmente pour les travailleurs d'usine.","O-","Coûts de production ↑ → offre ↓."],
+["Plusieurs nouvelles entreprises entrent sur le marché des vélos.","O+","Nombre de producteurs ↑ → offre ↑."],
+["Le prix de l'acier (matière première) baisse. Marché des autos?","O+","Coûts de production ↓ → offre ↑."],
+["Le prix du blé augmente. Marché du BLÉ, côté producteurs?","M","Prix du bien lui-même → quantité offerte ↑ (glisse sur la courbe)."],
+["Les producteurs de sirop d'érable anticipent un prix beaucoup plus élevé le mois prochain.","O-","Anticipation : ils gardent leur stock pour plus tard → offre ↓ aujourd'hui."],
+["Une tempête de verglas détruit des érablières.","O-","Désordre climatique → offre ↓."]];
+const LBL={"D+":"Demande ↑ (droite)","D-":"Demande ↓ (gauche)","O+":"Offre ↑ (droite)","O-":"Offre ↓ (gauche)","M":"Aucune courbe ne bouge (on glisse dessus)"};
+function svgOD(k,onO){const W=300,H=220,x0=40,y0=190;const L=(x1,y1,x2,y2,c,d)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="3" ${d?'stroke-dasharray="6 4"':''}/>`;
+ let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:340px;display:block;margin:8px auto">`+L(x0,10,x0,y0,"#333")+L(x0,y0,290,y0,"#333")+`<text x="4" y="18">Prix</text><text x="240" y="208">Quantité</text>`;
+ s+=L(70,30,250,170,"#1f6feb")+`<text x="252" y="175" fill="#1f6feb">D</text>`+L(70,170,250,30,"#e67e22")+`<text x="252" y="30" fill="#e67e22">O</text>`;
+ const dx=k.endsWith("+")?45:-45;
+ if(k[0]==="D")s+=L(70+dx,30,250+dx,170,"#1f6feb",1)+`<text x="${252+dx}" y="165" fill="#1f6feb">D₂</text><text x="150" y="${k.endsWith("+")?90:120}" font-size="22" fill="#1f6feb">${k.endsWith("+")?"→":"←"}</text>`;
+ if(k[0]==="O")s+=L(70+dx,170,250+dx,30,"#e67e22",1)+`<text x="${252+dx}" y="45" fill="#e67e22">O₂</text><text x="150" y="${k.endsWith("+")?125:85}" font-size="22" fill="#e67e22">${k.endsWith("+")?"→":"←"}</text>`;
+ if(k==="M")s+=onO?`<circle cx="190" cy="77" r="6" fill="#c0392b"/><circle cx="220" cy="53" r="6" fill="#c0392b"/><text x="120" y="45" fill="#c0392b">glisse sur O ↗</text>`:`<circle cx="100" cy="53" r="6" fill="#c0392b"/><circle cx="130" cy="77" r="6" fill="#c0392b"/><text x="120" y="45" fill="#c0392b">glisse sur D ↘</text>`;
+ return s+"</svg>";}
+let odO,odI,odS;
+function odStart(){odO=shuf(OD);odI=0;odS=0;odRender();}
+function odRender(){if(odI>=odO.length){$("odb").innerHTML=`<h2>Score : ${odS}/${odO.length}</h2><button class="p" onclick="odStart()">Recommencer (ordre mélangé)</button>`;return;}
+ const q=odO[odI];$("odb").innerHTML=`<div class="top"><span>${odI+1}/${odO.length}</span><span>Score : ${odS}</span></div><div class="bar"><div style="width:${odI/odO.length*100}%"></div></div>
+ <h2>${q[0]}</h2><div class="hint">Demande-toi d'abord : <b>est-ce le prix du bien LUI-MÊME?</b> Si oui → on glisse. Sinon : ça touche les acheteurs (D) ou les producteurs (O)?</div>
+ <div class="opts">${Object.keys(LBL).map(k=>`<button onclick="odAns('${k}')">${LBL[k]}</button>`).join("")}</div>${svgOD("")}<div id="odf"></div>`;}
+window.odAns=function(k){const q=odO[odI];if($("odf").innerHTML)return;const ok=k===q[1];if(ok)odS++;
+ document.querySelector("#odb svg").outerHTML=svgOD(q[1],/producteur/.test(q[0]));
+ $("odf").innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅':'❌'} <b>${LBL[q[1]]}</b><br>${q[2]}</div><button class="p" onclick="odI++;odRender()">Suivante →</button>`;};
+$("v-graph").innerHTML=`<div class="card"><h2>📈 Graphique Offre / Demande</h2><p>Lis la situation, choisis ce qui bouge, puis <b>regarde la courbe se déplacer</b>. Ton cerveau retient mieux l'image que la phrase.</p>
+<div class="mn">🧠 Truc : <b>↑ = vers la DROITE</b>, <b>↓ = vers la GAUCHE</b>, pour les deux courbes. Et coûts ↑ = offre ↓.</div><div id="odb"></div></div>`;
+odStart();
+
+/* ⑥ TRIER */
+const TR={
+"Micro ou Macro?":{o:["Micro","Macro"],q:[["Comment un étudiant choisit entre travailler ou étudier","Micro"],["Le taux d'inflation au Canada","Macro"],["Le prix fixé par une boulangerie","Micro"],["Le chômage dans le monde","Macro"],["Comment une taxe sur le sucre change les achats d'une famille","Micro"],["La production globale du Québec","Macro"],["Une entreprise qui réagit à une subvention (carotte)","Micro"],["Les effets agrégés des choix de tous les ménages","Macro"]]},
+"Quel type de bien?":{o:["Intermédiaire","Consommation","Investissement"],q:[["Farine achetée par une boulangerie","Intermédiaire"],["Pizza que tu achètes pour souper","Consommation"],["Camion de livraison acheté par une entreprise","Investissement"],["Pneus achetés par une usine qui fabrique des autos","Intermédiaire"],["Téléphone que tu t'achètes","Consommation"],["Four industriel acheté par un restaurant","Investissement"],["Tissu acheté par une usine de vêtements","Intermédiaire"],["Film au cinéma","Consommation"]]},
+"Normal, supérieur ou inférieur?":{o:["Normal","Supérieur","Inférieur"],q:[["Revenu +10 % → achats de vêtements +10 %","Normal"],["Revenu +10 % → voyages +40 %","Supérieur"],["Revenu +10 % → Kraft Dinner −15 %","Inférieur"],["Revenu +10 % → bijoux de luxe +30 %","Supérieur"],["Revenu +10 % → passes d'autobus −5 % (on s'achète une auto)","Inférieur"],["Revenu +10 % → sorties au resto +8 %","Normal"]]},
+"Substituts ou complémentaires?":{o:["Substituts","Complémentaires"],q:[["Café et thé","Substituts"],["Auto et essence","Complémentaires"],["Pepsi et Coke","Substituts"],["Imprimante et encre","Complémentaires"],["Beurre et margarine","Substituts"],["Console et jeux vidéo","Complémentaires"],["Netflix et Disney+","Substituts"],["Hot-dogs et pains à hot-dog","Complémentaires"]]},
+"Structure de marché?":{o:["Concurrence parfaite","Concurrence monopolistique","Oligopole","Monopole"],q:[["Des milliers de producteurs de blé identique","Concurrence parfaite"],["Hydro-Québec (électricité)","Monopole"],["Bell, Rogers, Telus","Oligopole"],["Les restaurants d'une ville","Concurrence monopolistique"],["Les salons de coiffure","Concurrence monopolistique"],["Les 3 grands constructeurs d'avions","Oligopole"]]},
+"Point sur la CPP?":{o:["Sous-emploi","Efficace","Impossible","Croissance"],q:[["Point à l'intérieur de la courbe","Sous-emploi"],["Point sur la courbe","Efficace"],["Point à l'extérieur de la courbe","Impossible"],["La courbe se déplace vers l'extérieur","Croissance"],["Beaucoup de chômeurs et d'usines fermées","Sous-emploi"],["Nouvelle technologie découverte","Croissance"],["Toutes les ressources utilisées au max","Efficace"],["Produire plus des deux biens sans nouvelles ressources, alors qu'on est déjà au max","Impossible"]]},
+"Linéaire, externalité ou circulaire?":{o:["Économie linéaire","Externalité négative","Économie circulaire","Internalisation"],q:[["Une usine rejette des produits chimiques dans la rivière","Externalité négative"],["Un téléphone conçu pour être réparé et recyclé","Économie circulaire"],["Extraire → produire → utiliser → jeter","Économie linéaire"],["Une taxe carbone que le pollueur doit payer","Internalisation"],["Le bruit d'un aéroport qui dérange les voisins","Externalité négative"],["Emballage biodégradable pensé dès la conception","Économie circulaire"],["Déforestation pour produire du papier","Externalité négative"],["Principe pollueur-payeur","Internalisation"]]}};
+let trD,trO,trI,trS,trW;
+function trStart(name){trD=name;const all=name==="🔀 Tout mélangé"?Object.entries(TR).flatMap(([n,d])=>d.q.map(q=>[q[0],q[1],d.o])):TR[name].q.map(q=>[q[0],q[1],TR[name].o]);trO=shuf(all);trI=0;trS=0;trW=[];trRender();}
+function trRender(){if(trI>=trO.length){$("trb").innerHTML=`<h2>Score : ${trS}/${trO.length}</h2>${trW.length?`<ul>${trW.map(q=>`<li>${q[0]} → <b>${q[1]}</b></li>`).join("")}</ul>`:"🔥 Parfait"}<button class="p" onclick="trStart(trD)">Recommencer</button>`;return;}
+ const q=trO[trI];$("trb").innerHTML=`<div class="top"><span>${trD} — ${trI+1}/${trO.length}</span><span>Score : ${trS}</span></div><div class="bar"><div style="width:${trI/trO.length*100}%"></div></div><h2>${q[0]}</h2><div class="opts">${q[2].map(o=>`<button onclick="trAns(this)">${o}</button>`).join("")}</div><div id="trf"></div>`;}
+window.trAns=function(b){if($("trf").innerHTML)return;const q=trO[trI],ok=b.textContent===q[1];if(ok)trS++;else trW.push(q);
+ $("trf").innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅':'❌ Réponse : <b>'+q[1]+'</b>'}</div><button class="p" onclick="trI++;trRender()">Suivante →</button>`;};
+$("v-trier").innerHTML=`<div class="card"><h2>🗂️ Trier</h2><p>Classe chaque situation. Commence par une catégorie, puis finis avec <b>🔀 Tout mélangé</b> (c'est ce qui ressemble le plus à l'exam).</p>
+<div>${[...Object.keys(TR),"🔀 Tout mélangé"].map(k=>`<button class="s" onclick="trStart('${k.replace(/'/g,"\\'")}')">${k}</button>`).join("")}</div><div id="trb" style="margin-top:12px"></div></div>`;
+trStart("Micro ou Macro?");
+
+/* ⑦ CPP CALCULS */
+const PROD=[["voitures","vélos"],["pizzas","hamburgers"],["ordinateurs","téléphones"],["blé","maïs"],["chandails","pantalons"],["tracteurs","camions"]];
+let cq,cN=0,cS=0;
+function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function cppNew(){const [A,B]=PROD[rnd(0,PROD.length-1)],t=rnd(0,2);
+ if(t===0){const g=rnd(2,6),k=rnd(2,8);cq={txt:`Pour produire <b>${g}</b> ${A} de plus, on doit renoncer à <b>${g*k}</b> ${B}. Quel est le coût de renonciation d'<b>un</b> ${A.replace(/s$/,"")}? (en ${B})`,ans:k,exp:`${g*k} ${B} perdus ÷ ${g} ${A} gagnés = <b>${k}</b>`};}
+ else if(t===1){const a1=rnd(5,20),g=rnd(1,5),k=rnd(2,6),b1=rnd(40,80);cq={txt:`La production passe de <b>${a1}</b> à <b>${a1+g}</b> ${A}, et celle de ${B} passe de <b>${b1}</b> à <b>${b1-g*k}</b>. Coût de renonciation d'un ${A.replace(/s$/,"")}?`,ans:k,exp:`(${b1} − ${b1-g*k}) ÷ (${a1+g} − ${a1}) = ${g*k} ÷ ${g} = <b>${k}</b> ${B}`};}
+ else{const k=[rnd(1,3)];for(let i=0;i<3;i++)k.push(k[i]+rnd(1,3));let rows=[[0,0]];let b=k.reduce((s,x)=>s+x,0)*2;rows=[];let yb=b;for(let i=0;i<=4;i++){rows.push([i*2,yb]);if(i<4)yb-=k[i]*2;}
+  const j=rnd(0,3);cq={txt:`Voici une CPP :<table><tr><th>Point</th>${rows.map((r,i)=>`<th>${"ABCDE"[i]}</th>`).join("")}</tr><tr><td>${A}</td>${rows.map(r=>`<td>${r[0]}</td>`).join("")}</tr><tr><td>${B}</td>${rows.map(r=>`<td>${r[1]}</td>`).join("")}</tr></table>Quel est le coût de renonciation d'un ${A.replace(/s$/,"")} entre <b>${"ABCDE"[j]}</b> et <b>${"ABCDE"[j+1]}</b>?`,ans:k[j],exp:`(${rows[j][1]} − ${rows[j+1][1]}) ÷ (${rows[j+1][0]} − ${rows[j][0]}) = ${k[j]*2} ÷ 2 = <b>${k[j]}</b>. Remarque : les coûts sont <b>croissants</b> (${k.join(" → ")}) → la courbe est <b>bombée</b>.`};}
+ $("cppq").innerHTML=cq.txt;$("cppa").value="";$("cppf").innerHTML="";$("cppa").focus();}
+window.cppCheck=function(){if($("cppf").innerHTML){cppNew();return;}const v=parseFloat($("cppa").value.replace(",","."));const ok=v===cq.ans;cN++;if(ok)cS++;
+ $("cppf").innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅':'❌'} ${cq.exp}</div>`;$("cpps").textContent=`${cS}/${cN}`;};
+$("v-cpp").innerHTML=`<div class="card"><h2>🧮 Calculs du coût de renonciation</h2>
+<div class="mn">🧠 <b>Ce que je PERDS ÷ ce que je GAGNE</b>. Toujours : (différence du bien sacrifié) ÷ (différence du bien gagné).</div>
+<p>Les questions sont générées au hasard, donc elles ne finissent jamais. Fais-en jusqu'à <b>5 bonnes d'affilée</b>. Score : <b id="cpps">0/0</b></p>
+<div id="cppq" style="font-size:1.05em;margin:10px 0"></div><input id="cppa" inputmode="decimal" placeholder="Ta réponse (un nombre)" onkeydown="if(event.key==='Enter')cppCheck()">
+<button class="p" onclick="cppCheck()">Valider / Suivante (Entrée)</button><div id="cppf"></div></div>`;
+cppNew();
+show("plan");
+</script>
+<script>
+
+// k: liste de groupes; chaque groupe = synonymes (au moins un doit apparaître). Tous les groupes requis.
+const Q=[
+["Intro","L'économie est une science qui porte directement sur qui/quoi?",[["humain","personne","individu","societe"]],"Sur l'être humain (science humaine)"],
+["Intro","Nomme 2 enjeux étudiés par la science économique.",[["chomage","inegalit","climat","justice","intelligence artificielle","ia","sante mentale"]],"Chômage, inégalités sociales, changements climatiques / justice sociale, intelligence artificielle, santé mentale"],
+["Intro","L'économie est la science des ______.",[["choix"]],"Des choix"],
+["Intro","Qu'est-ce que le problème économique (problème de rareté)? Complète : ressources ______ vs besoins ______.",[["limit"],["illimit"]],"Ressources LIMITÉES pour satisfaire des besoins ILLIMITÉS"],
+["Intro","Comment s'appelle le problème des ressources limitées face à des besoins illimités?",[["raret"]],"La rareté"],
+["Intro","Nomme les 2 branches de l'économie.",[["micro"],["macro"]],"Microéconomie et macroéconomie"],
+["Intro","Quelle branche étudie les choix des individus et des entreprises et leur réaction aux incitatifs?",[["micro"]],"Microéconomie"],
+["Intro","Quelle branche étudie les effets agrégés des choix sur l'économie nationale et mondiale?",[["macro"]],"Macroéconomie"],
+["Intro","Nomme 2 sujets étudiés en macroéconomie.",[["inflation","chomage","production globale","pib","production"]],"Inflation, chômage, production globale"],
+["Intro","Un incitatif peut prendre 2 formes (image). Lesquelles?",[["carotte","recompense"],["baton","punition","sanction"]],"La carotte (récompense) ou le bâton (punition)"],
+["Intro","Étudier comment une hausse du prix de l'essence change les habitudes d'un ménage : micro ou macro?",[["micro"]],"Microéconomie (choix d'un agent)"],
+["Intro","Étudier le taux de chômage au Canada : micro ou macro?",[["macro"]],"Macroéconomie (effet agrégé)"],
+["Intro","Quelles sont les 3 questions économiques fondamentales?",[["quoi"],["comment"],["pour qui"]],"Quoi produire? Comment produire? Pour qui produire?"],
+["Intro","Nomme les 4 agents économiques.",[["menage","consommat","individu"],["entreprise"],["etat","gouvernement"],["reste du monde","exterieur","etranger"]],"Ménages, entreprises, État (gouvernement), reste du monde"],
+["Biens","Un bien qui sert à fabriquer un autre bien (ex. farine pour une boulangerie) est un bien ______.",[["intermediaire"]],"Intermédiaire"],
+["Biens","Un bien qui arrive au consommateur ou à l'entreprise pour être utilisé tel quel est un bien ______.",[["final"]],"Final"],
+["Biens","Le bien final se divise en 2 types. Lesquels?",[["consommation"],["investissement"]],"Bien de consommation et bien d'investissement"],
+["Biens","Une machine achetée par une usine pour produire est un bien de ______.",[["investissement"]],"Bien d'investissement (bien final)"],
+["Biens","Des biens qui peuvent se remplacer l'un l'autre (café/thé) sont des biens ______.",[["substitu"]],"Substituts"],
+["Biens","Des biens dont la consommation entraîne celle d'un autre (auto/essence) sont des biens ______.",[["complementaire"]],"Complémentaires"],
+["Biens","Bien dont la demande AUGMENTE quand le revenu augmente?",[["normal"]],"Bien normal"],
+["Biens","Bien dont la demande augmente PLUS QUE PROPORTIONNELLEMENT à la hausse du revenu?",[["superieur","luxe"]],"Bien supérieur (ex. produits de luxe)"],
+["Biens","Bien dont la demande DIMINUE quand le revenu augmente?",[["inferieur"]],"Bien inférieur (ex. nouilles instantanées, marque générique)"],
+["Biens","Ton revenu double et tu achètes moins de Kraft Dinner. C'est quel type de bien?",[["inferieur"]],"Bien inférieur"],
+["Biens","Ton revenu augmente de 10 % et tu achètes 40 % plus de voyages. C'est quel type de bien?",[["superieur","luxe"]],"Bien supérieur"],
+["Environnement","Nomme les étapes de l'économie linéaire (au moins 4).",[["extraction","extraire"],["transformation","transformer","fabrication"],["distribution"],["utilisation","consommation"]],"Extraction → transformation → distribution → utilisation → gaspillage/déchets (pollution, surconsommation des ressources)"],
+["Environnement","Nomme 2 conséquences de l'économie linéaire.",[["gaspill","pollution","dechet","surconsommation"]],"Gaspillage, pollution et déchets, surconsommation des ressources"],
+["Environnement","Qu'est-ce qu'une externalité négative?",[["consommation","production","activite"],["negati","nuit","bien-etre","bien etre","autre","tiers"]],"Quand la consommation ou la production d'un agent a une influence négative sur le bien-être d'autres agents (sans compensation)"],
+["Environnement","Donne 2 exemples d'externalités négatives.",[["pollution","chimique","deforestation","bruit","cours d'eau"]],"Pollution de l'air en ville, déversement de produits chimiques dans les cours d'eau, déforestation, bruit excessif"],
+["Environnement","Comment s'appelle le fait de faire payer à l'agent le coût de son externalité?",[["internalis"]],"L'internalisation"],
+["Environnement","Nomme le principe d'internalisation où celui qui pollue paie.",[["pollueur"]],"Pollueur-payeur"],
+["Environnement","Qu'est-ce qui freine l'internalisation?",[["consommateur","yeux","ferm","ignor"]],"Les consommateurs préfèrent garder les yeux fermés sur le sujet"],
+["Environnement","⭐ Qu'est-ce que l'économie circulaire?",[["repenser","concevoir","conception","recycl","biodegradable","reutilis"]],"Repenser comment produire : écoconception, s'assurer que le produit est recyclable ou biodégradable (la boucle se referme au lieu de finir en déchet)"],
+["Environnement","⭐ Comment s'appelle le fait de concevoir un produit en pensant à son impact environnemental dès le départ?",[["ecoconception","eco-conception","eco conception"]],"L'écoconception"],
+["Environnement","⭐ Donne 2 caractéristiques d'un produit conçu selon l'économie circulaire.",[["recycl","biodegradable","reparable","reutilis","durable"]],"Recyclable, biodégradable (aussi : réparable, réutilisable)"],
+["Environnement","Différence principale entre économie linéaire et circulaire?",[["dechet","boucle","recycl","jeter","fin"]],"Linéaire : extraire → produire → jeter (déchets). Circulaire : on repense la production pour recycler/réutiliser, en boucle"],
+["Ressources","Nomme les 3 types de ressources (facteurs de production) vus en classe.",[["naturel","terre"],["humain","travail"],["infrastructure","capital"]],"Naturelles, humaines, infrastructures (capital)"],
+["Rareté","Qu'est-ce que le coût de renonciation?",[["renonc","sacrifi","abandon","perd"]],"Le coût de ce à quoi on renonce en prenant une décision donnée (la meilleure option sacrifiée)"],
+["Rareté","Donne les 2 autres noms du coût de renonciation.",[["opportunit"],["option"]],"Coût d'opportunité et coût d'option"],
+["Rareté","Tu choisis d'étudier ce soir au lieu de travailler 4 h à 15 $/h. Ton coût de renonciation?",[["60"]],"60 $ (le salaire sacrifié)"],
+["CPP","Que veut dire CPP?",[["courbe"],["possibilit"],["production"]],"Courbe des possibilités de production"],
+["CPP","Nomme les 2 hypothèses du modèle de la CPP.",[["ressource","toutes"],["varie pas","constant","fixe","court terme","ne change"]],"1) Toutes les ressources servent à produire 2 biens; 2) la quantité de ressources ne varie pas (court terme)"],
+["CPP","L'analyse de la CPP se fait à court ou à long terme?",[["court"]],"Court terme"],
+["CPP","Formule du coût de renonciation?",[["renonc","sacrifi"],["gain","gagn","supplementaire"]],"Coût de renonciation = quantité renoncée (unités sacrifiées) ÷ unités gagnées"],
+["CPP","Pour produire 4 voitures de plus, on doit renoncer à 20 vélos. Coût de renonciation d'une voiture? (juste le nombre)",[["5"]],"20 ÷ 4 = 5 vélos par voiture"],
+["CPP","On passe de 10 à 12 unités de blé et la production de maïs passe de 30 à 24. Coût de renonciation d'une unité de blé?",[["3"]],"(30−24) ÷ (12−10) = 6 ÷ 2 = 3 unités de maïs"],
+["CPP","On renonce à 15 chandails pour produire 5 pantalons de plus. Coût de renonciation d'un pantalon?",[["3"]],"15 ÷ 5 = 3 chandails"],
+["CPP","Le coût de renonciation peut être de 2 types. Lesquels?",[["constant"],["croissant"]],"Constant (CPP droite) ou croissant (CPP courbée/bombée)"],
+["CPP","Les coûts de renonciation sont généralement ______ à court terme.",[["croissant"]],"Croissants"],
+["CPP","Pourquoi les coûts de renonciation sont-ils croissants? (2 raisons)",[["productiv","pas egal","pas aussi","specialis","adapt"]],"Les ressources ne sont pas également productives dans toutes les productions, et on utilise d'abord les ressources les plus productives"],
+["CPP","Qu'est-ce qui provoque un déplacement de la CPP?",[["ressource","facteur"]],"Une modification des ressources (facteurs de production)"],
+["CPP","Nomme les 4 facteurs qui déplacent la CPP.",[["capital"],["travail"],["terre"],["technolog"]],"Capital, travail, terre, technologie"],
+["CPP","Une nouvelle technologie fait déplacer la CPP vers où?",[["droite","exterieur","haut","augment","agrand"]],"Vers l'extérieur (droite) = croissance économique"],
+["CPP","Nomme les 5 concepts que la CPP permet d'expliquer.",[["raret"],["choix"],["cout","option","renonc"],["sous-emploi","sous emploi","chomage"],["croissance"]],"Rareté, choix, coût d'option, sous-emploi des ressources, croissance économique"],
+["CPP","Un point À L'INTÉRIEUR de la CPP représente quoi?",[["sous-emploi","sous emploi","inefficac","chomage","pas utilis","gaspill"]],"Le sous-emploi des ressources (inefficacité)"],
+["CPP","Un point À L'EXTÉRIEUR de la CPP représente quoi?",[["impossible","inatteignable","pas atteignable","pas possible"]],"Une production impossible à atteindre (rareté)"],
+["CPP","Un point SUR la CPP représente quoi?",[["efficac","plein","toutes","maximum","optimal"]],"Utilisation efficace de toutes les ressources (plein emploi)"],
+["CPP","Quel concept est illustré par le fait qu'on doit choisir UN point sur la courbe?",[["choix"]],"Le choix"],
+["Marché","Définis un marché.",[["achet","demand"],["vend","offr","produc"],["echang"]],"Ensemble qui réunit des acheteurs (demandeurs) et des producteurs (offreurs) pour leur permettre d'échanger"],
+["Marché","Nomme les 4 structures de marché.",[["parfaite"],["monopolistique"],["oligopole"],["monopole"]],"Concurrence parfaite, concurrence monopolistique, oligopole, monopole"],
+["Marché","Dans quelle structure personne ne peut influencer le prix car il y a énormément d'acheteurs et de vendeurs?",[["parfaite"]],"Concurrence parfaite"],
+["Marché","Structure avec UN seul producteur?",[["monopole"]],"Monopole"],
+["Marché","Structure avec QUELQUES gros producteurs (ex. Bell, Rogers, Telus)?",[["oligopole"]],"Oligopole"],
+["Marché","Structure avec beaucoup de producteurs de produits différenciés (ex. restaurants)?",[["monopolistique"]],"Concurrence monopolistique"],
+["Demande","Définis la demande.",[["quantit"],["consommat","achet"],["prix"]],"Les diverses quantités que les consommateurs veulent acheter à différents prix"],
+["Demande","Que veut dire ceteris paribus?",[["toutes choses","toute chose","autre","egal"]],"Toutes choses étant égales par ailleurs"],
+["Demande","Sur le graphique du marché, qu'est-ce qu'on met sur l'axe vertical et sur l'axe horizontal?",[["prix"],["quantit"]],"Prix sur l'axe vertical (en haut à gauche), quantité sur l'axe horizontal (en bas à droite)"],
+["Demande","Qu'est-ce que la quantité demandée?",[["quantit"],["prix"]],"Une quantité spécifique associée à un prix spécifique"],
+["Demande","Qu'est-ce qui provoque une variation de la QUANTITÉ demandée?",[["prix"]],"Une variation du prix du bien lui-même (déplacement SUR la courbe)"],
+["Demande","Nomme les 2 facteurs qui font varier la DEMANDE (vus en classe).",[["revenu"],["apparent","substitu","complementaire","autre"]],"Le revenu des consommateurs et le prix des biens apparentés (substituts et complémentaires)"],
+["Demande","Variation de la quantité demandée = mouvement SUR la courbe ou déplacement DE la courbe?",[["sur","le long","mouvement"]],"Mouvement sur (le long de) la courbe"],
+["Demande","Variation de la demande = mouvement SUR la courbe ou déplacement DE la courbe?",[["deplac","de la courbe","shift"]],"Déplacement de la courbe au complet"],
+["Demande","Le prix du café augmente beaucoup. Qu'arrive-t-il à la demande de thé (substitut)?",[["augment","hausse","monte"]],"Elle augmente (les gens se tournent vers le substitut)"],
+["Demande","Le prix des imprimantes baisse. Qu'arrive-t-il à la demande d'encre (complémentaire)?",[["augment","hausse","monte"]],"Elle augmente (plus d'imprimantes = plus d'encre)"],
+["Demande","Le prix de l'essence explose. Qu'arrive-t-il à la demande de VUS (complémentaire)?",[["diminu","baisse"]],"Elle diminue"],
+["Demande","Le revenu des ménages augmente. Qu'arrive-t-il à la demande d'un bien normal?",[["augment","hausse","monte"]],"Elle augmente (courbe vers la droite)"],
+["Demande","Le prix du riz augmente. La DEMANDE de riz change-t-elle? (oui/non et pourquoi)",[["non","quantit"]],"Non! C'est la QUANTITÉ demandée qui diminue (mouvement sur la courbe). La demande ne bouge pas."],
+["Offre","Définis l'offre.",[["quantit"],["producteur","vend","offr"],["prix"]],"Les diverses quantités que les producteurs veulent et peuvent offrir à différents prix"],
+["Offre","Si le prix d'un bien augmente, la quantité OFFERTE ______.",[["augment","hausse","monte"]],"Augmente"],
+["Offre","Si le prix d'un bien diminue, la quantité offerte ______.",[["diminu","baisse"]],"Diminue"],
+["Offre","Qu'est-ce qui provoque une variation de l'OFFRE (déplacement de la courbe)?",[["autre","facteur"]],"Une variation des facteurs AUTRES que le prix du bien"],
+["Offre","Nomme au moins 4 facteurs qui font varier l'offre.",[["cout"],["nombre","producteur"],["productiv","technolog"],["anticipation","climat","desordre","apparent"]],"Coûts de production, nombre de producteurs, productivité (technologie), anticipations, désordres climatiques, prix des biens apparentés"],
+["Offre","Les coûts de production AUGMENTENT. Qu'arrive-t-il à l'offre?",[["diminu","baisse"]],"L'offre diminue (courbe vers la gauche)"],
+["Offre","Les coûts de production DIMINUENT. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente (courbe vers la droite)"],
+["Offre","Une nouvelle technologie rend les usines plus productives. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente"],
+["Offre","Une sécheresse détruit les récoltes de café. Qu'arrive-t-il à l'offre de café?",[["diminu","baisse"]],"L'offre diminue (désordre climatique)"],
+["Offre","Plusieurs nouveaux producteurs entrent sur le marché. Qu'arrive-t-il à l'offre?",[["augment","hausse"]],"L'offre augmente"],
+["Offre","Le salaire minimum augmente pour les employés d'une usine. Qu'arrive-t-il à l'offre?",[["diminu","baisse"]],"L'offre diminue (hausse des coûts de production)"],
+["Offre","Le prix du blé augmente. L'OFFRE de blé change-t-elle? (oui/non et pourquoi)",[["non","quantit"]],"Non! C'est la QUANTITÉ offerte qui augmente (mouvement sur la courbe)."],
+];
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];for(let j=1;j<=b.length;j++)m[i][j]=i?Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)):j;}return m[a.length][b.length];}
+function has(a,kk){
+ if(a.includes(kk))return true;
+ if(kk.includes(" ")||kk.length<5)return false;
+ const tol=kk.length>=8?2:1;
+ return a.split(/[^a-z0-9-]+/).some(w=>{for(let L=kk.length-1;L<=kk.length+1;L++){if(w.length>=L-1&&lev(w.slice(0,L),kk)<=tol)return true;}return false;});
+}
+function check(q,a){
+ a=norm(a).replace(/\bil+imit/g,"illimit").replace(/\bdecentrali/g,"decentrali");
+ const noIll=a.replace(/illimit\w*/g,""), noDec=a.replace(/decentralis\w*/g,"");
+ return q[2].every(g=>g.some(k=>{const kk=norm(k);
+   if(/^\d+$/.test(kk))return new RegExp("(^|\\D)"+kk+"(\\D|$)").test(a);
+   if(kk==="limit")return /limit/.test(noIll);
+   if(kk==="centralisation")return has(noDec,kk);
+   if(kk==="illimit")return /illimit/.test(a);
+   if(["micro","macro","officieuse"].includes(kk))return a.includes(kk.slice(0,5));
+   return has(a,kk);}));
+}
+const TRUC={
+"Qu'est-ce que le problème économique":"🧠 Ressources <b>limitées</b>, besoins <b>illimités</b> → on doit faire des <b>choix</b>. (⚠️ Ton document dit « ressources ilimitées » : c'est une erreur, c'est LIMITÉES.)",
+"Nomme les 2 branches":"🧠 <b>Micro</b> = petit (1 personne, 1 entreprise). <b>Macro</b> = gros (tout le pays, le monde).",
+"Quelles sont les 3 questions":"🧠 <b>Quoi? Comment? Pour qui?</b>",
+"Nomme les 4 agents":"🧠 <b>M-E-E-R</b> = « <i>la MER</i> » → Ménages, Entreprises, État, Reste du monde.",
+"Bien dont la demande AUGMENTE":"🧠 Normal = plus d'argent → j'en achète plus (normal!). Supérieur = BEAUCOUP plus (luxe). Inférieur = j'en achète MOINS (je passe à mieux).",
+"Nomme les étapes de l'économie linéaire":"🧠 « <i>Extrais, Transforme, Distribue, Utilise… Jette</i> » → une ligne droite qui finit à la poubelle.",
+"⭐ Qu'est-ce que l'économie circulaire":"🧠 Circulaire = un <b>cercle</b> : rien ne finit à la poubelle. Mots-clés : <b>écoconception, recyclable, biodégradable</b>.",
+"Nomme les 3 types de ressources":"🧠 <b>N-H-I</b> : Naturelles, Humaines, Infrastructures.",
+"Donne les 2 autres noms":"🧠 Les 3 noms : coût de <b>renonciation</b> = coût d'<b>opportunité</b> = coût d'<b>option</b>.",
+"Formule du coût de renonciation":"🧠 <b>Ce que je PERDS ÷ ce que je GAGNE</b> (sacrifié sur gagné).",
+"Nomme les 4 facteurs qui déplacent la CPP":"🧠 <b>C-T-T-T</b> : Capital, Travail, Terre, Technologie.",
+"Nomme les 5 concepts":"🧠 « <i>Rare Choix Coûte Sous Croissance</i> » → Rareté, Choix, Coût d'option, Sous-emploi, Croissance.",
+"Pourquoi les coûts de renonciation sont-ils croissants":"🧠 On prend d'abord les meilleurs joueurs pour chaque job; ensuite il reste juste ceux qui sont moins bons → ça coûte de plus en plus cher.",
+"Nomme les 4 structures":"🧠 Du plus de vendeurs au moins : <b>Parfaite → Monopolistique → Oligopole → Monopole</b> (oligo = peu, mono = un).",
+"Qu'est-ce qui provoque une variation de la QUANTITÉ demandée":"🧠 <b>Le prix du bien lui-même bouge → on glisse SUR la courbe</b>. Autre chose bouge → la courbe au complet se déplace.",
+"Le prix du riz augmente. La DEMANDE":"🧠 Piège classique : le prix du bien lui-même = <b>quantité</b> demandée, jamais « la demande ».",
+"Le prix du blé augmente. L'OFFRE":"🧠 Même piège qu'à la demande : prix du bien = <b>quantité</b> offerte.",
+"Nomme au moins 4 facteurs qui font varier l'offre":"🧠 « <i>Coûte Nombreux Produits Anticipés Climatiques Apparentés</i> » → Coûts, Nombre de producteurs, Productivité, Anticipations, Climat, biens Apparentés.",
+"Les coûts de production AUGMENTENT":"🧠 Coûts ↑ = offre ↓ (c'est l'inverse!). Produire coûte plus cher → on produit moins.",
+"Qu'est-ce qu'une externalité négative":"🧠 Quelqu'un d'autre paie pour ton activité (ex. l'usine pollue, les voisins toussent)."
+};
+const truc=q=>{for(const k in TRUC)if(q[1].startsWith(k))return TRUC[k];return"";};
+let order,i,score,wrong,done,round=1;
+function start(list){order=list.slice().sort(()=>Math.random()-.5);i=0;score=0;wrong=[];render();}
+const app=document.getElementById('app');
+function render(){
+ if(i>=order.length)return end();
+ const q=order[i];done=false;
+ app.innerHTML=`<div class="top"><span>Question ${i+1}/${order.length} ${round>1?"(reprise des erreurs)":""}</span><span>Score : ${score}</span></div>
+ <div class="bar"><div style="width:${i/order.length*100}%"></div></div>
+ <span class="ch">${q[0]}</span><h2>${q[1]}</h2>
+ <input id="a" autocomplete="off" placeholder="Écris ta réponse…">
+ <div class="hint">Entrée = valider · accents, majuscules et petites fautes d'orthographe acceptés</div>
+ <div id="f"></div><div id="b"><button class="p" onclick="sub()">Valider</button><button class="s" onclick="sub(true)">Je sais pas</button></div>`;
+ const inp=document.getElementById('a');inp.focus();
+ inp.onkeydown=e=>{if(e.key==="Enter"){done?next():sub()}};
+}
+window.sub=function(skip){if(done)return;done=true;const q=order[i],a=document.getElementById('a').value;
+ const ok=!skip&&a.trim()&&check(q,a);if(ok)score++;else wrong.push(q);
+ document.getElementById('f').innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅ Bonne réponse!':'❌ Pas tout à fait.'}<br><b>Réponse :</b> ${q[3]}${truc(q)?'<div style="margin-top:6px">'+truc(q)+'</div>':''}</div>`;
+ document.getElementById('b').innerHTML=`<button class="p" onclick="next()">Suivante →</button>${ok?'':(a.trim()?'<button class="s" onclick="override()">J\'avais raison</button>':'')}`;
+ document.getElementById('a').focus();
+};
+window.hint=function(){const t=truc(order[i]);document.getElementById('f').innerHTML=`<div class="fb" style="background:#fff8db;border-left:4px solid #d4a017">${t}</div>`;document.getElementById('a').focus();};
+window.override=function(){score++;wrong.pop();next();};
+window.next=function(){i++;render();};
+function end(){const pct=Math.round(score/order.length*100);
+ app.innerHTML=`<h2>Terminé! ${score}/${order.length} (${pct} %)</h2>
+ <p>${pct>=90?'🔥 T\'es prêt.':pct>=70?'👍 Bon, révise les erreurs ci-dessous.':'📖 Relis la fiche pour les sujets manqués, puis refais les erreurs.'}</p>
+ ${wrong.length?`<h3>À revoir :</h3><ul>${wrong.map(q=>`<li><b>${q[1]}</b><br>→ ${q[3]}${truc(q)?'<br><small>'+truc(q)+'</small>':''}</li>`).join('')}</ul>
+ <button class="p" onclick="retry()">Refaire seulement mes erreurs (${wrong.length})</button>`:''}
+ <button class="s" onclick="round=1;start(Q)">Recommencer tout</button>`;}
+window.retry=function(){round++;start(wrong);};
+start(Q);
+
+</script></body></html>
