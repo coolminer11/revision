@@ -1,0 +1,212 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz — L'entreprise ch.1-3</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f4f6fa;color:#1d1d1f;margin:0;padding:16px}
+.box{max-width:680px;margin:auto;background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px #0001}
+.top{display:flex;justify-content:space-between;font-size:.9em;color:#555;flex-wrap:wrap;gap:6px}
+.bar{height:6px;background:#e3e8ef;border-radius:3px;margin:8px 0 16px}.bar div{height:100%;background:#1f6feb;border-radius:3px;transition:.3s}
+.ch{display:inline-block;background:#e6ebf2;border-radius:10px;padding:2px 8px;font-size:.8em}
+h2{font-size:1.2em;margin:.5em 0 1em}
+input{width:100%;box-sizing:border-box;font-size:1.05em;padding:10px;border:2px solid #ccd;border-radius:8px}
+button{font-size:1em;padding:9px 14px;border:0;border-radius:8px;cursor:pointer;margin:10px 6px 0 0}
+.p{background:#1f6feb;color:#fff}.s{background:#e6ebf2}
+.fb{margin-top:12px;padding:10px;border-radius:8px}.ok{background:#e3f6e8;border-left:4px solid #2e8b57}.no{background:#fdecea;border-left:4px solid #c0392b}
+.hint{color:#666;font-size:.85em;margin-top:6px}
+li{margin:4px 0}
+</style></head><body><div class="box" id="app"></div>
+<script>
+// k: liste de groupes; chaque groupe = synonymes (au moins un doit apparaître). Tous les groupes requis.
+const Q=[
+["Ch1","Définis une entreprise : « _____ structurée qui exerce une activité économique… »",[["organisation humaine","organisation"]],"Organisation humaine structurée"],
+["Ch1","Nomme les 4 types de ressources utilisées par une entreprise.",[["humain"],["information"],["materiel"],["financ"]],"Humaines, informationnelles, matérielles, financières"],
+["Ch1","Formule du profit?",[["revenu","vente"],["cout","depense"]],"Profit = Revenus (ventes) − Coûts"],
+["Ch1","Nomme les 3 rôles de l'entreprise.",[["econom"],["social"],["environnement","ecolo"]],"Économique, social, environnemental"],
+["Ch1","Le rôle environnemental a un double impact : l'entreprise ____ des ressources et ____ des déchets.",[["consomm","utilise"],["produit","rejette","genere"]],"Consomme / produit (rejette)"],
+["Ch1","Une petite entreprise a moins de combien d'employés?",[["100"]],"Moins de 100 (moyenne 100-499, grande 500+)"],
+["Ch1","Dans quel secteur d'activité est une mine d'or?",[["primaire"]],"Primaire (extraction des ressources)"],
+["Ch1","Dans quel secteur est une usine qui fabrique des meubles?",[["secondaire"]],"Secondaire (transformation)"],
+["Ch1","Dans quel secteur est une firme de R&D / technologies de l'information?",[["quaternaire"]],"Quaternaire (savoir, information)"],
+["Ch1","Quelles sont les 4 formes juridiques d'entreprise?",[["individuel"],["nom collectif","senc","societe de personne"],["action","compagnie","inc"],["coop"]],"Entreprise individuelle, société en nom collectif (SENC/SENCRL), société par actions, coopérative"],
+["Ch1","Quel type de responsabilité ont les associés d'une SENC?",[["solidaire"],["illimit"]],"Solidaire et illimitée"],
+["Ch1","Quel type de responsabilité ont les associés d'une SENCRL?",[["limit"]],"Limitée",["illimit"]],
+["Ch1","Quelles 2 formes juridiques ont une responsabilité illimitée?",[["individuel"],["senc","nom collectif","societe de personne"]],"Entreprise individuelle et SENC"],
+["Ch1","Dans une société par actions, les actionnaires sont responsables des dettes jusqu'à quel montant?",[["invest","mise","action","apport","mont"]],"Jusqu'au montant de leur investissement (mise)"],
+["Ch1","Quelle forme juridique est la plus facile à financer?",[["action","compagnie","inc"]],"Société par actions (marché public et privé)"],
+["Ch1","Dans une coopérative, comment fonctionne le vote?",[["1","un"],["membre"],["voix","vote"]],"1 membre = 1 voix"],
+["Ch1","Comment s'appelle la part des excédents redonnée aux membres d'une coop?",[["ristourne"]],"Ristourne (selon le niveau d'activité de chaque membre)"],
+["Ch1","Nombre minimum de membres pour une coop de travailleurs? (juste le chiffre)",[["3","trois"]],"3 (et 5 pour les autres types)"],
+["Ch1","Quelle forme juridique : le propriétaire peut perdre sa maison, l'entreprise meurt avec lui et paye l'impôt des particuliers?",[["individuel"]],"Entreprise individuelle"],
+["Ch1","Donne un exemple québécois connu de coopérative.",[["desjardins","coop"]],"Mouvement Desjardins"],
+["Ch2","C'est quoi la mondialisation? (Réponds en une phrase : les pays deviennent de plus en plus ___ les uns des autres à cause de l'augmentation des ___ internationaux.)",[["interdependan","dependan","lie","connect"],["echange","commerce","import","export"]],"Interdépendance des économies, résultant de l'augmentation et diversification des échanges internationaux"],
+["Ch2","Selon Adam Smith, qu'est-ce qui augmente le bien-être général?",[["specialisation","libre-echange","libre echange"]],"La spécialisation internationale (libre-échange)"],
+["Ch2","Donne 2 avantages de la mondialisation.",[["productiv","production","niveau de vie","prix","croissance","technolog","capitaux","variete","connaissance"]],"Hausse de la production/niveau de vie, meilleur prix, croissance rapide, diffusion des technologies, libre circulation des capitaux"],
+["Ch2","Donne 1 inconvénient de la mondialisation.",[["gouvernement","pouvoir","exploitation","delocalis","main","programmes sociaux","emploi","concurren"]],"Gouvernements perdent du pouvoir d'action, exploitation/délocalisation de la main-d'œuvre, programmes sociaux menacés"],
+["Ch2","Qu'est-ce que la balance commerciale?",[["export"],["import"]],"Valeur des exportations vs importations"],
+["Ch2","Quel est le principal partenaire commercial du Québec?",[["etats-unis","etats unis","usa","e-u","americ"]],"Les États-Unis"],
+["Ch2","Donne 2 raisons pour lesquelles on commerce surtout avec les É-U.",[["proximite","voisin","geograph","aceum","accord","taille","marche","langue","culture","transport"]],"Proximité géographique, gros marché, ACEUM, culture/langue semblables, transport"],
+["Ch2","Quel accord lie le Canada, les É-U et le Mexique (sigle)?",[["aceum"]],"ACEUM (2020)"],
+["Ch2","Quel accord le Canada a-t-il signé avec l'Union européenne en 2017 (sigle)?",[["aecg"]],"AECG"],
+["Ch2","Que veut dire PESTE?",[["politi"],["econom"],["social"],["technolog"],["ecolog","environnement"]],"Politique, Économique, Social, Technologique, Écologique"],
+["Ch2","PESTE sert à analyser quel environnement?",[["externe","macro"]],"Le macro-environnement externe"],
+["Ch2","Classe dans PESTE : une hausse des taux d'intérêt.",[["econom"]],"Économique"],
+["Ch2","Classe dans PESTE : le vieillissement de la population.",[["social"]],"Social (démographique)",["econom"]],
+["Ch2","Classe dans PESTE : une nouvelle loi sur les emballages.",[["politi","jurid"]],"Politique (et juridique)"],
+["Ch2","Classe dans PESTE : l'arrivée d'Uber / de l'économie de la demande.",[["technolog"]],"Technologique"],
+["Ch2","Que veut dire FFOM?",[["force"],["faiblesse"],["opportunit"],["menace"]],"Forces, Faiblesses, Opportunités, Menaces"],
+["Ch2","Dans FFOM, quels éléments sont INTERNES?",[["force"],["faiblesse"]],"Forces et faiblesses"],
+["Ch2","FFOM : « un nouveau concurrent ouvre à côté ». C'est quoi?",[["menace"]],"Menace (externe, négatif)"],
+["Ch2","FFOM : « nos employés sont très expérimentés ». C'est quoi?",[["force"]],"Force (interne, positif)"],
+["Ch2","FFOM : « le gouvernement offre une nouvelle subvention ». C'est quoi?",[["opportunit"]],"Opportunité (externe, positif)"],
+["Ch3","Nomme les 3 catégories de rôles du gestionnaire (Mintzberg).",[["interpersonn"],["information"],["decision"]],"Interpersonnels, informationnels, décisionnels"],
+["Ch3","Le gestionnaire recueille et diffuse l'information : quelle catégorie de rôle?",[["information"]],"Informationnels"],
+["Ch3","Le gestionnaire représente légalement l'entreprise et motive ses employés : quelle catégorie de rôle?",[["interpersonn"]],"Interpersonnels"],
+["Ch3","Comment s'appelle l'ensemble des activités de recherche, traitement et diffusion de l'info utile aux gestionnaires?",[["veille"]],"Veille stratégique"],
+["Ch3","Que veut dire PODC?",[["planifi"],["organis"],["dirig"],["control"]],"Planifier, Organiser, Diriger, Contrôler"],
+["Ch3","Qu'est-ce que la mission d'une entreprise?",[["raison d","pourquoi","but","objectif general","existe","cree"]],"Sa raison d'être (ce pour quoi elle a été créée)"],
+["Ch3","Les objectifs sont fixés à partir de quoi?",[["mission"]],"De la mission"],
+["Ch3","Donne 2 éléments d'une stratégie à long terme.",[["politique","programme","procedure"]],"Politiques, programmes, procédures"],
+["Ch3","Donne les 2 éléments d'une tactique à court terme.",[["calendrier","horaire","echeancier","budget"]],"Calendriers/horaires et budgets"],
+["Ch3","Fixer un budget, c'est quelle étape du PODC?",[["planifi"]],"Planifier"],
+["Ch3","Faire l'organigramme et répartir les tâches, c'est quelle étape du PODC?",[["organis"]],"Organiser"],
+["Ch3","Donner une prime pour motiver un employé, c'est quelle étape du PODC?",[["dirig"]],"Diriger"],
+["Ch3","Comparer les ventes réelles aux objectifs, c'est quelle étape du PODC?",[["control"]],"Contrôler"],
+["Ch3","Mode d'organisation où toutes les décisions importantes relèvent du sommet?",[["centralisation"]],"Centralisation",["decentralis"]],
+["Ch3","Délégation formelle de l'autorité?",[["decentralisation"]],"Décentralisation"],
+["Ch3","Nomme les 3 types de départementalisation.",[["fonction"],["produit"],["region","geograph","territ"]],"Par fonctions, par produits, par régions"],
+["Ch3","Nomme les 3 types de relations organisationnelles.",[["hierarch","autorit"],["conseil"],["fonctionnel"]],"Hiérarchiques, de conseil, fonctionnelles"],
+["Ch3","Info communiquée par une source sérieuse mais sans l'aval des autorités : quel type de communication?",[["officieuse"]],"Officieuse"],
+["Ch3","Nomme les 5 besoins de Maslow du bas vers le haut.",[["physio","base","survie","primaire"],["securit"],["appartenance","social","amour"],["estime","reconnaissance"],["accomplissement","realisation","actualisation"]],"Physiologiques, sécurité, appartenance, estime, accomplissement"],
+["Ch3","Quel besoin de Maslow est comblé par une promotion ou de la reconnaissance?",[["estime"]],"Estime"],
+["Ch3","Quel besoin de Maslow est comblé par une rémunération adéquate et des conditions sécuritaires?",[["securit"]],"Sécurité"],
+["Ch3","Définis le contrôle : « vérification de la ______ des résultats à des données préétablies ».",[["conformit","conforme"]],"Conformité (suivie d'un jugement)"],
+["Ch3","Nomme les 4 étapes du contrôle dans l'ordre.",[["lecture","lire","resultat","mesur","observ"],["compar"],["interpret","ecart","analys","cause"],["correct","modif","ajust","corrig","action","mesure"]],"Lecture des résultats → comparaison avec les normes → interprétation des écarts → mesures correctives"],
+["Ch3","Ensemble d'indicateurs présentés en tableau montrant l'état et l'évolution de l'entreprise?",[["tableau de bord"]],"Tableau de bord"],
+["Ch3","Nomme 2 types de contrôle.",[["officiel","officieux","continu","periodique","aleatoire","systematique","preventif"]],"Officiel/officieux, continu/périodique, aléatoire/systématique, préventif"],
+["Ch1","L'entreprise n'est pas que les bâtiments et les capitaux. C'est surtout quoi? (2 éléments)",[["personne","gens","humain","employe"],["culture"]],"Les personnes et la culture"],
+["Ch1","Nomme les grandes fonctions de l'entreprise (au moins 4).",[["financ","compta"],["marketing","mrk","vente"],["production","operation","prod"],["ressources humaines","rh"]],"Finance/comptabilité, marketing, production/opérations, ressources humaines (+ management)"],
+["Ch1","Quelle fonction sert de soutien à toutes les autres fonctions?",[["ressources humaines","rh"]],"Ressources humaines"],
+["Ch1","Combien d'employés a une moyenne entreprise?",[["100"],["499","500"]],"Entre 100 et 499"],
+["Ch1","Une grande entreprise a combien d'employés ou plus?",[["500"]],"500 ou plus"],
+["Ch1","Dans quel secteur est une banque ou un restaurant?",[["tertiaire"]],"Tertiaire (services)"],
+["Ch1","Pourquoi dit-on que l'entreprise individuelle n'a pas d'existence juridique distincte?",[["proprietaire","personne","patrimoine","separe","distinct","meme"]],"Elle ne se distingue pas de son propriétaire : pas de personnalité juridique ni de patrimoine distincts"],
+["Ch1","Donne 1 avantage de l'entreprise individuelle.",[["simple","peu coute","latitude","libert","controle","fiscal","impot","partage pas","profit"]],"Création simple et peu coûteuse, liberté de gestion, fiscalité des particuliers, ne partage pas les profits"],
+["Ch1","Donne 1 inconvénient de l'entreprise individuelle.",[["deces","meurt","precaire","financement","seul","risque","biens personnel","illimit","impot"]],"Ne survit pas au décès, financement difficile, seul, prend tous les risques (biens personnels), impôt augmente avec le revenu"],
+["Ch1","Combien de personnes minimum pour une SENC?",[["2","deux"]],"2 personnes ou plus (associés)"],
+["Ch1","Quelle formalité suffit pour créer une SENC?",[["immatricul","enregistr"]],"L'immatriculation (raison sociale, nom des associés)"],
+["Ch1","Quel document est préférable de signer entre associés d'une SENC?",[["convention","contrat"]],"Une convention (contrat) entre associés"],
+["Ch1","Quel % des entreprises au Québec sont des SENC?",[["12"]],"12 %"],
+["Ch1","La société par actions est une personne ______.",[["morale"]],"Morale (existence juridique distincte)"],
+["Ch1","Dans une société par actions, qu'est-ce qui détermine le pouvoir de contrôle d'un actionnaire?",[["action"],["vot"]],"Le nombre d'actions votantes qu'il possède"],
+["Ch1","Quel est l'objectif d'une coopérative?",[["membre"]],"Servir ses membres (biens et services à meilleur compte)"],
+["Ch1","Nomme 2 types de coopératives.",[["consommat","producteur","travail","solidarit","actionnaire"]],"Consommateurs, producteurs, travail, solidarité, travailleurs actionnaires"],
+["Ch1","Quelle forme juridique a une durée de vie limitée à la vie du propriétaire?",[["individuel"]],"Entreprise individuelle"],
+["Ch1","Quelle forme juridique paye l'impôt des entreprises (généralement plus bas)?",[["action","compagnie","inc"]],"Société par actions"],
+["Ch2","Définis le commerce international.",[["pays","etranger","international"]],"Activités commerciales entre clients et fournisseurs de pays différents"],
+["Ch2","Différence entre exportation et importation?",[["export"],["import"]],"Exportation = vendre à l'étranger; importation = faire entrer au pays des marchandises étrangères"],
+["Ch2","Selon Adam Smith, que doit faire chaque nation?",[["specialis"]],"Se spécialiser et échanger les produits qu'elle ne fabrique pas"],
+["Ch2","La théorie d'Adam Smith suppose la libre-______ et la libre-______.",[["concurren"],["circulation"]],"Libre-concurrence et libre-circulation (capitaux, biens, personnes, info)"],
+["Ch2","Nomme 2 pays « gagnants » de la mondialisation.",[["chine","inde","bresil","vietnam"]],"Chine, Inde, Brésil, Vietnam"],
+["Ch2","Qui sont les « perdants » de la mondialisation?",[["secteur","industri","canada","riche","pauvre","afrique","amerique du sud"]],"Plusieurs secteurs industriels des pays riches (Canada) et des pays pauvres d'Afrique et d'Amérique du Sud"],
+["Ch2","Que veut dire le sigle UE et combien de pays?",[["union europeenne"],["27"]],"Union européenne, 27 pays"],
+["Ch2","Que veut dire APEC?",[["asie"],["pacifique"]],"Coopération économique pour l'Asie-Pacifique (21 pays)"],
+["Ch2","Que veut dire ANASE?",[["asie du sud-est","asie du sud est","sud-est","sud est"]],"Association des nations de l'Asie du Sud-Est (10 pays)"],
+["Ch2","En quelle année le Canada a-t-il adhéré à l'OMC?",[["1994"]],"1994"],
+["Ch2","Quel accord le Canada a-t-il signé en 2018 (sigle)?",[["ptpgp"]],"PTPGP (partenariat transpacifique)"],
+["Ch2","Quel modèle sert à analyser l'environnement INTERNE de l'entreprise?",[["ffom","swot"]],"FFOM (forces et faiblesses)"],
+["Ch2","Nomme les 2 systèmes de droit au Canada/Québec.",[["code civil"],["common law"]],"Code civil (Québec) et Common law (Canada)"],
+["Ch2","Nomme les 3 droits du capitalisme.",[["propriete"],["choix","liberte"],["profit"]],"Propriété privée, liberté de choix, profit"],
+["Ch2","Nomme les 4 phases du cycle économique.",[["croissance","expansion"],["ralentissement"],["declin","recession"],["reprise"]],"Croissance, ralentissement, déclin, reprise"],
+["Ch2","Le prix d'équilibre est déterminé par quoi?",[["offre"],["demande"]],"L'offre et la demande"],
+["Ch2","Nomme 2 États communistes (2021).",[["chine","cuba","coree","laos","viet"]],"Chine, Cuba, Corée du Nord, Laos, Viêt Nam"],
+["Ch2","Qu'est-ce qu'une technologie de rupture?",[["boulevers","change","transform","revolution","secteur"]],"Nouvelle technique qui peut bouleverser des secteurs d'activité"],
+["Ch2","Donne un exemple d'entreprise de l'économie de la demande.",[["airbnb","uber","turo","doordash"]],"Airbnb, Uber, Turo, DoorDash"],
+["Ch2","Classe dans PESTE : les rapports du GIEC sur le climat.",[["ecolog","environnement"]],"Écologique"],
+["Ch2","Classe dans PESTE : la hausse de la consommation équitable.",[["social"]],"Social (type de consommation)"],
+["Ch2","Que veut dire CFMIP (environnement immédiat)?",[["concurren"],["fournisseur"],["marche"],["intermediaire"],["public"]],"Concurrence, Fournisseurs, Marché, Intermédiaires, Publics"],
+["Ch3","Nomme 2 caractéristiques du travail du gestionnaire.",[["charge","rythme","fragment","vari","action","verbal","oral"]],"Grosse charge de travail, travail fragmenté/varié, goût de l'action, préfèrent la communication verbale"],
+["Ch3","Nomme 1 rôle décisionnel du gestionnaire.",[["entrepreneur","regulateur","perturbation","repartiteur","ressource","negociat"]],"Entrepreneur, régulateur, répartiteur de ressources, négociateur"],
+["Ch3","Qu'est-ce que planifier?",[["penser"],["agir"]],"Penser avant d'agir (activité continue)"],
+["Ch3","Planification à long terme = planification ______.",[["strategique"]],"Stratégique"],
+["Ch3","Nomme les 4 étapes du processus de planification.",[["mission"],["analyse","environnement"],["synthese","objectif","constat"],["strateg","plan"]],"Mission → analyse de l'environnement → synthèse (constats, objectifs) → stratégies (plans)"],
+["Ch3","Que précise l'énoncé de mission? (2 éléments)",[["objectif","valeur","philosophie","structure"]],"Objectif général, valeurs, philosophie et structure"],
+["Ch3","Qu'est-ce qu'organiser?",[["agencer","ordonner","coordonner","relation","tache"]],"Agencer, ordonner : définir et coordonner les relations entre personnes, matériel, pouvoirs, tâches et responsabilités"],
+["Ch3","Nomme 3 éléments de l'étape « organiser ».",[["tache","organigramme","structure","departement","relation","communication","culture"]],"Tâches, organigramme, départementalisation, relations, communication, culture organisationnelle"],
+["Ch3","Nomme les 3 niveaux de cadres.",[["superieur"],["intermediaire"],["terrain","premier niveau"]],"Cadres supérieurs, intermédiaires, de terrain"],
+["Ch3","Communication qui émane de l'autorité ou que celle-ci endosse?",[["officielle"]],"Officielle"],
+["Ch3","Qu'est-ce que diriger?",[["coordonn","indiquer","motiv","inciter"]],"Coordonner le travail, indiquer quoi faire et comment, et motiver à le faire"],
+["Ch3","Diriger implique quels 3 éléments?",[["pouvoir"],["motivation"],["leadership"]],"Pouvoir, motivation, leadership"],
+["Ch3","Selon la théorie du comportement opérant, que se passe-t-il si un bon comportement est récompensé?",[["repet","recommenc","refai"]],"La personne va probablement le répéter"],
+["Ch3","Quelle perception est importante pour qu'une récompense motive?",[["equit","juste"]],"L'équité (la récompense doit sembler juste)"],
+["Ch3","Nomme 2 types de récompenses.",[["salaire","prime","bonus","reconnaissance","gratification","promotion"]],"Salaire, primes/bonus, reconnaissance, promotion"],
+["Ch3","Sur quoi doit reposer la motivation?",[["besoin"]],"Sur des besoins (Maslow)"],
+["Ch3","Quel besoin de Maslow est comblé par des relations courtoises et être accepté dans l'équipe?",[["appartenance"]],"Appartenance"],
+["Ch3","Quel besoin de Maslow est comblé par l'autonomie et des mandats exigeants?",[["accomplissement","realisation"]],"Accomplissement"],
+["Ch3","Le contrôle est étroitement lié à quelle autre étape du PODC?",[["planifi"]],"La planification"],
+];
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];for(let j=1;j<=b.length;j++)m[i][j]=i?Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)):j;}return m[a.length][b.length];}
+function has(a,kk){
+ if(a.includes(kk))return true;
+ if(kk.includes(" ")||kk.length<5)return false;
+ const tol=kk.length>=8?2:1;
+ return a.split(/[^a-z0-9-]+/).some(w=>{for(let L=kk.length-1;L<=kk.length+1;L++){if(w.length>=L-1&&lev(w.slice(0,L),kk)<=tol)return true;}return false;});
+}
+function check(q,a){
+ a=norm(a).replace(/\bil+imit/g,"illimit").replace(/\bdecentrali/g,"decentrali");
+ const noIll=a.replace(/illimit\w*/g,""), noDec=a.replace(/decentralis\w*/g,"");
+ return q[2].every(g=>g.some(k=>{const kk=norm(k);
+   if(kk==="limit")return has(noIll,kk)&&!/illimit/.test(a)||(/\blimit/.test(noIll)&&!/illimit/.test(a));
+   if(kk==="centralisation")return has(noDec,kk);
+   if(kk==="illimit")return /illimit/.test(a);
+   if(kk==="officieuse")return /officieu/.test(a);
+   return has(a,kk);}));
+}
+const TRUC={
+"Nomme les 3 types de départementalisation":"🧠 <b>F-P-R</b> = « <i>Faut Pas Rêver</i> » → <b>F</b>onctions (finance, marketing…), <b>P</b>roduits (consommation vs industriels), <b>R</b>égions (nord, sud…). Pense : on regroupe par <i>quoi on fait</i>, <i>quoi on vend</i>, <i>où on est</i>.",
+"Donne les 2 éléments d'une tactique":"🧠 Court terme = <b>C.B.</b> (comme une carte bancaire : tu paies <i>tout de suite</i>) → <b>C</b>alendriers/horaires + <b>B</b>udgets.",
+"Donne 2 éléments d'une stratégie":"🧠 Long terme = les <b>3 P</b> → <b>P</b>olitiques, <b>P</b>rogrammes, <b>P</b>rocédures. (Court terme = C.B., long terme = PPP.)",
+"Nomme les 3 types de relations":"🧠 <b>H-C-F</b> = « <i>Hé, Ça Fonctionne!</i> » → <b>H</b>iérarchiques (le boss donne des ordres), <b>C</b>onseil (l'expert conseille sans autorité), <b>F</b>onctionnelles (entre services, ex. comptabilité ↔ ventes).",
+"Nomme les 5 besoins de Maslow":"🧠 Du bas vers le haut : <b>P-S-A-E-A</b> = « <i>Pas Sans Avoir Envie d'Avancer</i> » → Physiologiques (base), Sécurité, Appartenance, Estime, Accomplissement.",
+"Nomme les 4 étapes du contrôle":"🧠 <b>L-C-I-M</b> = « <i>Lis, Compare, Interprète, Modifie</i> ».",
+"C'est quoi la mondialisation":"🧠 Pense à une <b>toile d'araignée</b> : tous les pays sont <b>liés (interdépendants)</b> parce qu'ils <b>échangent</b> de plus en plus (biens, argent, technologies).",
+"Que veut dire PODC":"🧠 « <i>Pour Organiser, Deviens Capitaine</i> ».",
+"Nomme les 3 catégories de rôles":"🧠 <b>I-I-D</b> = « <i>Il Informe, puis Décide</i> » → Interpersonnels, Informationnels, Décisionnels.",
+"Les objectifs sont fixés":"🧠 L'ordre : <b>Mission → Objectifs → Stratégies</b>. On sait d'abord <i>pourquoi on existe</i>, ensuite <i>où on veut aller</i>.",
+"Quelles 2 formes juridiques ont une responsabilité illimitée":"🧠 « Les 2 premiers perdent leur maison » → Individuelle + SENC.",
+"Nomme les 4 types de ressources":"🧠 <b>H-I-M-F</b> = « <i>HIMalaya Financier</i> ».",
+"Nomme les 3 rôles de l'entreprise":"🧠 <b>É-S-E</b> : Économique, Social, Environnemental."
+};
+const truc=q=>{for(const k in TRUC)if(q[1].startsWith(k))return TRUC[k];return"";};
+let order,i,score,wrong,done,round=1;
+function start(list){order=list.slice().sort(()=>Math.random()-.5);i=0;score=0;wrong=[];render();}
+const app=document.getElementById('app');
+function render(){
+ if(i>=order.length)return end();
+ const q=order[i];done=false;
+ app.innerHTML=`<div class="top"><span>Question ${i+1}/${order.length} ${round>1?"(reprise des erreurs)":""}</span><span>Score : ${score}</span></div>
+ <div class="bar"><div style="width:${i/order.length*100}%"></div></div>
+ <span class="ch">${q[0]}</span><h2>${q[1]}</h2>
+ <input id="a" autocomplete="off" placeholder="Écris ta réponse…">
+ <div class="hint">Entrée = valider · accents, majuscules et petites fautes d'orthographe acceptés</div>
+ <div id="f"></div><div id="b"><button class="p" onclick="sub()">Valider</button><button class="s" onclick="sub(true)">Je sais pas</button></div>`;
+ const inp=document.getElementById('a');inp.focus();
+ inp.onkeydown=e=>{if(e.key==="Enter"){done?next():sub()}};
+}
+window.sub=function(skip){if(done)return;done=true;const q=order[i],a=document.getElementById('a').value;
+ const ok=!skip&&a.trim()&&check(q,a);if(ok)score++;else wrong.push(q);
+ document.getElementById('f').innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅ Bonne réponse!':'❌ Pas tout à fait.'}<br><b>Réponse :</b> ${q[3]}${truc(q)?'<div style="margin-top:6px">'+truc(q)+'</div>':''}</div>`;
+ document.getElementById('b').innerHTML=`<button class="p" onclick="next()">Suivante →</button>${ok?'':(a.trim()?'<button class="s" onclick="override()">J\'avais raison</button>':'')}`;
+ document.getElementById('a').focus();
+};
+window.hint=function(){const t=truc(order[i]);document.getElementById('f').innerHTML=`<div class="fb" style="background:#fff8db;border-left:4px solid #d4a017">${t}</div>`;document.getElementById('a').focus();};
+window.override=function(){score++;wrong.pop();next();};
+window.next=function(){i++;render();};
+function end(){const pct=Math.round(score/order.length*100);
+ app.innerHTML=`<h2>Terminé! ${score}/${order.length} (${pct} %)</h2>
+ <p>${pct>=90?'🔥 T\'es prêt.':pct>=70?'👍 Bon, révise les erreurs ci-dessous.':'📖 Relis la fiche pour les sujets manqués, puis refais les erreurs.'}</p>
+ ${wrong.length?`<h3>À revoir :</h3><ul>${wrong.map(q=>`<li><b>${q[1]}</b><br>→ ${q[3]}${truc(q)?'<br><small>'+truc(q)+'</small>':''}</li>`).join('')}</ul>
+ <button class="p" onclick="retry()">Refaire seulement mes erreurs (${wrong.length})</button>`:''}
+ <button class="s" onclick="round=1;start(Q)">Recommencer tout</button>`;}
+window.retry=function(){round++;start(wrong);};
+start(Q);
+</script></body></html>
