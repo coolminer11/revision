@@ -1,0 +1,528 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion ch.4-5 — Salle d'entraînement</title>
+<style>
+:root{--b:#6366f1;--ok:#2e8b57;--no:#c0392b;--bg:#f4f6fa;--pan:#fff;--tx:#10131a;--mut:#667;--line:#e1e6ee;
+ --cli:#f59e0b;--str:#8b5cf6;--p1:#3b82f6;--p2:#10b981;--p3:#f97316;--p4:#ef4444;--p5:#06b6d4;--rap:#64748b;--a:var(--b)}
+@media(prefers-color-scheme:dark){:root{--bg:#0a0c11;--pan:#141922;--tx:#eef1f7;--mut:#94a0b4;--line:#222a37}}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--tx);margin:0;padding:12px}
+.wrap{max-width:780px;margin:auto}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:5}
+nav button{background:var(--pan);border:1px solid var(--line);color:var(--tx);border-radius:20px;padding:7px 12px;cursor:pointer;font-size:.88em}
+nav button.on{background:var(--b);color:#fff;border-color:var(--b)}
+.card,.box{background:var(--pan);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 2px 12px #0b0d120c;margin-bottom:12px}
+h2{font-size:1.2em;margin:.3em 0 .7em}
+h3,h4{margin:1.1em 0 .3em;padding-left:10px;border-left:4px solid var(--a);color:var(--tx)}
+h3{font-size:1.05em}h4{font-size:1em}
+.h-cli{--a:var(--cli)}.h-str{--a:var(--str)}.h-p1{--a:var(--p1)}.h-p2{--a:var(--p2)}.h-p3{--a:var(--p3)}.h-p4{--a:var(--p4)}.h-p5{--a:var(--p5)}
+.c-cli{--a:var(--cli)}.c-str{--a:var(--str)}.c-p1{--a:var(--p1)}.c-p2{--a:var(--p2)}.c-p3{--a:var(--p3)}.c-p4{--a:var(--p4)}.c-p5{--a:var(--p5)}.c-rap{--a:var(--rap)}
+button{font-size:1em;padding:9px 14px;border:0;border-radius:9px;cursor:pointer;margin:6px 6px 0 0}
+.p{background:var(--b);color:#fff}.s{background:var(--line);color:var(--tx)}
+input,textarea,select{width:100%;box-sizing:border-box;font-size:1.02em;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--tx);font-family:inherit;margin-bottom:8px}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--a)}
+.fb{margin-top:12px;padding:11px;border-radius:9px}.ok{background:#2e8b5720;border-left:4px solid var(--ok)}.no{background:#c0392b18;border-left:4px solid var(--no)}
+.fb .dot{color:var(--a)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:var(--bg);font-size:.95em;user-select:none;margin-bottom:8px;border-left:4px solid var(--a)}
+.tile.sel{border-color:var(--a);background:color-mix(in srgb,var(--a) 14%,transparent)}
+.tile.done{border-color:var(--ok);background:#2e8b5718;cursor:default;opacity:.75}.tile.bad{border-color:var(--no);background:#c0392b18}
+.opts button{background:var(--bg);border:1px solid var(--line);border-left:5px solid var(--a);color:var(--tx)}
+.opts button:hover{border-color:var(--a)}
+.mn{background:#2e8b5714;border-left:4px solid var(--ok);padding:9px 11px;margin:9px 0;border-radius:6px}
+.rap{background:color-mix(in srgb,var(--rap) 14%,transparent);border-left:4px solid var(--rap);padding:9px 11px;margin:9px 0;border-radius:6px}
+.story{line-height:1.65}
+.story h3+p b,.story h4+p b,.story p b,.story li b{background:color-mix(in srgb,var(--a) 22%,transparent);padding:0 3px;border-radius:3px}
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.lg{font-size:.85em;padding:4px 10px;border-radius:99px;border:1px solid var(--a);color:var(--a);background:color-mix(in srgb,var(--a) 10%,transparent)}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-size:.9em;flex-wrap:wrap}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:8px 0 14px}.bar div{height:100%;background:var(--a);border-radius:3px;transition:.3s}
+.ch{display:inline-block;border-radius:10px;padding:2px 9px;font-size:.8em;color:#fff;background:var(--a)}
+.ch-Ch4{--a:var(--cli)}.ch-Ch5{--a:var(--p1)}.ch-Cas{--a:var(--p4)}.ch-Rappel{--a:var(--rap)}
+.hint,.log{color:var(--mut);font-size:.86em;margin-top:6px}
+table{border-collapse:collapse;margin:8px 0;width:100%;font-size:.92em}td,th{border:1px solid var(--line);padding:6px 9px;text-align:left}
+th{background:color-mix(in srgb,var(--a) 12%,transparent)}
+.miss{color:var(--no)}.hit{color:var(--ok)}
+.timer{font-size:1.8em;font-weight:700;text-align:center;margin:6px 0;color:var(--a)}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<nav id="nav"></nav>
+<div id="v-plan"></div><div id="v-histoire" hidden></div><div id="v-blurt" hidden></div><div id="v-assoc" hidden></div>
+<div id="v-cas" hidden></div><div id="v-trier" hidden></div><div id="v-ordre" hidden></div>
+<div id="v-quiz" hidden><div class="box" id="app"></div></div>
+</div>
+<script>
+const $=i=>document.getElementById(i);
+const nrm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const TABS=[["plan","① Méthode"],["histoire","② L'histoire"],["blurt","③ Vide-cerveau"],["assoc","④ Associer"],["cas","⑤ Cas 4P"],["trier","⑥ Trier"],["ordre","⑦ Mettre en ordre"],["quiz","⑧ Quiz final"]];
+function show(t){TABS.forEach(([k])=>{$("v-"+k).hidden=k!==t;});[...$("nav").children].forEach(b=>b.classList.toggle("on",b.dataset.t===t));window.scrollTo(0,0);}
+$("nav").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}" onclick="show('${k}')">${l}</button>`).join("");
+
+/* ① MÉTHODE */
+$("v-plan").innerHTML=`<div class="card"><h2>🎯 Comment apprendre le marketing VITE</h2>
+<p>Les chapitres 4 et 5, c'est une seule grosse chaîne : <b>comprendre le client → choisir qui on vise → bâtir les 4P</b>. Si tu retiens la chaîne, les définitions rentrent toutes seules. Fais les onglets dans l'ordre.</p>
+<table style="width:100%;text-align:left"><tr><th>Onglet</th><th>Ce que ça fait</th><th>Temps</th></tr>
+<tr><td>② L'histoire</td><td>Toute la matière en une chaîne logique, avec les rappels des ch. 1-3 dont t'as besoin (FFOM, PESTE, besoins, mission).</td><td>10 min</td></tr>
+<tr><td>③ Vide-cerveau</td><td><b>Blurting</b> : tu écris tout de mémoire, la page te dit ce qui manque.</td><td>5 min/thème</td></tr>
+<tr><td>④ Associer</td><td>Relier chaque terme à sa définition — c'est là que tu arrêtes de mélanger segmentation/ciblage/positionnement.</td><td>10 min</td></tr>
+<tr><td>⑤ Cas 4P</td><td>Une situation → quel P? C'est le type de question d'exam le plus fréquent.</td><td>10 min</td></tr>
+<tr><td>⑥ Trier</td><td>Classer : critères de segmentation, phases du cycle de vie, types d'intermédiaires, etc.</td><td>10 min</td></tr>
+<tr><td>⑦ Mettre en ordre</td><td>Les processus (plan de marketing, achat, développement de produit) remis dans le bon ordre.</td><td>5 min</td></tr>
+<tr><td>⑧ Quiz final</td><td>Réponses écrites, puis reprise de tes erreurs jusqu'à 0.</td><td>25 min</td></tr></table>
+<h3>Les 4 règles</h3>
+<ol><li><b>Essaie avant de regarder.</b> Se tromper puis voir la réponse, ça imprime 2× mieux que relire.</li>
+<li><b>Explique à voix haute</b> comme à un ami de 12 ans. Si tu bloques, c'est un trou.</li>
+<li><b>Refais tes erreurs</b> 10 min plus tard, puis une fois avant l'exam.</li>
+<li><b>Pour chaque concept, invente TON exemple</b> (une marque que t'aimes). Un exemple personnel se retient 10× mieux qu'une définition.</li></ol>
+<h3>🎨 Le code de couleurs</h3>
+<p>Chaque notion garde <b>toujours la même couleur</b>, dans tous les onglets. Ton cerveau retient la couleur avant le mot : quand tu vois orange à l'exam, tu penses « distribution ».</p>
+<div class="leg">
+<span class="lg c-cli">🟡 Client · besoins · recherche</span><span class="lg c-str">🟣 Stratégie · S-C-P · plan</span>
+<span class="lg c-p1">🔵 P1 Produit</span><span class="lg c-p2">🟢 P2 Prix</span><span class="lg c-p3">🟠 P3 Place</span>
+<span class="lg c-p4">🔴 P4 Promotion</span><span class="lg c-p5">🩵 P5 People</span><span class="lg c-rap">⬜ Rappels ch. 1-3</span></div>
+<button class="p" onclick="show('histoire')">Commencer → L'histoire</button></div>`;
+
+/* ② HISTOIRE */
+$("v-histoire").innerHTML=`<div class="card story"><h2>📖 Ch. 4 et 5 en une histoire</h2>
+<p>Lis 2 fois, puis raconte-la à voix haute. Les <span class="rap">encadrés bleus</span> sont les rappels des chapitres 1-3 sans lesquels le reste ne tient pas debout.</p>
+
+<h3>0. D'où ça vient (rappel ch. 1-3)</h3>
+<div class="rap">L'entreprise a <b>4 grandes fonctions</b> : Finance-Comptabilité, <b>Marketing</b>, Production, RH. Le marketing, c'est donc <b>une fonction</b> de l'entreprise, pas l'entreprise au complet. Et avant de décider quoi que ce soit, le gestionnaire <b>planifie</b> (le P de PODC) : il part de la <b>mission</b>, analyse l'externe avec <b>PESTE</b> et l'interne avec <b>FFOM</b>, puis fixe ses objectifs. Le plan de marketing, c'est exactement cette démarche appliquée au client.</div>
+
+<h3 class="h-cli">1. C'est quoi le marketing</h3>
+<p>Le <b>marketing</b> = l'ensemble des activités qui consistent à <b>cerner (identifier) des clients potentiels</b> — le <b>marché cible</b> — à <b>concevoir des produits adaptés</b>, et à établir les <b>politiques de prix, de distribution, de communication et de vente</b>. Bref : <b>le bon produit, au bon prix, à la bonne place, avec le bon message</b>.</p>
+<p>Le marketing a évolué : économie de subsistance → orientation <b>production</b> (1800) → orientation <b>vente</b> (1900) → orientation <b>marketing</b> (1950) → <b>postindustriel</b> (1985) → <b>social, mobile et individualisé</b> (2015).</p>
+<p>Deux grands types : le marketing <b>spécialisé (de grande consommation, B2C)</b>, qui vise le consommateur, et le marketing <b>industriel (B2B)</b>, qui vise les entreprises — moins d'acheteurs, contrats plus gros, décision plus rationnelle et plus longue.</p>
+
+<h3 class="h-cli">2. Satisfaire le client</h3>
+<p>L'offre doit être meilleure que celle des concurrents. On y arrive en satisfaisant :</p>
+<ul><li>le <b>besoin</b> : un sentiment de manque ou de privation qui pousse à agir (manger, se sentir en sécurité);</li>
+<li>le <b>désir</b> : l'envie particulière, indépendante du besoin (vouloir un Big Mac plutôt qu'un sandwich);</li>
+<li>l'<b>utilité</b> du bien ou du service, qui existe en 4 formes : <b>forme</b> (transformer la matière), <b>temps</b> (dispo au bon moment), <b>emplacement</b> (dispo au bon endroit), <b>possession</b> (facilité du transfert du droit d'utilisation).</li></ul>
+<div class="rap">Rappel ch. 3 : les besoins, c'est la <b>pyramide de Maslow</b> (physiologiques, sécurité, appartenance, estime, accomplissement). Le marketing s'adresse à ces niveaux : une auto de luxe vise l'estime, une assurance vise la sécurité.</div>
+
+<h3 class="h-cli">3. Comprendre le client : la recherche marketing</h3>
+<p><b>Recherche marketing</b> = processus qui consiste à <b>recueillir</b> et à <b>analyser</b> systématiquement des renseignements sur les <b>clients potentiels</b> et sur les produits susceptibles de les intéresser, afin de prendre des décisions conformes au marché.</p>
+<ul><li><b>Données secondaires</b> : déjà recueillies par d'autres, faciles à consulter (Statistique Canada, nouvelles, taux d'intérêt).</li>
+<li><b>Données primaires</b> : n'existent pas encore, on va les chercher soi-même (sondage, observation, expérimentation, entrevue).</li>
+<li><b>Recherche qualitative</b> (pourquoi : groupe de discussion, entrevue en profondeur, client-mystère) vs <b>quantitative</b> (combien : sondage, analyse statistique).</li>
+<li><b>Instruments de mesure</b> : questionnaire, grille d'observation, schéma d'entrevue, photo, vidéo.</li></ul>
+
+<h3 class="h-cli">4. Pourquoi j'achète</h3>
+<p><b>Facteurs liés à l'individu</b> : image de soi, perception, attitudes (→ <b>émotions</b>) et budget (→ <b>raison</b>). <b>Facteurs liés à l'environnement</b> : stimuli marketing (prix, pub, disponibilité), stimuli environnementaux, groupe d'appartenance (classe sociale, famille, culture).</p>
+<p>La <b>situation d'achat</b> change tout : <b>achat répétitif</b> (routine, ex. pinte de lait) ou <b>achat réfléchi</b> (on compare, ex. voiture).</p>
+<p><b>Processus d'achat</b> : ① reconnaissance du besoin → ② recherche d'information → ③ évaluation des options → ④ décision et achat → ⑤ évaluation après l'achat (satisfaction, fidélité ou regret).</p>
+
+<h3 class="h-str">5. S-C-P : segmentation, ciblage, positionnement ⭐</h3>
+<ul><li><b>Segmentation</b> : diviser le marché en groupes d'individus <b>semblables</b>, caractérisés par leur <b>comportement d'achat</b> ou leurs besoins. 4 familles de critères : <b>géographiques</b> (densité, climat), <b>démographiques</b> (âge, revenu, culture), <b>psychologiques</b> (opinions, goûts, style de vie), <b>comportementaux</b> (fréquence d'achat, quantité achetée).</li>
+<li><b>Ciblage</b> : choisir les <b>segments</b> auxquels l'entreprise va s'adresser. Le segment choisi = le <b>marché cible</b>.</li>
+<li><b>Le segment, c'est une petite part du marché total</b> (fig. 4.5, les shampoings) : le marché complet = l'offre de tous les concurrents; ton segment = une pointe de cette tarte; ta part dans ce segment = une pointe de la pointe.</li>
+<li><b>Positionnement</b> : la <b>place particulière</b> qu'occupe le produit par rapport aux concurrents <b>dans l'esprit</b> de la clientèle cible (haut, milieu ou bas de gamme, sportif, écolo…).</li></ul>
+<div class="mn">🧠 <b>S → C → P</b> : je <b>découpe</b> le gâteau (segmentation), je <b>choisis ma pointe</b> (ciblage), je décide <b>quel goût elle a dans leur tête</b> (positionnement).</div>
+
+<h3 class="h-str">6. La stratégie et le plan de marketing</h3>
+<p>La <b>stratégie de marketing</b> = l'approche générale du marché : les grandes orientations et les activités à réaliser, en adaptant le marketing mix à la clientèle cible. Avant : on examine l'environnement <b>PESTE</b> (concurrence, politique, législation, économie, marché, technologies).</p>
+<p><b>Le plan de marketing en 6 étapes (fig. 4.6)</b> : ① <b>Analyse FFOM</b> → ② <b>Segmentation, ciblage, positionnement</b> → ③ <b>Stratégie d'entreprise</b> (différenciation = faire mieux, bas prix, ou meilleur service → <b>avantage concurrentiel / valeur ajoutée</b>) → ④ <b>Stratégie de marketing</b> → ⑤ <b>Choix du marketing mix</b> (les variables que l'entreprise maîtrise) → ⑥ <b>Plan de marketing</b> (mise en application).</p>
+<div class="rap">Rappel ch. 2 : <b>FFOM</b> = Forces et Faiblesses (interne) + Opportunités et Menaces (externe). <b>PESTE</b> = Politique, Économique, Social, Technologique, Écologique (macro-environnement externe). Le plan de marketing commence par ces deux analyses — c'est la même démarche qu'au chapitre 2.</div>
+
+<h3 class="h-cli">7. Le commerce électronique</h3>
+<p>Avantages : marché mondial, ouvert 24/7, coûts réduits, personnalisation, comparaison facile. Nouveaux comportements : clients <b>mieux renseignés</b>, <b>achat compulsif</b> avec livraison, plateformes <b>GAFA</b>, systèmes de paiement (PayPal), assistants virtuels et objets connectés.</p>
+
+<h3 class="h-str">8. Chapitre 5 : le marketing mix = les 4P ⭐⭐</h3>
+<p>Le <b>marketing mix</b> = la combinaison et le dosage des 4 éléments de la politique commerciale : <b>Produit, Prix, Place (distribution), Promotion (communication)</b>. Aujourd'hui on ajoute un <b>5e P : People</b> (le personnel / la relation client), ce qui donne les <b>5 variables</b> : produit, prix, distribution, communication marketing et <b>gestion de la relation client</b>.</p>
+<p>Ces variables sont celles que l'entreprise <b>maîtrise</b> (étape 5 du plan de marketing) — contrairement à PESTE, qu'elle subit.</p>
+
+<h4 class="h-p1">P1 — Le produit</h4>
+<p>Le produit = la <b>promesse</b> faite par l'entreprise de <b>satisfaire un ou plusieurs besoins</b> (physiologiques ou psychologiques) du client.</p>
+<ul><li><b>Caractéristiques du service</b> : <b>intangible</b>, <b>périssable</b> (offert et consommé au même moment, on ne peut pas le stocker), <b>inséparable</b> de la personne qui le rend, <b>variable</b> (les relations humaines font la qualité).</li>
+<li><b>Produits de consommation</b> : de <b>grande consommation</b> (peu personnalisés, peu coûteux), de <b>longue durée</b> (achats réfléchis : ordi, voiture), de <b>conviction</b> (on tient à la marque). <b>Produits industriels</b> : destinés à produire d'autres produits, souvent plus <b>chers</b> mais <b>moins nombreux</b> (moins d'acheteurs).</li>
+<li><b>Emballage (packaging)</b> : ensemble des opérations assurant la <b>protection</b> du produit et facilitant sa <b>manutention / son transport</b>. <b>Conditionnement</b> : individuel, par lot, en vrac + graphisme, couleur, forme, esthétique.</li>
+<li><b>Marque</b> : symbole ou nom retenu pour <b>identifier</b> ses produits et les <b>distinguer</b> de ceux des <b>concurrents</b>. La <b>marque maison (marque du distributeur)</b> appartient au détaillant (Sélection, Le Choix du Président).</li>
+<li><b>Processus de développement</b> : naissance des idées → tri des idées → analyse de valeur et de rentabilité → prototypage → test de marché → commercialisation.</li>
+<li><b>Cycle de vie</b> : développement → <b>introduction</b> (lancement, profits négatifs) → <b>croissance</b> (ventes montent, <b>zone de turbulence</b> : les concurrents arrivent) → <b>maturité</b> (sommet des ventes) → <b>déclin</b>.</li></ul>
+<table><tr><th>Phase</th><th>Ce que fait le marketing mix</th><th>Exemple du livre</th></tr>
+<tr><td>Introduction</td><td>Faire connaître : beaucoup de publicité, prix d'écrémage ou de pénétration, distribution limitée</td><td>Montre intelligente</td></tr>
+<tr><td>Croissance</td><td>Élargir la distribution, améliorer le produit, prix qui commence à baisser</td><td>Voiture 100 % électrique</td></tr>
+<tr><td>Maturité</td><td>Se défendre : promotions, rabais, nouvelles versions, fidélisation</td><td>Téléphone intelligent</td></tr>
+<tr><td>Déclin</td><td>Réduire les coûts, retirer le produit ou le relancer</td><td>Téléphonie résidentielle</td></tr></table>
+<div class="rap">Rappel ch. 2 : un produit <b>industriel</b> ici = le <b>bien intermédiaire</b> en économie (il sert à produire autre chose); un produit de consommation = le <b>bien final</b>. Même idée, deux vocabulaires.</div>
+
+<h4 class="h-p2">P2 — Le prix</h4>
+<p>Éléments qui influencent le prix : avantages vs concurrents, <b>positionnement</b> (haut/milieu/bas de gamme), <b>demande du marché</b>, coûts et capacité de production, <b>phase du cycle de vie</b>, prix des concurrents, marges exigées par les intermédiaires, <b>concurrence</b>, perception du rapport qualité-prix.</p>
+<p>Le consommateur a une idée du prix qu'il est prêt à payer : il cherche un prix <b>juste</b> et <b>raisonnable</b>. D'où l'importance de sa <b>perception</b>.</p>
+<p><b>3 stratégies de prix</b> : <b>prix d'écrémage</b> (nouveau produit vendu <b>cher</b>, ex. téléviseur numérique), <b>prix de pénétration</b> (vendu <b>bas</b> pour entrer sur le marché et réduire la concurrence, ex. imprimante presque gratuite et cartouches chères), <b>prix dynamique (flexible)</b> (ajusté en temps réel selon l'offre et la demande, ex. billets d'avion, hôtels).</p>
+<div class="rap">Rappel économie : le prix d'équilibre vient de l'<b>offre et de la demande</b>. Le prix dynamique, c'est littéralement cette loi appliquée minute par minute.</div>
+
+<h4 class="h-p3">P3 — La distribution (place)</h4>
+<p>Ensemble des opérations qui assurent l'<b>acheminement et l'écoulement</b> du produit, de sa fabrication jusqu'à son acquisition : le rendre accessible <b>à l'endroit</b>, <b>à l'heure</b> et <b>dans le délai</b> voulus par le client.</p>
+<ul><li><b>Distribution directe</b> : l'entreprise vend elle-même (magasin, hors magasin, catalogue, Internet, distributrices).</li>
+<li><b>Distribution indirecte</b> : recours à des <b>intermédiaires</b> — <b>détaillants</b> (vendent aux consommateurs), <b>grossistes</b> (vendent à d'autres intermédiaires), <b>distributeurs</b> (fournisseurs industriels), <b>agents</b> (représentants locaux d'une société), <b>courtiers</b> (intermédiaires entre acheteur et vendeur).</li>
+<li><b>2 stratégies</b> : <b>pull (attraction)</b> = Entreprise → publicité → consommateurs → réseau de distribution (le client réclame le produit). <b>Push (pression)</b> = Entreprise → représentants → réseau de distribution → consommateurs (on pousse le produit vers le client).</li></ul>
+<div class="mn">🧠 <b>Pull</b> = je <b>tire</b> le client vers le produit avec de la pub. <b>Push</b> = je <b>pousse</b> le produit dans les tablettes avec des vendeurs.</div>
+
+<h4 class="h-p4">P4 — La communication (promotion)</h4>
+<p>4 grandes catégories de moyens :</p>
+<ul><li><b>La publicité</b> : forme <b>payée</b> et <b>non personnelle</b> de diffusion d'idées, de biens ou de services dans un média, au bénéfice d'un <b>annonceur clairement désigné</b>. Elle fait la prévente et donne la <b>notoriété</b>. Le <b>plan média</b> choisit les médias selon la tâche de communication et la clientèle. Le <b>marketing relationnel (direct)</b> vise à créer ou entretenir des liens <b>personnalisés</b> de confiance (courriel, poste, téléphone) — pas en personne.</li>
+<li><b>La vente personnelle</b> : le point de contact <b>humain</b>, la <b>force de vente</b>. Communication à <b>deux sens</b>, qui s'adapte au client.</li>
+<li><b>La promotion des ventes</b> : interventions qui stimulent la vente de façon <b>directe</b> en entraînant une <b>action immédiate</b> (coupon, concours, prime, échantillon, dégustation, promotion croisée).</li>
+<li><b>Les médias sociaux et les relations publiques</b>. Médias sociaux : médias numériques qui facilitent la <b>création</b> et le <b>partage</b> de contenu généré par les utilisateurs, communication <b>bidirectionnelle</b>. Relations publiques : techniques pour donner au public une <b>image positive</b> et créer un climat favorable à la croissance.</li></ul>
+
+<h4 class="h-p5">P5 — People (le 5e P)</h4>
+<p>Développer une <b>approche client</b> (vers la <b>fidélisation</b>), augmenter la <b>satisfaction</b>, offrir un service <b>personnalisé</b>, maintenir les <b>normes de service</b> : l'ensemble des caractéristiques définissant le <b>taux de service</b> à assurer et la <b>qualité de prestation</b> à offrir.</p>
+
+<h3 class="h-str">9. L'exercice type de l'exam : décrire un segment</h3>
+<p>Le prof donne un véhicule (ou un produit) et demande le <b>profil du segment cible</b> + le <b>critère de segmentation</b> pour chaque élément. Exemple corrigé avec la Honda Civic type R :</p>
+<table><tr><th>Élément du profil</th><th>Critère</th></tr>
+<tr><td>Homme de 25 à 30 ans</td><td>Démographique (âge, sexe)</td></tr>
+<tr><td>Revenu de 45 000 $, scolarité secondaire</td><td>Démographique (revenu, scolarité)</td></tr>
+<tr><td>Mode de vie festif, fréquente les bars</td><td>Psychologique (style de vie)</td></tr>
+<tr><td>Accro à l'adrénaline, conduit vite</td><td>Psychologique (goûts, personnalité)</td></tr></table>
+<p>Réflexe : <b>qui il est</b> → démographique · <b>où il vit</b> → géographique · <b>ce qu'il aime / pense</b> → psychologique · <b>comment il achète</b> → comportemental.</p>
+<div class="mn">🧠 La chaîne complète à réciter : <b>Besoin → Recherche marketing → Comportement du consommateur → Segmentation → Ciblage → Positionnement → FFOM/PESTE → Stratégie → 4P (Produit, Prix, Place, Promotion) + People → Plan de marketing</b>.</div>
+<button class="p" onclick="show('blurt')">Suivant → Vide-cerveau</button></div>`;
+
+/* couleur héritée par chaque section de l'histoire */
+(function(){const el=$("v-histoire").querySelector(".story");let cur="";
+ for(const n of el.children){const m=(n.className||"").match(/h-(\w+)/);
+  if(/^H[34]$/.test(n.tagName)){cur=m?"var(--"+m[1]+")":"";}
+  else if(cur&&!n.classList.contains("rap")&&!n.classList.contains("mn")){n.style.setProperty("--a",cur);}}})();
+
+/* ③ BLURTING */
+const BL={
+"Tout (la chaîne complète)":["besoin","desir","utilite","recherche marketing","primaire","secondaire","segmentation","ciblage","positionnement","ffom","peste","produit","prix","place","distribution","promotion","communication","people","cycle de vie","marque","ecremage","penetration","dynamique","push","pull","publicite","vente personnelle","promotion des ventes","medias sociaux","relations publiques"],
+"Ch.4 — Marketing, recherche, consommateur":["cerner","client","marche cible","besoin","desir","utilite","forme","temps","emplacement","possession","recherche marketing","recueillir","analyser","primaire","secondaire","qualitative","quantitative","sondage","observation","repetitif","reflechi","individu","environnement","image de soi","perception","budget","groupe d appartenance"],
+"Ch.4 — Segmentation, ciblage, positionnement, plan":["segmentation","semblable","comportement","geographique","demographique","psychologique","comportemental","ciblage","segment","marche cible","positionnement","esprit","concurrent","ffom","peste","differenciation","bas prix","service","avantage concurrentiel","marketing mix","plan de marketing"],
+"Ch.5 — Produit":["promesse","besoin","service","intangible","perissable","consommation","grande consommation","longue duree","conviction","industriel","emballage","protection","manutention","conditionnement","lot","vrac","marque","identifier","distinguer","marque maison","prototypage","test de marche","cycle de vie","introduction","croissance","maturite","declin"],
+"Ch.5 — Prix":["positionnement","demande","cout","production","cycle de vie","concurrent","marge","intermediaire","perception","juste","raisonnable","ecremage","cher","penetration","bas","dynamique","offre","demande"],
+"Ch.5 — Distribution et communication":["acheminement","ecoulement","endroit","heure","delai","directe","indirecte","intermediaire","detaillant","grossiste","distributeur","agent","courtier","pull","push","publicite","payee","non personnelle","notoriete","plan media","relationnel","vente personnelle","force de vente","promotion des ventes","immediate","medias sociaux","relations publiques","image positive","people","fidelisation"]};
+let bt=null;
+$("v-blurt").innerHTML=`<div class="card"><h2>🧠 Vide-cerveau (blurting)</h2>
+<p>Choisis un thème, pars le chrono de <b>3 minutes</b> et écris <b>tout</b> ce que tu sais, sans regarder. Ensuite, clique « Vérifier » : ce qui manque s'affiche en rouge. Relis juste ça, puis recommence le même thème. Vise 100 %.</p>
+<select id="bth">${Object.keys(BL).map(k=>`<option>${k}</option>`).join("")}</select>
+<div class="timer" id="btm">3:00</div>
+<textarea id="bta" rows="9" placeholder="Écris tout ce que tu sais ici…"></textarea>
+<button class="s" onclick="btStart()">▶ Démarrer le chrono</button><button class="p" onclick="btCheck()">Vérifier</button><button class="s" onclick="$('bta').value='';$('btr').innerHTML=''">Effacer</button>
+<div id="btr"></div></div>`;
+window.btStart=function(){clearInterval(bt);let s=180;$("bta").focus();bt=setInterval(()=>{s--;$("btm").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(s<=0){clearInterval(bt);$("btm").textContent="⏰ Temps!";btCheck();}},1000);};
+const BL_COL={"Tout (la chaîne complète)":"str","Ch.4 — Marketing, recherche, consommateur":"cli","Ch.4 — Segmentation, ciblage, positionnement, plan":"str","Ch.5 — Produit":"p1","Ch.5 — Prix":"p2","Ch.5 — Distribution et communication":"p3"};
+window.btCheck=function(){clearInterval(bt);const t=nrm($("bta").value),k=BL[$("bth").value];$("btr").className="c-"+(BL_COL[$("bth").value]||"cli");const hit=k.filter(w=>t.includes(nrm(w))),miss=k.filter(w=>!t.includes(nrm(w)));const pct=Math.round(hit.length/k.length*100);
+$("btr").innerHTML=`<div class="fb ${pct>=80?'ok':'no'}"><b>${pct} %</b> (${hit.length}/${k.length})<br><span class="hit">✔ ${hit.join(", ")||"—"}</span><br><span class="miss">✘ Il te manque : <b>${miss.join(", ")||"rien! 🔥"}</b></span><br><small>Relis ces mots dans « L'histoire », puis recommence.</small></div>`;};
+
+/* ④ ASSOCIER */
+const AS={
+"Les bases du marketing":[["Marketing","Cerner des clients potentiels, concevoir des produits adaptés et établir prix, distribution, communication et vente"],["Besoin","Sentiment de manque ou de privation qui motive à agir"],["Désir","Envie particulière, indépendante du besoin"],["Utilité de forme","Créée en convertissant des matières premières en produit utile"],["Utilité de temps","Créée par la disponibilité au moment voulu par le client"],["Utilité d'emplacement","Créée par la disponibilité à l'endroit voulu par le client"],["Utilité de possession","Créée par la facilité du transfert du droit d'utilisation"]],
+"Recherche marketing":[["Recherche marketing","Recueillir et analyser systématiquement des renseignements sur les clients potentiels"],["Données secondaires","Déjà recueillies par d'autres et faciles à consulter"],["Données primaires","N'existent pas encore, on les obtient en faisant une recherche"],["Recherche qualitative","Comprendre le POURQUOI (groupe de discussion, entrevue en profondeur)"],["Recherche quantitative","Mesurer COMBIEN (sondage, analyse statistique)"],["Instrument de mesure","Questionnaire, grille d'observation, schéma d'entrevue"],["Achat répétitif","Achat de routine, peu réfléchi (pinte de lait)"],["Achat réfléchi","On compare avant d'acheter (voiture)"]],
+"Segmentation, ciblage, positionnement":[["Segmentation","Diviser le marché en groupes semblables selon leurs besoins ou leur comportement d'achat"],["Ciblage","Choisir les segments auxquels l'entreprise s'adresse"],["Marché cible","Le groupe de consommateurs auquel le produit s'adresse"],["Positionnement","La place qu'occupe le produit vs les concurrents dans l'esprit du client"],["Critère géographique","Densité de population, climat, région"],["Critère démographique","Âge, revenu, culture, scolarité"],["Critère psychologique","Opinions, goûts, style de vie"],["Critère comportemental","Fréquence d'achat, quantité achetée"]],
+"Le produit (P1)":[["Produit","Promesse de satisfaire un ou plusieurs besoins du client"],["Emballage","Assure la protection du produit et facilite sa manutention"],["Conditionnement","Individuel, par lot ou en vrac, + graphisme et apparence"],["Marque","Symbole ou nom qui identifie les produits et les distingue des concurrents"],["Marque maison","Marque appartenant au distributeur (Sélection, Choix du Président)"],["Produit de grande consommation","Peu personnalisé et peu coûteux"],["Produit de longue durée","Achat réfléchi : ordinateur, voiture"],["Produit industriel","Sert à produire d'autres produits, plus cher mais moins d'acheteurs"]],
+"Le prix (P2)":[["Prix d'écrémage","Nouveau produit vendu cher au lancement"],["Prix de pénétration","Prix bas pour entrer sur le marché et réduire la concurrence"],["Prix dynamique","Prix ajusté selon l'offre et la demande (billets d'avion)"],["Perception du consommateur","L'idée qu'il se fait d'un prix juste et raisonnable"],["Marge bénéficiaire","Ce que l'entreprise et les intermédiaires gardent sur la vente"],["Positionnement et prix","Haut, milieu ou bas de gamme"]],
+"Distribution et communication (P3-P4-P5)":[["Distribution","Acheminement et écoulement du produit, de la fabrication à l'acquisition"],["Distribution directe","L'entreprise vend elle-même (magasin, Internet, distributrice)"],["Détaillant","Intermédiaire qui vend aux consommateurs"],["Grossiste","Intermédiaire qui vend à d'autres intermédiaires"],["Courtier","Intermédiaire entre l'acheteur et le vendeur"],["Stratégie pull (attraction)","Pub → le consommateur réclame le produit au détaillant"],["Stratégie push (pression)","Représentants → réseau de distribution → consommateur"],["Publicité","Forme payée et non personnelle, annonceur clairement désigné"],["Vente personnelle","Contact humain à deux sens avec le client"],["Promotion des ventes","Stimule la vente de façon directe, action immédiate"],["Relations publiques","Donner au public une image positive de l'entreprise"],["5e P (People)","Approche client, service personnalisé, fidélisation"]],
+"Rappels ch. 1-3 utiles ici":[["FFOM","Forces, faiblesses (interne) + opportunités, menaces (externe) — étape 1 du plan de marketing"],["PESTE","Politique, économique, social, technologique, écologique — le macro-environnement externe"],["Mission","Raison d'être de l'entreprise, point de départ des objectifs"],["PODC","Planifier, organiser, diriger, contrôler — le marketing se planifie comme le reste"],["Les 4 fonctions","Finance-comptabilité, marketing, production, ressources humaines"],["Pyramide de Maslow","Les besoins que le produit cherche à combler"]]};
+const AS_COL={"Les bases du marketing":"cli","Recherche marketing":"cli","Segmentation, ciblage, positionnement":"str","Le produit (P1)":"p1","Le prix (P2)":"p2","Distribution et communication (P3-P4-P5)":"p3","Rappels ch. 1-3 utiles ici":"rap"};
+let asSel=null,asSet,asErr;
+function asRender(name){asSet=name;asSel=null;asErr=0;const pairs=AS[name];
+ const L=shuf(pairs.map((p,i)=>({t:p[0],i}))),R=shuf(pairs.map((p,i)=>({t:p[1],i})));
+ const cl="c-"+(AS_COL[name]||"cli");
+ $("asb").innerHTML=`<div class="grid ${cl}"><div>${L.map(x=>`<div class="tile" data-i="${x.i}" data-s="L" onclick="asClick(this)">${x.t}</div>`).join("<div style='height:8px'></div>")}</div><div>${R.map(x=>`<div class="tile" data-i="${x.i}" data-s="R" onclick="asClick(this)">${x.t}</div>`).join("<div style='height:8px'></div>")}</div></div><div id="asr"></div>`;}
+window.asRender=asRender;
+window.asClick=function(el){if(el.classList.contains("done"))return;
+ if(!asSel||asSel.dataset.s===el.dataset.s){if(asSel)asSel.classList.remove("sel");asSel=el;el.classList.add("sel");return;}
+ const a=asSel;asSel=null;a.classList.remove("sel");
+ if(a.dataset.i===el.dataset.i){a.classList.add("done");el.classList.add("done");
+  if(document.querySelectorAll("#asb .tile:not(.done)").length===0)$("asr").innerHTML=`<div class="fb ${asErr?'no':'ok'}">Terminé avec <b>${asErr}</b> erreur(s). ${asErr?"Recommence jusqu'à 0.":"Parfait 🔥"} <button class="s" onclick="asRender(asSet)">Recommencer</button></div>`;}
+ else{asErr++;[a,el].forEach(x=>{x.classList.add("bad");setTimeout(()=>x.classList.remove("bad"),600);});}};
+$("v-assoc").innerHTML=`<div class="card"><h2>🔗 Associer</h2><p>Clique un terme à gauche, puis sa définition à droite. Refais chaque série jusqu'à <b>0 erreur</b>.</p>
+<div>${Object.keys(AS).map(k=>`<button class="s" onclick="asRender('${k.replace(/'/g,"\\'")}')">${k}</button>`).join("")}</div><div id="asb" style="margin-top:12px"></div></div>`;
+asRender("Les bases du marketing");
+
+/* ⑤ CAS 4P */
+const CAS=[
+["Tim Hortons lance un beigne à l'érable en édition limitée.","Produit","Un nouvel article, une nouvelle saveur, un format : ça touche l'offre elle-même."],
+["Un manufacturier vend son imprimante presque au prix coûtant et se reprend sur les cartouches.","Prix","Stratégie de prix de pénétration."],
+["Apple lance un nouveau modèle à 1 899 $ le jour du lancement, puis baisse le prix un an plus tard.","Prix","Stratégie d'écrémage."],
+["Lululemon ouvre une boutique dans un centre commercial de Québec.","Place","Rendre le produit accessible à l'endroit voulu par le client."],
+["Une microbrasserie signe avec un grossiste pour être vendue dans les dépanneurs.","Place","Distribution indirecte par un intermédiaire."],
+["Une marque paye des publicités Instagram pendant 3 semaines.","Promotion","Publicité : forme payée et non personnelle, annonceur désigné."],
+["Un vendeur en magasin explique les modèles et conclut la vente.","Promotion","Vente personnelle (force de vente), mais toujours dans le P de communication."],
+["Un sac de croustilles contient un coupon rabais pour La Ronde.","Promotion","Promotion des ventes (promotion croisée), qui pousse à l'action immédiate."],
+["Une compagnie aérienne change ses prix chaque heure selon les places restantes.","Prix","Prix dynamique (flexible), basé sur l'offre et la demande."],
+["Une entreprise redessine son emballage pour mieux protéger le produit pendant le transport.","Produit","L'emballage fait partie du produit."],
+["Un hôtel forme ses employés à saluer chaque client par son nom.","People","5e P : approche client, service personnalisé, fidélisation."],
+["Une marque de café lance un programme de points pour que les clients reviennent.","People","Fidélisation : la relation client, c'est le 5e P."],
+["Amazon offre la livraison en 24 h dans un nouveau centre de distribution.","Place","Distribution : le bon délai, au bon endroit."],
+["Une entreprise dépose un nouveau logo et un nouveau nom pour se distinguer des concurrents.","Produit","La marque fait partie du P de produit."],
+["Une compagnie envoie une infolettre personnalisée à ses anciens clients.","Promotion","Marketing relationnel (direct), une forme de communication."],
+["Un fabricant paye ses représentants pour convaincre les détaillants de garder son produit en tablette.","Place","Stratégie push : on pousse le produit dans le réseau de distribution. (La vente aux détaillants fait partie de la distribution.)"],
+["Une entreprise fait une grosse campagne télé pour que les clients réclament son produit en magasin.","Promotion","Stratégie pull : la publicité attire le consommateur, qui réclame le produit."],
+["Une chaîne ajoute une garantie de remboursement de 30 jours.","Produit","Un élément de l'offre : garantie et service rattachés au produit."],
+["Un restaurant fait une dégustation gratuite en épicerie.","Promotion","Promotion des ventes (marketing expérientiel)."],
+["Une marque baisse ses prix parce que ses coûts de production ont diminué.","Prix","Les coûts de production influencent directement le prix de vente."]];
+const PS=["Produit","Prix","Place","Promotion","People"];
+let cO,cI,cS;
+function casStart(){cO=shuf(CAS);cI=0;cS=0;casRender();}
+window.casStart=casStart;
+function casRender(){if(cI>=cO.length){$("casb").innerHTML=`<h2>Score : ${cS}/${cO.length}</h2><button class="p" onclick="casStart()">Recommencer</button>`;return;}
+ const q=cO[cI];$("casb").innerHTML=`<div class="top"><span>${cI+1}/${cO.length}</span><span>Score : ${cS}</span></div><div class="bar"><div style="width:${cI/cO.length*100}%"></div></div>
+ <h2>${q[0]}</h2><div class="opts">${PS.map((p,ix)=>`<button class="c-p${ix+1}" onclick="casAns('${p}')">${p}</button>`).join("")}</div><div id="casf"></div>`;}
+window.casAns=function(p){if($("casf").innerHTML)return;const q=cO[cI],ok=p===q[1];if(ok)cS++;
+ $("casf").innerHTML=`<div class="fb ${ok?'ok':'no'} c-p${PS.indexOf(q[1])+1}">${ok?'✅':'❌'} <b class="dot">${q[1]}</b><br>${q[2]}</div><button class="p" onclick="cI++;casRender()">Suivante →</button>`;};
+$("v-cas").innerHTML=`<div class="card"><h2>🧩 Cas : quel P?</h2><p>La question type de l'exam. Lis la situation et choisis le P concerné.</p>
+<div class="mn">🧠 Réflexe : <b>Produit</b> = ce qu'on vend (incluant emballage, marque, garantie) · <b>Prix</b> = combien · <b>Place</b> = comment ça se rend au client · <b>Promotion</b> = ce qu'on dit et à qui · <b>People</b> = comment on traite le client.</div><div id="casb"></div></div>`;
+casStart();
+
+/* ⑥ TRIER */
+const TR={
+"Critère de segmentation?":{o:["Géographique","Démographique","Psychologique","Comportemental"],q:[["Viser les gens qui habitent en ville","Géographique"],["Viser les 18-25 ans","Démographique"],["Viser les familles à revenu de 100 000 $","Démographique"],["Viser les amateurs de plein air","Psychologique"],["Récompenser les clients qui achètent chaque semaine","Comportemental"],["Viser les régions montagneuses pour du matériel de ski","Géographique"],["Viser les gens qui ont un style de vie festif","Psychologique"],["Offrir un rabais sur la 2e paire de lunettes","Comportemental"],["Viser les diplômés universitaires","Démographique"],["Viser ceux qui achètent en grande quantité","Comportemental"]]},
+"Donnée primaire ou secondaire?":{o:["Primaire","Secondaire"],q:[["Un sondage que l'entreprise fait elle-même","Primaire"],["Les publications de Statistique Canada","Secondaire"],["Une observation en magasin faite par l'entreprise","Primaire"],["Les taux d'intérêt publiés par la Banque du Canada","Secondaire"],["Un groupe de discussion organisé par l'entreprise","Primaire"],["Un article de journal sur les tendances du marché","Secondaire"]]},
+"Phase du cycle de vie?":{o:["Introduction","Croissance","Maturité","Déclin"],q:[["Les ventes explosent et des concurrents arrivent","Croissance"],["Le produit vient d'être lancé, les profits sont négatifs","Introduction"],["Les ventes plafonnent au sommet","Maturité"],["Les ventes baissent, le produit est dépassé","Déclin"],["La téléphonie résidentielle","Déclin"],["La montre intelligente au lancement","Introduction"],["Le téléphone intelligent aujourd'hui","Maturité"],["La voiture 100 % électrique","Croissance"]]},
+"Type d'intermédiaire?":{o:["Détaillant","Grossiste","Agent","Courtier","Distributeur"],q:[["Il vend directement aux consommateurs","Détaillant"],["Il vend à d'autres intermédiaires","Grossiste"],["Il est le représentant local d'une société","Agent"],["Il fait le pont entre un acheteur et un vendeur","Courtier"],["Nom souvent donné aux fournisseurs industriels","Distributeur"],["Le Costco où tu achètes ton litre de lait","Détaillant"]]},
+"Stratégie de prix?":{o:["Écrémage","Pénétration","Dynamique"],q:[["Lancer un téléviseur nouvelle génération à prix élevé","Écrémage"],["Vendre l'imprimante presque gratuitement et se reprendre sur l'encre","Pénétration"],["Changer le prix des chambres d'hôtel selon la demande","Dynamique"],["Entrer sur un marché avec le prix le plus bas pour écarter la concurrence","Pénétration"],["Profiter des premiers acheteurs prêts à payer cher","Écrémage"],["Ajuster le prix des billets d'avion en temps réel","Dynamique"]]},
+"Moyen de communication?":{o:["Publicité","Vente personnelle","Promotion des ventes","Médias sociaux / RP"],q:[["Une annonce payée à la radio","Publicité"],["Un concours avec un voyage à gagner","Promotion des ventes"],["Un représentant qui rencontre un client","Vente personnelle"],["Un communiqué pour redorer l'image de l'entreprise","Médias sociaux / RP"],["Un échantillon gratuit à la pharmacie","Promotion des ventes"],["Une collaboration avec un créateur sur TikTok","Médias sociaux / RP"],["Un panneau publicitaire sur l'autoroute","Publicité"],["Un kiosque de dégustation en épicerie","Promotion des ventes"]]},
+"Produit de consommation ou industriel?":{o:["Consommation","Industriel"],q:[["Un café acheté chez Starbucks","Consommation"],["Une presse hydraulique vendue à une usine","Industriel"],["Des pneus vendus au fabricant d'autos","Industriel"],["Un ordinateur portable acheté pour l'école","Consommation"],["Du tissu vendu à une usine de vêtements","Industriel"],["Un téléphone acheté en magasin","Consommation"]]},
+"Pull ou push?":{o:["Pull (attraction)","Push (pression)"],q:[["Grosse campagne publicitaire pour que le client demande le produit","Pull (attraction)"],["Des représentants convainquent les détaillants de stocker le produit","Push (pression)"],["Des rabais offerts aux grossistes pour qu'ils poussent la marque","Push (pression)"],["Une pub télé qui crée la demande avant même la mise en tablette","Pull (attraction)"]]},
+"Rappels ch. 1-3 : FFOM ou PESTE?":{o:["Force","Faiblesse","Opportunité","Menace","PESTE"],q:[["Notre équipe de vente est la meilleure de la région","Force"],["Un nouveau concurrent ouvre à côté","Menace"],["Le gouvernement offre une subvention à notre secteur","Opportunité"],["Notre site web est dépassé","Faiblesse"],["Une nouvelle loi sur l'étiquetage entre en vigueur","PESTE"],["Le vieillissement de la population change la demande","PESTE"]]}};
+const TR_COL={"Critère de segmentation?":"str","Donnée primaire ou secondaire?":"cli","Phase du cycle de vie?":"p1","Type d'intermédiaire?":"p3","Stratégie de prix?":"p2","Moyen de communication?":"p4","Produit de consommation ou industriel?":"p1","Pull ou push?":"p3","Rappels ch. 1-3 : FFOM ou PESTE?":"rap","🔀 Tout mélangé":"str"};
+let trD,trO,trI,trS,trW;
+function trStart(name){trD=name;const all=name==="🔀 Tout mélangé"?Object.entries(TR).flatMap(([n,d])=>d.q.map(q=>[q[0],q[1],d.o])):TR[name].q.map(q=>[q[0],q[1],TR[name].o]);trO=shuf(all);trI=0;trS=0;trW=[];trRender();}
+window.trStart=trStart;
+function trRender(){if(trI>=trO.length){$("trb").innerHTML=`<h2>Score : ${trS}/${trO.length}</h2>${trW.length?`<ul>${trW.map(q=>`<li>${q[0]} → <b>${q[1]}</b></li>`).join("")}</ul>`:"🔥 Parfait"}<button class="p" onclick="trStart(trD)">Recommencer</button>`;return;}
+ const q=trO[trI];$("trb").className="c-"+(TR_COL[trD]||"str");$("trb").innerHTML=`<div class="top"><span>${trD} — ${trI+1}/${trO.length}</span><span>Score : ${trS}</span></div><div class="bar"><div style="width:${trI/trO.length*100}%"></div></div><h2>${q[0]}</h2><div class="opts">${q[2].map(o=>`<button onclick="trAns(this)">${o}</button>`).join("")}</div><div id="trf"></div>`;}
+window.trAns=function(b){if($("trf").innerHTML)return;const q=trO[trI],ok=b.textContent===q[1];if(ok)trS++;else trW.push(q);
+ $("trf").innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅':'❌ Réponse : <b>'+q[1]+'</b>'}</div><button class="p" onclick="trI++;trRender()">Suivante →</button>`;};
+$("v-trier").innerHTML=`<div class="card"><h2>🗂️ Trier</h2><p>Classe chaque situation. Finis avec <b>🔀 Tout mélangé</b> : c'est ce qui ressemble le plus à l'exam.</p>
+<div>${[...Object.keys(TR),"🔀 Tout mélangé"].map(k=>`<button class="s" onclick="trStart('${k.replace(/'/g,"\\'")}')">${k}</button>`).join("")}</div><div id="trb" style="margin-top:12px"></div></div>`;
+trStart("Critère de segmentation?");
+
+/* ⑦ ORDRE */
+const ORD={
+"Le plan de marketing (6 étapes)":["Analyse FFOM","Segmentation, ciblage, positionnement","Stratégie d'entreprise (différenciation, bas prix, service)","Stratégie de marketing","Choix du marketing mix (4P)","Plan de marketing (mise en application)"],
+"Le processus d'achat du consommateur":["Reconnaissance du besoin","Recherche d'information","Évaluation des options","Décision et achat","Évaluation après l'achat"],
+"Le développement d'un produit":["Naissance des idées","Tri des idées","Analyse de valeur et de rentabilité","Prototypage","Test de marché","Commercialisation"],
+"Le cycle de vie du produit":["Développement","Introduction","Croissance","Maturité","Déclin"],
+"L'évolution du marketing":["Économie de subsistance","Orientation vers la production (1800)","Orientation vers la vente (1900)","Orientation vers le marketing (1950)","Marketing postindustriel (1985)","Marketing social, mobile et individualisé (2015)"],
+"Rappel ch.3 — Le cycle administratif":["Planifier","Organiser","Diriger","Contrôler"]};
+let orD,orNext,orErr;
+const OR_COL={"Le plan de marketing (6 étapes)":"str","Le processus d'achat du consommateur":"cli","Le développement d'un produit":"p1","Le cycle de vie du produit":"p1","L'évolution du marketing":"cli","Rappel ch.3 — Le cycle administratif":"rap"};
+function orStart(name){orD=name;orNext=0;orErr=0;$("orb").className="c-"+(OR_COL[name]||"str");
+ $("orb").innerHTML=`<div class="log" id="orlog">Clique les étapes dans le bon ordre.</div><div id="orlist">${shuf(ORD[name].map((t,i)=>({t,i}))).map(x=>`<div class="tile" data-i="${x.i}" onclick="orClick(this)">${x.t}</div>`).join("")}</div>`;}
+window.orStart=orStart;
+window.orClick=function(el){if(el.classList.contains("done"))return;
+ if(+el.dataset.i===orNext){el.classList.add("done");el.innerHTML=`<b>${orNext+1}.</b> ${el.textContent}`;orNext++;
+  if(orNext===ORD[orD].length)$("orlog").innerHTML=`<div class="fb ${orErr?'no':'ok'}">Terminé avec <b>${orErr}</b> erreur(s). <button class="s" onclick="orStart(orD)">Recommencer</button></div>`;}
+ else{orErr++;el.classList.add("bad");setTimeout(()=>el.classList.remove("bad"),600);$("orlog").textContent=`❌ Pas encore celle-là. Cherche l'étape n° ${orNext+1}.`;}};
+$("v-ordre").innerHTML=`<div class="card"><h2>🔢 Mettre en ordre</h2><p>Clique les étapes dans le bon ordre. Tant que tu te trompes, l'étape clignote en rouge.</p>
+<div>${Object.keys(ORD).map(k=>`<button class="s" onclick="orStart('${k.replace(/'/g,"\\'")}')">${k}</button>`).join("")}</div><div id="orb" style="margin-top:12px"></div></div>`;
+orStart("Le plan de marketing (6 étapes)");
+show("plan");
+
+</script>
+<script>
+const Q=[
+["Ch4","Définis le marketing (idée générale).",[["client","consommateur","marche"],["produit","service","offre"],["prix","distribution","communication","vente"]],"Ensemble des activités consistant à cerner des clients potentiels (marché cible), à concevoir des produits adaptés et à établir les politiques de prix, de distribution, de communication et de vente"],
+["Ch4","Comment s'appelle le groupe de consommateurs auquel un produit s'adresse?",[["marche cible","cible"]],"Le marché cible"],
+["Ch4","Différence entre un besoin et un désir?",[["manque","privation","necessaire","essentiel"],["envie","particulier","independant","specifique"]],"Le besoin est un sentiment de manque ou de privation qui motive à agir; le désir est l'envie particulière, indépendante du besoin"],
+["Ch4","Le marketing qui vise les entreprises plutôt que les consommateurs s'appelle le marketing ______.",[["industriel","b2b","affaire"]],"Industriel (B2B)"],
+["Ch4","Nomme les 4 formes d'utilité.",[["forme"],["temps"],["emplacement","lieu","endroit"],["possession"]],"Forme, temps, emplacement, possession"],
+["Ch4","Quelle forme d'utilité : une distributrice Coca-Cola installée à l'extérieur?",[["emplacement","lieu","endroit"]],"Utilité d'emplacement"],
+["Ch4","Quelle forme d'utilité : un produit numérique livrable à tout moment?",[["temps"]],"Utilité de temps"],
+["Ch4","Quelle forme d'utilité : transformer des matières premières en produit utile?",[["forme"]],"Utilité de forme"],
+["Ch4","Quelle forme d'utilité : un abonnement de gym qui donne accès aux appareils?",[["possession"]],"Utilité de possession"],
+["Ch4","Définis la recherche marketing.",[["recueill","collect","ramass"],["analys","traite"],["client","consommateur","marche"]],"Processus qui consiste à recueillir et à analyser systématiquement des renseignements sur les clients potentiels et sur les produits susceptibles de les intéresser"],
+["Ch4","Différence entre données primaires et secondaires?",[["primaire"],["secondaire"],["autre","existe","nouvelle","soi-meme","soi meme"]],"Secondaires : déjà recueillies par d'autres et faciles à consulter. Primaires : n'existent pas encore, on les obtient soi-même par une recherche"],
+["Ch4","Donne 2 exemples de données secondaires.",[["statistique canada","taux d interet","nouvelle","journal","publication","rapport","internet"]],"Publications de Statistique Canada, taux d'intérêt, nouvelles en ligne ou télédiffusées"],
+["Ch4","Donne 2 exemples de collecte de données primaires.",[["sondage","observation","experimentation","entrevue","groupe de discussion","client-mystere","client mystere"]],"Sondage, observation, expérimentation, entrevue, groupe de discussion, client-mystère"],
+["Ch4","Différence entre recherche qualitative et quantitative?",[["qualitative"],["quantitative"],["pourquoi","profondeur","combien","chiffre","nombre","mesur","statistique"]],"Qualitative : comprendre le pourquoi (groupes de discussion, entrevues). Quantitative : mesurer combien (sondages, statistiques)"],
+["Ch4","Nomme 2 instruments de mesure en recherche marketing.",[["questionnaire","grille d observation","schema d entrevue","photo","video"]],"Questionnaire, grille d'observation, schéma d'entrevue, photographie, vidéo"],
+["Ch4","Nomme les 2 situations d'achat.",[["repetitif","routine","habitude"],["reflechi","reflexion","compare"]],"Achat répétitif (ex. pinte de lait) et achat réfléchi (ex. voiture)"],
+["Ch4","Acheter une voiture, c'est quelle situation d'achat?",[["reflechi"]],"Un achat réfléchi"],
+["Ch4","Nomme 3 facteurs liés à l'INDIVIDU qui influencent le consommateur.",[["image de soi","perception","attitude","budget","emotion","raison"]],"Image de soi, perception, attitudes (→ émotions) et budget (→ raison)"],
+["Ch4","Nomme 2 facteurs liés à l'ENVIRONNEMENT qui influencent le consommateur.",[["stimuli","publicite","prix","groupe","classe sociale","famille","culture"]],"Stimuli marketing (prix, pub, disponibilité), stimuli environnementaux, groupe d'appartenance (classe sociale, famille, culture)"],
+["Ch4","Dans les facteurs liés à l'individu, image de soi, perception et attitudes mènent à quoi?",[["emotion"]],"Aux émotions (alors que le budget mène à la raison)"],
+["Ch4","Nomme les 5 étapes du processus d'achat.",[["besoin","probleme"],["information","recherche"],["evaluation","compar","option"],["achat","decision"],["apres","post","satisfaction"]],"Reconnaissance du besoin → recherche d'information → évaluation des options → décision et achat → évaluation après l'achat"],
+["Ch4","Définis la segmentation du marché.",[["divis","decoup","separ","group"],["semblable","similaire","besoin","comportement"]],"Division du marché en groupes d'individus semblables, caractérisés par leur comportement d'achat ou leurs besoins"],
+["Ch4","Nomme les 4 catégories de critères de segmentation.",[["geographique"],["demographique"],["psychologique"],["comportemental"]],"Géographiques, démographiques, psychologiques, comportementaux"],
+["Ch4","Donne 2 exemples de critères démographiques.",[["age","revenu","culture","scolarite","sexe","famille"]],"Âge, revenu, culture (aussi scolarité, taille du ménage)"],
+["Ch4","Donne 2 exemples de critères psychologiques.",[["opinion","gout","style de vie","valeur","personnalite"]],"Opinions, goûts, styles de vie"],
+["Ch4","Donne 2 exemples de critères géographiques.",[["densite","climat","region","ville","campagne"]],"Densité de la population, climat, région"],
+["Ch4","Donne 2 exemples de critères comportementaux.",[["frequence","quantite","fidelite","usage"]],"Fréquence d'achat, quantité achetée"],
+["Ch4","Définis le ciblage.",[["choix","choisir","selection"],["segment"]],"Le choix, par l'entreprise, des segments auxquels elle s'adresse"],
+["Ch4","Définis le positionnement.",[["place","position"],["concurrent"],["esprit","tete","perception","client"]],"La place particulière qu'occupe un produit par rapport à ceux des concurrents dans l'esprit de la clientèle cible"],
+["Ch4","Dans quel ordre fait-on segmentation, ciblage et positionnement?",[["segmentation"],["ciblage"],["positionnement"]],"Segmentation → ciblage → positionnement"],
+["Ch4","Qu'est-ce que la stratégie de marketing?",[["approche","orientation","grande"],["marche","clientele","cible","mix"]],"L'approche générale du marché : les grandes orientations et activités de marketing à réaliser, en adaptant le marketing mix à la clientèle cible"],
+["Ch4","Quel modèle utilise-t-on pour examiner l'environnement externe avant la stratégie marketing?",[["peste"]],"Le modèle PESTE"],
+["Ch4","Nomme les 6 étapes du plan de marketing (fig. 4.6).",[["ffom","analyse"],["segmentation","ciblage","positionnement"],["strategie d entreprise","differenciation"],["strategie de marketing"],["mix","4p"],["plan"]],"1) Analyse FFOM 2) Segmentation, ciblage, positionnement 3) Stratégie d'entreprise 4) Stratégie de marketing 5) Choix du marketing mix 6) Plan de marketing"],
+["Ch4","Quelle est la toute première étape du plan de marketing?",[["ffom","analyse","force","faiblesse"]],"L'analyse FFOM (forces, faiblesses, opportunités, menaces)"],
+["Ch4","Nomme les 3 stratégies d'entreprise possibles (étape 3 du plan).",[["differenciation","faire mieux"],["bas prix","prix"],["service"]],"Différenciation (faire mieux), bas prix, meilleur service"],
+["Ch4","La stratégie d'entreprise vise à obtenir quoi?",[["avantage concurrentiel","valeur ajoutee"]],"Un avantage concurrentiel / une valeur ajoutée"],
+["Ch4","Nomme 2 avantages du commerce électronique.",[["mondial","24","monde","cout","comparer","personnalis","choix","accessible","rapide"]],"Marché mondial, ouvert 24 h/24, coûts réduits, comparaison facile, personnalisation"],
+["Ch4","Nomme 2 nouveaux comportements d'achat liés au commerce électronique.",[["renseign","informe","compulsif","livraison","gafa","plateforme","paiement","paypal","assistant","objet connecte"]],"Clients mieux renseignés, achat compulsif avec livraison, plateformes (GAFA), systèmes de paiement (PayPal), assistants virtuels et objets connectés"],
+["Ch4","Nomme les grandes étapes de l'évolution du marketing.",[["production"],["vente"],["marketing"],["social","mobile","individualis","postindustriel"]],"Économie de subsistance → orientation production (1800) → vente (1900) → marketing (1950) → postindustriel (1985) → social, mobile et individualisé (2015)"],
+["Ch5","Que veulent dire les 4P?",[["produit","product"],["prix","price"],["place","distribution"],["promotion","communication"]],"Produit, Prix, Place (distribution), Promotion (communication)"],
+["Ch5","Définis le marketing mix.",[["combinaison","dosage","ensemble","melange"],["4","quatre","produit"]],"La combinaison et le dosage des 4 éléments de la politique commerciale : produit, prix, distribution, communication"],
+["Ch5","Quel est le 5e P et à quoi sert-il?",[["people","personnel","relation"],["client","service","fidelis","satisfaction"]],"People (personnel / relation client) : approche client, service personnalisé, satisfaction et fidélisation"],
+["Ch5","Définis le produit.",[["promesse","engagement"],["besoin"]],"La promesse faite par l'entreprise de satisfaire un ou plusieurs besoins (physiologiques ou psychologiques) du client"],
+["Ch5","Nomme 2 caractéristiques d'un service.",[["intangible","touche","pas posseder","perissable","stock","meme moment","variable","humain","insepar"]],"Intangible, périssable (offert et consommé au même moment, on ne peut pas le posséder), variable (les relations humaines font sa qualité)"],
+["Ch5","Pourquoi dit-on qu'un service est périssable?",[["meme moment","stock","garder","conserver","temporaire","acces"]],"Il est offert et consommé au même moment : on ne peut pas le garder, on y a accès temporairement"],
+["Ch5","Nomme les 3 types de produits de consommation.",[["grande consommation"],["longue duree"],["conviction"]],"Grande consommation, longue durée, de conviction"],
+["Ch5","Un produit de grande consommation est comment?",[["peu personnalis","peu couteux","pas cher","courant","frequent"]],"Peu personnalisé et peu coûteux"],
+["Ch5","Un produit industriel sert à quoi?",[["produire","fabriquer","production","autre produit"]],"À produire d'autres produits (il vise les entreprises)"],
+["Ch5","Le produit industriel est souvent plus ______ mais avec ______ d'acheteurs.",[["cher","couteux"],["moins","peu"]],"Plus cher, mais moins nombreux (moins d'acheteurs)"],
+["Ch5","Définis l'emballage (packaging).",[["protection","proteger"],["manutention","transport","manipul"]],"Ensemble d'opérations assurant la protection du produit et facilitant sa manutention"],
+["Ch5","Nomme les types de conditionnement.",[["individuel"],["lot","multiple","paquet"],["vrac"]],"Individuel, par lot, en vrac"],
+["Ch5","Nomme 2 autres éléments du conditionnement (à part le nombre d'articles).",[["graphisme","couleur","forme","apparence","esthetique"]],"Graphisme, couleur, forme du contenant, apparence, esthétique"],
+["Ch5","Définis la marque.",[["symbole","nom","logo"],["identifier","reconnaitre","distinguer"],["concurrent"]],"Symbole ou nom retenu par une entreprise pour identifier ses produits et les distinguer de ceux de ses concurrents"],
+["Ch5","Qu'est-ce qu'une marque maison?",[["distributeur","detaillant","magasin","commerce"]],"La marque du distributeur : elle appartient au détaillant (ex. Sélection, Le Choix du Président)"],
+["Ch5","Nomme les étapes du développement d'un produit.",[["idee","naissance"],["tri","selection"],["valeur","rentabilite","analyse"],["prototyp"],["test"],["commercialis"]],"Naissance des idées → tri des idées → analyse de valeur et de rentabilité → prototypage → test de marché → commercialisation"],
+["Ch5","Nomme les phases du cycle de vie d'un produit.",[["developpement"],["introduction","lancement"],["croissance"],["maturite"],["declin"]],"Développement → introduction → croissance → maturité → déclin"],
+["Ch5","Dans quelle phase du cycle de vie les profits sont-ils négatifs?",[["introduction","developpement","lancement"]],"Au développement et à l'introduction (lancement)"],
+["Ch5","Dans quelle phase les ventes atteignent-elles leur sommet?",[["maturite"]],"La maturité"],
+["Ch5","Nomme 3 éléments qui influencent la fixation du prix.",[["concurrent","positionnement","demande","cout","production","cycle de vie","marge","intermediaire","perception","qualite"]],"Avantages vs concurrents, positionnement, demande du marché, coûts et capacité de production, phase du cycle de vie, prix des concurrents, marges des intermédiaires, perception qualité-prix"],
+["Ch5","Le consommateur cherche un prix ______ et ______.",[["juste"],["raisonnable"]],"Juste et raisonnable"],
+["Ch5","Nomme les 3 stratégies de prix.",[["ecremage"],["penetration"],["dynamique","flexible"]],"Écrémage, pénétration, prix dynamique (flexible)"],
+["Ch5","Explique le prix d'écrémage.",[["nouveau","lancement","debut"],["cher","eleve","haut"]],"Vendre un nouveau produit à prix élevé au lancement (ex. téléviseur numérique)"],
+["Ch5","Explique le prix de pénétration.",[["bas","faible","pas cher","gratuit"],["concurrence","marche","part"]],"Vendre à bas prix pour entrer sur le marché et réduire la concurrence (ex. imprimante presque gratuite, cartouches chères)"],
+["Ch5","Explique le prix dynamique.",[["ajust","varie","change"],["offre","demande"]],"Le prix est ajusté en fonction de l'offre et de la demande (ex. billets d'avion, hôtels)"],
+["Ch5","Définis la distribution.",[["acheminement","transport","amener"],["ecoulement","vente","acquisition","client"]],"Les opérations qui assurent l'acheminement et l'écoulement d'un produit, de sa fabrication jusqu'à son acquisition"],
+["Ch5","La distribution vise à rendre le produit accessible comment? (3 éléments)",[["endroit","lieu"],["heure","moment"],["delai"]],"À l'endroit désiré, à l'heure désirée, dans un délai convenable"],
+["Ch5","Différence entre distribution directe et indirecte?",[["directe"],["indirecte"],["intermediaire"]],"Directe : l'entreprise vend elle-même (magasin, Internet, catalogue, distributrices). Indirecte : elle passe par des intermédiaires"],
+["Ch5","Nomme 4 types d'intermédiaires.",[["detaillant"],["grossiste"],["distributeur","agent"],["courtier","agent"]],"Détaillants, grossistes, distributeurs, agents, courtiers"],
+["Ch5","À qui vend un détaillant?",[["consommateur","client","public"]],"Aux consommateurs"],
+["Ch5","À qui vend un grossiste?",[["intermediaire","detaillant","autre"]],"À d'autres intermédiaires (ex. les détaillants)"],
+["Ch5","Que fait un courtier?",[["intermediaire","entre"],["acheteur","vendeur"]],"Il agit comme intermédiaire entre l'acheteur et le vendeur"],
+["Ch5","Nomme les 2 stratégies de distribution.",[["pull","attraction"],["push","pression"]],"Pull (attraction) et push (pression)"],
+["Ch5","Décris la stratégie pull (attraction).",[["publicite","pub","consommateur"],["distribution","detaillant","reseau","demande"]],"Entreprise → publicité → consommateurs → réseau de distribution : le client réclame le produit"],
+["Ch5","Décris la stratégie push (pression).",[["representant","vendeur","force de vente"],["reseau","distribution","detaillant"]],"Entreprise → représentants → réseau de distribution → consommateurs"],
+["Ch5","Nomme les 4 grandes catégories de moyens de communication.",[["publicite"],["vente personnelle"],["promotion des vente"],["medias sociaux","relations publiques"]],"La publicité (et le marketing relationnel), la vente personnelle, la promotion des ventes, les médias sociaux et les relations publiques"],
+["Ch5","Définis la publicité.",[["payee","paye"],["non personnelle","media","masse"],["annonceur","entreprise"]],"Toute forme payée et non personnelle de diffusion d'idées, de biens ou de services dans un média, au bénéfice d'un annonceur clairement désigné"],
+["Ch5","À quoi sert la publicité?",[["prevente","notoriete","connaitre","image"]],"Elle fait la prévente et donne la notoriété"],
+["Ch5","Qu'est-ce que le plan média?",[["selection","choix"],["media"]],"La sélection des médias en fonction de la tâche de communication et de la nature de la clientèle"],
+["Ch5","Qu'est-ce que le marketing relationnel (direct)?",[["lien","relation","confiance"],["personnalis","direct"]],"Technique visant à créer ou à entretenir des liens personnalisés de confiance entre le vendeur et le client (courriel, poste, téléphone) — pas en personne"],
+["Ch5","Qu'est-ce que la vente personnelle?",[["humain","personne","contact","face"],["client"]],"Le point de contact humain entre l'entreprise et la clientèle : communication à deux sens qui s'adapte au client (la force de vente)"],
+["Ch5","Définis la promotion des ventes.",[["stimul","augment","pousse"],["immediate","directe","rapide"]],"Interventions servant à stimuler la vente de manière directe, en entraînant une action immédiate"],
+["Ch5","Donne 3 exemples de promotion des ventes.",[["coupon","concours","prime","echantillon","degustation","rabais","code promo","casquette","kiosque"]],"Coupon-rabais, concours, prime dans une boîte de céréales, échantillon, dégustation, code promotionnel, objet promotionnel"],
+["Ch5","Définis les médias sociaux.",[["creation","partage","contenu"],["utilisateur","public"]],"Médias numériques qui facilitent la création et le partage de contenu généré par les utilisateurs; communication bidirectionnelle"],
+["Ch5","Définis les relations publiques.",[["image","positive","favorable"],["public","croissance"]],"Ensemble des techniques utilisées pour donner au public une image positive et créer un climat favorable à la croissance de l'entreprise"],
+["Ch5","Le 5e P vise quoi (2 éléments)?",[["fidelis","satisfaction","relation"],["service","personnalis","norme","qualite"]],"Développer une approche client (fidélisation), augmenter la satisfaction, offrir un service personnalisé et maintenir les normes de service"],
+["Ch5","Qu'est-ce qu'une norme de service?",[["taux de service","qualite","prestation","caracteristique"]],"L'ensemble des caractéristiques définissant le taux de service à assurer et la qualité de prestation à offrir"],
+["Cas","Une entreprise change la recette et le format de son jus : quel P?",[["produit"]],"Produit"],
+["Cas","Une entreprise ouvre une boutique en ligne : quel P?",[["place","distribution"]],"Place (distribution)"],
+["Cas","Une entreprise commandite un festival pour son image : quel P?",[["promotion","communication"]],"Promotion (relations publiques)"],
+["Cas","Une entreprise donne une formation au personnel pour mieux accueillir les clients : quel P?",[["people","personnel","5e","cinquieme"]],"People (5e P)"],
+["Cas","Une entreprise aligne ses prix sur ceux d'un concurrent : quel P?",[["prix"]],"Prix"],
+["Cas","Netflix ajuste son prix selon les forfaits et la demande : quelle stratégie de prix?",[["dynamique","flexible"]],"Prix dynamique"],
+["Cas","Un nouveau jeu vidéo sort à 89,99 $ et baisse à 39,99 $ 8 mois plus tard : quelle stratégie?",[["ecremage"]],"Écrémage"],
+["Cas","Un segment : « hommes de 25 à 30 ans, mode de vie festif, conduisent vite ». Nomme 2 critères utilisés.",[["demographique","age","sexe"],["psychologique","style de vie","gout"]],"Démographiques (âge, sexe) et psychologiques (style de vie)"],
+["Ch4","Différence entre le marketing spécialisé (B2C) et le marketing industriel (B2B)?",[["consommateur","grande consommation","particulier","public"],["entreprise","industriel","organisation"]],"B2C vise le consommateur (grande consommation); B2B vise les entreprises (moins d'acheteurs, achats plus gros et plus rationnels)"],
+["Ch4","Sur la figure des shampoings, que représente la grande partie du cercle?",[["offre du marche","tous","concurrent","ensemble","marche total"]],"L'offre du marché, c'est-à-dire l'ensemble des concurrents (ton segment n'est qu'une petite pointe)"],
+["Ch4","Dans l'exercice des véhicules, « mode de vie festif » correspond à quel critère?",[["psycholog"]],"Critère psychologique (style de vie)"],
+["Ch4","Dans l'exercice des véhicules, « revenu familial de 100 000 $ » correspond à quel critère?",[["demograph"]],"Critère démographique"],
+["Ch4","Dans l'exercice des véhicules, « habite une grande agglomération » correspond à quel critère?",[["geograph"]],"Critère géographique"],
+["Ch5","Nomme les 5 variables du marketing mix (version à 5).",[["produit"],["prix"],["distribution","place"],["communication","promotion"],["relation client","people","personnel"]],"Produit, prix, distribution, communication marketing et gestion de la relation client"],
+["Ch5","Les variables du marketing mix, c'est quoi par rapport à l'entreprise?",[["maitrise","controle","decide","interne"]],"Ce sont les variables que l'entreprise maîtrise (contrairement à PESTE, qu'elle subit)"],
+["Ch5","Comment s'appelle la zone du cycle de vie où les concurrents arrivent en force?",[["turbulence"]],"La zone de turbulence (fin de la croissance)"],
+["Ch5","En phase d'introduction, que fait surtout le marketing mix?",[["connaitre","notoriete","publicite","promouvoir","faire savoir"]],"Faire connaître le produit : beaucoup de publicité, distribution encore limitée, prix d'écrémage ou de pénétration"],
+["Ch5","En phase de maturité, que fait surtout le marketing mix?",[["promotion","rabais","fidelis","defendre","nouvelle version","prix"]],"Se défendre : promotions, rabais, nouvelles versions, fidélisation"],
+["Ch5","Que fait l'entreprise en phase de déclin?",[["retire","abandonne","reduire","relance","arrete"]],"Réduire les coûts, retirer le produit ou tenter de le relancer"],
+["Ch5","Nomme 3 caractéristiques du service qui le distinguent d'un bien.",[["intangible","touche"],["perissable","stock","garde","meme moment"],["variable","humain","insepar","qualite"]],"Intangible, périssable (non stockable), variable et inséparable de la personne qui le rend"],
+["Ch5","Qu'est-ce qu'un produit de conviction?",[["marque","fidele","tient","precis","convaincu","insiste"]],"Un produit pour lequel le client tient à une marque précise et refuse les substituts"],
+["Ch5","Pourquoi le marché industriel a-t-il moins d'acheteurs?",[["entreprise","production","specialis","industrie"]],"Parce qu'il s'adresse aux entreprises (les produits servent à en fabriquer d'autres), alors le nombre d'acheteurs est plus petit mais les achats sont plus gros"],
+["Ch5","Qu'est-ce que le plan média?",[["selection","choix"],["media"]],"La sélection des médias selon la tâche de communication et la nature de la clientèle"],
+["Ch5","Nomme 3 exemples de distribution directe.",[["magasin","internet","catalogue","distributrice","hors magasin","site"]],"Vente en magasin ou hors magasin, catalogue, Internet, distributrices automatiques"],
+["Ch5","La gestion de la relation client (5e P) sert à quoi?",[["fidelis","satisfaction","garder","relation","revenir"]],"Fidéliser : garder le client et augmenter sa satisfaction"],
+["Ch4","Nomme 3 méthodes de recherche marketing (tableau 4.3).",[["sondage","observation","entrevue","groupe de discussion","experimentation","client-mystere","client mystere","analyse statistique","forage","veille"]],"Sondage, observation, entrevue, groupe de discussion, expérimentation, client-mystère, analyse statistique, forage de données, veille concurrentielle"],
+["Ch4","Qu'est-ce que la veille concurrentielle?",[["concurrent","surveill","observ","info"]],"Surveiller en continu l'information sur les concurrents"],
+["Cas","Une entreprise ajoute un service d'assistance téléphonique 7 jours sur 7 : quel P?",[["people","personnel","5e","cinquieme","service"]],"People (5e P) — le service et la relation client"],
+["Cas","Un fabricant décide de vendre uniquement sur son propre site web : quel P?",[["place","distribution"]],"Place — distribution directe"],
+["Cas","Une marque de céréales met une prime (un jouet) dans la boîte : quel P?",[["promotion","communication"]],"Promotion — promotion des ventes"],
+["Rappel","Le marketing est l'une des 4 fonctions de l'entreprise. Nomme les 3 autres.",[["financ","compta"],["production","operation"],["ressources humaines","rh"]],"Finance-comptabilité, production/opérations, ressources humaines"],
+["Rappel","À quelle étape du PODC correspond le plan de marketing?",[["planifi"]],"Planifier"],
+["Rappel","Quelle analyse sert à trouver les opportunités et les menaces du marché?",[["ffom","swot","peste"]],"L'analyse FFOM (pour O et M), appuyée sur PESTE"],
+["Rappel","Que veut dire FFOM et à quelle étape du plan de marketing sert-il?",[["force"],["faiblesse"],["opportunit"],["menace"]],"Forces, faiblesses, opportunités, menaces — c'est l'étape 1 (l'analyse) du plan de marketing"],
+["Rappel","Dans FFOM, quels éléments sont internes?",[["force"],["faiblesse"]],"Les forces et les faiblesses"],
+["Rappel","Que veut dire PESTE?",[["politi"],["econom"],["social"],["technolog"],["ecolog","environnement"]],"Politique, Économique, Social, Technologique, Écologique"],
+["Rappel","PESTE analyse quel environnement?",[["externe","macro"]],"Le macro-environnement externe"],
+["Rappel","Nomme les 4 grandes fonctions de l'entreprise.",[["financ","compta"],["marketing"],["production","operation"],["ressources humaines","rh"]],"Finance-comptabilité, marketing, production, ressources humaines"],
+["Rappel","Que veut dire PODC?",[["planifi"],["organis"],["dirig"],["control"]],"Planifier, organiser, diriger, contrôler"],
+["Rappel","Qu'est-ce que la mission d'une entreprise?",[["raison d","pourquoi","but","existe"]],"Sa raison d'être, ce pour quoi elle a été créée"],
+["Rappel","Nomme les 5 besoins de Maslow, du bas vers le haut.",[["physio","base"],["securit"],["appartenance"],["estime"],["accomplissement","realisation"]],"Physiologiques, sécurité, appartenance, estime, accomplissement"],
+["Rappel","En économie, un bien qui sert à en fabriquer un autre s'appelle un bien ______ (l'équivalent du produit industriel).",[["intermediaire"]],"Bien intermédiaire"],
+["Rappel","Deux produits qui se remplacent (Pepsi et Coke) sont des biens ______.",[["substitu"]],"Substituts"],
+["Rappel","Le prix d'équilibre d'un marché est déterminé par quoi?",[["offre"],["demande"]],"L'offre et la demande"],
+["Rappel","Une nouvelle loi qui touche l'étiquetage des produits, c'est quelle lettre de PESTE?",[["politi","jurid"]],"Politique (et juridique)"],
+["Rappel","Le vieillissement de la population, c'est quelle lettre de PESTE?",[["social"]],"Social"],
+];
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ").replace(/\s+/g," ");
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];for(let j=1;j<=b.length;j++)m[i][j]=i?Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)):j;}return m[a.length][b.length];}
+function has(a,kk){
+ if(a.includes(kk))return true;
+ if(kk.includes(" ")||kk.length<5)return false;
+ const tol=kk.length>=8?2:1;
+ return a.split(/[^a-z0-9-]+/).some(w=>{for(let L=kk.length-1;L<=kk.length+1;L++){if(w.length>=L-1&&lev(w.slice(0,L),kk)<=tol)return true;}return false;});
+}
+function check(q,a){
+ a=norm(a).replace(/\bil+imit/g,"illimit").replace(/\bdecentrali/g,"decentrali");
+ const noIll=a.replace(/illimit\w*/g,""), noDec=a.replace(/decentralis\w*/g,"");
+ return q[2].every(g=>g.some(k=>{const kk=norm(k);
+   if(/^\d+$/.test(kk))return new RegExp("(^|\\D)"+kk+"(\\D|$)").test(a);
+   if(kk==="limit")return /limit/.test(noIll);
+   if(kk==="centralisation")return has(noDec,kk);
+   if(kk==="illimit")return /illimit/.test(a);
+   if(["micro","macro","officieuse"].includes(kk))return a.includes(kk.slice(0,5));
+   return has(a,kk);}));
+}
+const TRUC={
+"Que veulent dire les 4P":"🧠 <b>Produit, Prix, Place, Promotion</b> (+ <b>People</b>). En français : ce qu'on vend, combien, où, ce qu'on dit, et comment on traite le client.",
+"Nomme les 4 catégories de critères de segmentation":"🧠 <b>G-D-P-C</b> : <b>G</b>éographique (où il vit), <b>D</b>émographique (qui il est), <b>P</b>sychologique (ce qu'il pense), <b>C</b>omportemental (ce qu'il fait en achetant).",
+"Dans quel ordre fait-on segmentation":"🧠 <b>S-C-P</b> : je <b>découpe</b> le gâteau, je <b>choisis ma pointe</b>, je décide <b>quel goût elle a dans leur tête</b>.",
+"Nomme les 6 étapes du plan de marketing":"🧠 <b>FFOM → SCP → Stratégie d'entreprise → Stratégie marketing → Mix → Plan</b>. On analyse, on choisit à qui, on choisit comment gagner, puis on bâtit les 4P.",
+"Nomme les 3 stratégies de prix":"🧠 <b>Écrémage = cher au début</b> (on écrème la crème, les clients prêts à payer). <b>Pénétration = bas pour entrer</b>. <b>Dynamique = ça bouge</b> avec l'offre et la demande.",
+"Nomme les 2 stratégies de distribution":"🧠 <b>Pull</b> = la pub <b>tire</b> le client vers le produit. <b>Push</b> = les représentants <b>poussent</b> le produit dans les tablettes.",
+"Nomme les phases du cycle de vie":"🧠 <b>D-I-C-M-D</b> : Développement, Introduction, Croissance, Maturité, Déclin. Comme une vie : bébé, jeune, adulte, vieux.",
+"Nomme les étapes du développement d'un produit":"🧠 <b>Idées → tri → rentabilité → prototype → test → commercialisation</b> : on part de 100 idées et il en reste une sur le marché.",
+"Nomme les 5 étapes du processus d'achat":"🧠 <b>Besoin → Info → Évaluation → Achat → Après-achat</b>. N'oublie jamais la 5e : c'est elle qui fait la fidélité.",
+"Nomme les 4 formes d'utilité":"🧠 <b>F-T-E-P</b> : Forme (on le fabrique), Temps (quand je veux), Emplacement (où je veux), Possession (facile à obtenir).",
+"Nomme les 4 grandes catégories de moyens de communication":"🧠 <b>Pub · Vente personnelle · Promotion des ventes · Médias sociaux et RP</b>. Payé et de masse / humain / action immédiate / image et partage.",
+"Différence entre données primaires et secondaires":"🧠 <b>Secondaire = seconde main</b> (quelqu'un d'autre l'a déjà ramassée). <b>Primaire = je vais la chercher moi-même</b>.",
+"Définis la publicité":"🧠 3 mots-clés à écrire : <b>payée</b>, <b>non personnelle</b>, <b>annonceur clairement désigné</b>.",
+"Définis la promotion des ventes":"🧠 Le mot-clé, c'est <b>action immédiate</b> : coupon, concours, échantillon → tu achètes maintenant.",
+"Que veut dire FFOM":"🧠 Interne = <b>Forces/Faiblesses</b>, externe = <b>Opportunités/Menaces</b>. C'est l'étape 1 du plan de marketing.",
+"Que veut dire PESTE":"🧠 <b>P</b>olitique, <b>É</b>conomique, <b>S</b>ocial, <b>T</b>echnologique, <b>É</b>cologique — le macro-environnement externe.",
+"Nomme les 5 besoins de Maslow":"🧠 <b>P-S-A-E-A</b> = « Pas Sans Avoir Envie d'Avancer ».",
+"Définis le produit":"🧠 Le mot à écrire, c'est <b>promesse</b> : promesse de satisfaire un besoin.",
+"Définis la segmentation du marché":"🧠 Mots-clés : <b>diviser en groupes semblables</b> selon leurs <b>besoins</b> ou leur <b>comportement d'achat</b>.",
+"Définis le positionnement":"🧠 Le mot qui rapporte les points : <b>dans l'esprit</b> du client, <b>par rapport aux concurrents</b>."
+};
+const truc=q=>{for(const k in TRUC)if(q[1].startsWith(k))return TRUC[k];return"";};
+let order,i,score,wrong,done,round=1;
+function start(list){order=list.slice().sort(()=>Math.random()-.5);i=0;score=0;wrong=[];render();}
+const app=document.getElementById('app');
+function render(){
+ if(i>=order.length)return end();
+ const q=order[i];done=false;
+ app.innerHTML=`<div class="top"><span>Question ${i+1}/${order.length} ${round>1?"(reprise des erreurs)":""}</span><span>Score : ${score}</span></div>
+ <div class="bar"><div style="width:${i/order.length*100}%"></div></div>
+ <span class="ch ch-${q[0]}">${q[0]}</span><h2>${q[1]}</h2>
+ <input id="a" autocomplete="off" placeholder="Écris ta réponse…">
+ <div class="hint">Entrée = valider · accents, majuscules et petites fautes d'orthographe acceptés</div>
+ <div id="f"></div><div id="b"><button class="p" onclick="sub()">Valider</button><button class="s" onclick="sub(true)">Je sais pas</button></div>`;
+ const inp=document.getElementById('a');inp.focus();
+ inp.onkeydown=e=>{if(e.key==="Enter"){done?next():sub()}};
+}
+window.sub=function(skip){if(done)return;done=true;const q=order[i],a=document.getElementById('a').value;
+ const ok=!skip&&a.trim()&&check(q,a);if(ok)score++;else wrong.push(q);
+ document.getElementById('f').innerHTML=`<div class="fb ${ok?'ok':'no'}">${ok?'✅ Bonne réponse!':'❌ Pas tout à fait.'}<br><b>Réponse :</b> ${q[3]}${truc(q)?'<div style="margin-top:6px">'+truc(q)+'</div>':''}</div>`;
+ document.getElementById('b').innerHTML=`<button class="p" onclick="next()">Suivante →</button>${ok?'':(a.trim()?'<button class="s" onclick="override()">J\'avais raison</button>':'')}`;
+ document.getElementById('a').focus();
+};
+window.hint=function(){const t=truc(order[i]);document.getElementById('f').innerHTML=`<div class="fb" style="background:#fff8db;border-left:4px solid #d4a017">${t}</div>`;document.getElementById('a').focus();};
+window.override=function(){score++;wrong.pop();next();};
+window.next=function(){i++;render();};
+function end(){const pct=Math.round(score/order.length*100);
+ app.innerHTML=`<h2>Terminé! ${score}/${order.length} (${pct} %)</h2>
+ <p>${pct>=90?'🔥 T\'es prêt.':pct>=70?'👍 Bon, révise les erreurs ci-dessous.':'📖 Relis la fiche pour les sujets manqués, puis refais les erreurs.'}</p>
+ ${wrong.length?`<h3>À revoir :</h3><ul>${wrong.map(q=>`<li><b>${q[1]}</b><br>→ ${q[3]}${truc(q)?'<br><small>'+truc(q)+'</small>':''}</li>`).join('')}</ul>
+ <button class="p" onclick="retry()">Refaire seulement mes erreurs (${wrong.length})</button>`:''}
+ <button class="s" onclick="round=1;start(Q)">Recommencer tout</button>`;}
+window.retry=function(){round++;start(wrong);};
+start(Q);
+
+</script></body></html>
