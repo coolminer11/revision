@@ -1,135 +1,280 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Révisions</title>
+<title>Cahier de révision</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f7fb;--bg2:#eceffa;--pan:#fff;--tx:#10131a;--mut:#6b7280;--line:#e4e8f0;--sh:0 1px 2px #0b0d1208,0 8px 24px #0b0d120a}
-@media(prefers-color-scheme:dark){:root{--bg:#0a0c11;--bg2:#10141d;--pan:#141922;--tx:#eef1f7;--mut:#94a0b4;--line:#222a37;--sh:0 1px 2px #0006,0 10px 30px #0006}}
+:root{--paper:#f3efe6;--sheet:#fbf9f4;--ink:#1c1b19;--soft:#6e6a62;--rule:#d9d3c5;--red:#c23a22;--hl:#f6e27a}
+@media(prefers-color-scheme:dark){:root{--paper:#161513;--sheet:#1e1d1a;--ink:#ece8de;--soft:#9b968b;--rule:#34312b;--red:#e2614a;--hl:#6b5b14}}
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--tx);background:var(--bg);min-height:100vh;
- background-image:radial-gradient(60vw 40vh at 15% -10%,#6366f126,transparent 60%),radial-gradient(50vw 35vh at 95% 0%,#22d3ee1f,transparent 60%)}
-.w{max-width:1000px;margin:auto;padding:38px 20px 60px}
-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:26px}
-h1{font-family:"Instrument Serif",Georgia,serif;font-weight:400;font-size:clamp(2.6rem,7vw,4rem);line-height:1;margin:0 0 10px;letter-spacing:-.01em}
-h1 em{font-style:italic;background:linear-gradient(100deg,#6366f1,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
-.tag{color:var(--mut);font-size:1.02rem;max-width:44ch}
-.stats{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.pill{font-size:.78rem;color:var(--mut);border:1px solid var(--line);background:var(--pan);border-radius:99px;padding:5px 11px}
-.icbtn{border:1px solid var(--line);background:var(--pan);color:var(--tx);border-radius:12px;padding:10px 14px;cursor:pointer;font:inherit;font-size:.88rem;box-shadow:var(--sh);white-space:nowrap}
-.icbtn:hover{border-color:#6366f1}
-.search{position:relative;margin:4px 0 30px}
-.search input{width:100%;font:inherit;font-size:1rem;padding:14px 16px 14px 44px;border-radius:14px;border:1px solid var(--line);background:var(--pan);color:var(--tx);box-shadow:var(--sh)}
-.search input:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 4px #6366f11f}
-.search span{position:absolute;left:16px;top:13px;opacity:.5}
-.sec{margin-bottom:34px}
-.sh{display:flex;align-items:center;gap:10px;margin:0 0 14px}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--a)}
-.sh h2{font-size:1.05rem;font-weight:600;margin:0;letter-spacing:.01em}
-.sh .c{font-size:.75rem;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:2px 8px}
-.line{flex:1;height:1px;background:var(--line)}
-.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
-.card{position:relative;display:block;text-decoration:none;color:inherit;background:var(--pan);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--sh);transition:transform .18s cubic-bezier(.2,.8,.3,1),border-color .18s,box-shadow .18s;overflow:hidden}
-.card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,var(--a),transparent);opacity:0;transition:.18s}
-.card:hover{transform:translateY(-4px);border-color:var(--a);box-shadow:0 14px 34px #0b0d1214}
-.card:hover:before{opacity:1}
-.ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.25rem;background:color-mix(in srgb,var(--a) 14%,transparent);border:1px solid color-mix(in srgb,var(--a) 28%,transparent)}
-.ti{font-weight:600;margin:12px 0 6px;font-size:1.02rem;line-height:1.3}
-.me{font-size:.78rem;color:var(--mut);display:flex;gap:8px;align-items:center}
-.kind{border:1px solid var(--line);border-radius:99px;padding:1px 8px}
-.ph{border-style:dashed;background:transparent;cursor:pointer;display:grid;place-items:center;min-height:132px;text-align:center;color:var(--mut)}
-.ph:hover{color:var(--tx)}
-.ph .ic{margin:auto;border-style:dashed}
-.del{position:absolute;top:10px;right:10px;border:1px solid var(--line);background:var(--pan);color:#e5484d;border-radius:9px;width:28px;height:28px;cursor:pointer;font-size:.9rem;line-height:1;opacity:0;transition:.15s}
-.card:hover .del{opacity:1}.del:hover{background:#e5484d;color:#fff;border-color:#e5484d}
-.panel{background:var(--pan);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--sh);margin-bottom:28px}
-.panel b{font-size:1rem}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1;min-width:170px}
-.panel input,.panel select{font:inherit;padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:var(--bg2);color:var(--tx);width:100%}
-.panel input:focus,.panel select:focus{outline:none;border-color:#6366f1}
-.go{flex:0 0 auto!important;background:linear-gradient(100deg,#6366f1,#4f46e5);color:#fff;border:0;border-radius:11px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer}
-.drop{margin-top:12px;border:2px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--mut);cursor:pointer;transition:.15s}
-.drop.on,.drop:hover{border-color:#6366f1;color:var(--tx);background:#6366f10a}
-.log{font-size:.85rem;color:var(--mut);margin-top:10px;min-height:1.2em}
-.msg{background:var(--pan);border:1px solid var(--line);border-radius:16px;padding:20px;color:var(--mut);box-shadow:var(--sh)}
-footer{margin-top:40px;color:var(--mut);font-size:.8rem;text-align:center}
-@media(max-width:560px){.w{padding:26px 16px 50px}header{flex-direction:column}}
-</style></head><body><div class="w">
-<header><div><h1>Mes <em>révisions</em></h1><div class="tag">Quiz, fiches et exercices. Tout roule dans ton navigateur, rien à installer.</div>
-<div class="stats" id="stats"></div></div><button class="icbtn" onclick="toggleAdmin()">⚙️ Gérer</button></header>
-<div class="panel" id="adm" hidden></div>
-<div class="search"><span>🔍</span><input id="q" placeholder="Chercher une matière, un quiz…" oninput="draw()"></div>
-<div id="out"><div class="msg">Chargement…</div></div>
-<footer>Ajoute un quiz avec ⚙️ Gérer</footer></div>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.wrap{max-width:980px;margin:0 auto;padding:40px 22px 80px}
+/* entête */
+.top{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:18px}
+.top h1{font-family:Newsreader,Georgia,serif;font-weight:400;font-size:clamp(2.4rem,6vw,3.6rem);line-height:1;margin:0;letter-spacing:-.015em}
+.top p{margin:8px 0 0;color:var(--soft)}
+.meta{font-size:12px;color:var(--soft);text-align:right;line-height:1.7}
+.btn{border:1px solid var(--ink);background:transparent;padding:7px 12px;border-radius:2px;font-size:13px}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.red{border-color:var(--red);color:var(--red)}.btn.red:hover{background:var(--red);color:#fff}
+.btn.fill{background:var(--ink);color:var(--paper)}.btn.fill:hover{background:var(--red);border-color:var(--red)}
+/* examens */
+.exams{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--rule);margin:0 -2px}
+.ex{flex:0 0 auto;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;padding:14px 22px 14px 2px;border-right:1px dashed var(--rule);margin-right:20px;align-items:center}
+.ex:last-child{border-right:0}
+.ex .d{grid-row:span 2;font-family:Newsreader,serif;font-size:2.1rem;line-height:1;text-align:center;min-width:44px}
+.ex .d small{display:block;font:500 11px "IBM Plex Mono",monospace;text-transform:uppercase;color:var(--soft)}
+.ex .t{font-weight:600;font-size:14px}.ex .s{font-size:12px;color:var(--soft)}
+.ex .s b{color:var(--red);font-weight:600}
+/* outils */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:22px 0 8px}
+.search{flex:1 1 240px;border:0;border-bottom:1px solid var(--ink);background:transparent;padding:8px 2px;font:inherit;color:var(--ink);outline:none}
+.search::placeholder{color:var(--soft)}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 4px}
+.chip{border:1px solid var(--rule);background:transparent;padding:3px 10px;border-radius:2px;font:500 12px "IBM Plex Mono",monospace;color:var(--soft)}
+.chip:hover{border-color:var(--ink);color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+/* matières */
+.subj{margin-top:42px}
+.sh{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:6px}
+.sh .n{font:500 13px "IBM Plex Mono",monospace;color:var(--red)}
+.sh h2{font-family:Newsreader,serif;font-weight:400;font-size:1.75rem;margin:0;line-height:1.1}
+.sh .c{font-size:12px;color:var(--soft)}
+.sh .c b{color:var(--red);font-weight:600}
+.row{display:grid;grid-template-columns:74px 1fr auto;gap:14px;align-items:center;padding:11px 2px;border-bottom:1px solid var(--rule)}
+.row:hover{background:var(--sheet)}
+.tag{white-space:nowrap;font:500 11px "IBM Plex Mono",monospace;letter-spacing:.04em;border:1px solid currentColor;padding:2px 6px;text-align:center;border-radius:2px;color:var(--soft)}
+.tag.quiz{color:var(--red)}.tag.fiche,.tag.note{color:var(--ink)}
+.ti{min-width:0}
+.ti a,.ti button.lk{font-weight:500;text-decoration:none;background:none;border:0;padding:0;text-align:left;font-size:15px}
+.ti a:hover,.ti button.lk:hover{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:3px}
+.ti .f{display:block;font-size:12px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act{display:flex;gap:6px;align-items:center}
+.ib{border:0;background:none;padding:4px 6px;font-size:12px;color:var(--soft);text-decoration:underline;text-underline-offset:3px}
+.ib:hover{color:var(--ink)}.ib.x:hover{color:var(--red)}
+.slot .ti{color:var(--soft);font-style:italic}
+.gal{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--rule)}
+.gal figure{margin:0;width:118px;position:relative}
+.gal img{width:118px;height:88px;object-fit:cover;border:1px solid var(--rule);display:block;cursor:zoom-in;background:var(--sheet)}
+.gal figcaption{font-size:11px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gal .ib{position:absolute;top:2px;right:2px;background:var(--sheet);text-decoration:none}
+.empty{padding:40px 0;color:var(--soft);font-style:italic;text-align:center}
+footer{margin-top:60px;font-size:12px;color:var(--soft);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+/* tiroir de gestion */
+.veil{position:fixed;inset:0;background:#0006;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.veil.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(470px,100%);background:var(--sheet);border-left:2px solid var(--ink);transform:translateX(100%);transition:.25s ease;z-index:21;display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--rule)}
+.dh h3{font-family:Newsreader,serif;font-weight:400;font-size:1.5rem;margin:0}
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:0 14px}
+.tab{border:0;background:none;padding:10px 8px;font:500 12px "IBM Plex Mono",monospace;color:var(--soft);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--ink);border-color:var(--red)}
+.db{padding:18px 20px;overflow-y:auto;flex:1}
+label.l{display:block;font:500 11px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.05em;color:var(--soft);margin:14px 0 4px}
+.in{width:100%;border:1px solid var(--rule);background:var(--paper);color:var(--ink);padding:9px 10px;font:inherit;border-radius:2px}
+.in:focus{outline:2px solid var(--ink);outline-offset:-1px}
+textarea.in{min-height:220px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55}
+.drop{margin-top:14px;border:1.5px dashed var(--soft);padding:28px 14px;text-align:center;color:var(--soft);cursor:pointer}
+.drop.on,.drop:hover{border-color:var(--red);color:var(--ink);background:var(--paper)}
+.drop b{color:var(--ink)}
+.log{font-size:13px;color:var(--soft);margin-top:12px;white-space:pre-line}
+.li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:14px}
+.li span small{color:var(--soft)}
+.hint{font-size:13px;color:var(--soft);margin:6px 0 0}
+/* visionneuse */
+.view{position:fixed;inset:0;z-index:30;background:#000c;display:none;align-items:center;justify-content:center;padding:20px}
+.view.on{display:flex}
+.view img{max-width:100%;max-height:88vh;border:1px solid #fff3}
+.paperv{background:var(--sheet);color:var(--ink);max-width:760px;width:100%;max-height:88vh;overflow:auto;padding:30px 34px;border:1px solid var(--rule)}
+.paperv h1,.paperv h2,.paperv h3{font-family:Newsreader,serif;font-weight:600;line-height:1.2}
+.paperv code{background:var(--paper);padding:1px 4px}
+.vx{position:fixed;top:14px;right:18px;color:#fff;background:none;border:1px solid #fff8;padding:5px 11px;font-size:13px;z-index:31}
+@media(max-width:620px){.wrap{padding:26px 16px 70px}.top{grid-template-columns:1fr}.meta{text-align:left}
+ .row{grid-template-columns:66px 1fr;gap:10px}.tag{font-size:10px;padding:2px 4px}.act{grid-column:2;justify-content:flex-start;margin-top:-6px}}
+@media print{.tools,.chips,footer,.act,.btn{display:none!important}}
+</style></head><body>
+<div class="wrap">
+ <header class="top"><div><h1 id="ttl">Cahier de révision</h1><p id="stl">Quiz, notes et fiches pour réussir la session.</p></div>
+  <div class="meta"><div id="cnt" class="mono"></div><button class="btn" id="admBtn" onclick="openD()">Gérer</button></div></header>
+ <div class="exams" id="exams"></div>
+ <div class="tools"><input class="search" id="q" placeholder="Rechercher…" oninput="draw()"></div>
+ <div class="chips" id="subChips"></div>
+ <div class="chips" id="typeChips"></div>
+ <main id="out"><div class="empty">Chargement du cahier…</div></main>
+ <footer><span>Ouvre un quiz : tout roule dans ton navigateur.</span><span class="mono" id="foot"></span></footer>
+</div>
+<div class="veil" id="veil" onclick="closeD()"></div>
+<aside class="drawer" id="drawer"><div class="dh"><h3>Gérer le cahier</h3><button class="btn" onclick="closeD()">Fermer</button></div><div id="dbody" style="display:flex;flex-direction:column;flex:1;min-height:0"></div></aside>
+<div class="view" id="view" onclick="if(event.target===this)closeV()"><button class="vx" onclick="closeV()">Fermer ✕</button><div id="vbody" style="display:contents"></div></div>
 <script>
-const $=i=>document.getElementById(i),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const AC=["#6366f1","#10b981","#f59e0b","#ec4899","#06b6d4","#8b5cf6"];
-const accent=s=>AC[[...s].reduce((a,c)=>a+c.charCodeAt(0),0)%AC.length];
-let items=[],phs=[];
-function repo(){const h=location.hostname,p=location.pathname.split("/").filter(Boolean);if(!h.endsWith(".github.io"))return null;
- return{user:h.split(".")[0],name:(p[0]&&!p[0].endsWith(".html"))?p[0]:h};}
-function kind(f){f=f.toLowerCase();return f.includes("fiche")?["📘","Fiche"]:f.includes("entrain")?["🏋️","Entraînement"]:f.includes("flash")?["🃏","Flashcards"]:["🎯","Quiz"];}
-const pretty=f=>f.replace(/\.html?$/i,"").replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+"use strict";
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const TYPES={html:["QUIZ","quiz","Entraînement"],pdf:["PDF","doc","Notes"],png:["IMAGE","img","Images"],jpg:["IMAGE","img","Images"],jpeg:["IMAGE","img","Images"],webp:["IMAGE","img","Images"],gif:["IMAGE","img","Images"],heic:["IMAGE","img","Images"],
+ doc:["WORD","doc","Notes"],docx:["WORD","doc","Notes"],ppt:["PPT","doc","Notes"],pptx:["PPT","doc","Notes"],xls:["EXCEL","doc","Notes"],xlsx:["EXCEL","doc","Notes"],md:["NOTE","note","Notes"],txt:["NOTE","note","Notes"]};
+const OFFICE=["doc","docx","ppt","pptx","xls","xlsx"];
+const ext=f=>(f.split(".").pop()||"").toLowerCase();
+function typeOf(it){const e=ext(it.file);let t=TYPES[e]||["FICHIER","doc","Notes"];if(e==="html"&&/fiche|feuille|resume|résumé/i.test(it.file+it.title))t=["FICHE","fiche","Notes"];if(e==="htm")t=TYPES.html;return t;}
+const pretty=f=>f.replace(/\.[^.]+$/,"").replace(/[_-]+/g," ").replace(/\s+/g," ").trim().replace(/^./,c=>c.toUpperCase());
+const size=b=>b==null?"":b<1024?b+" o":b<1048576?(b/1024).toFixed(0)+" Ko":(b/1048576).toFixed(1).replace(".",",")+" Mo";
+const slug=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9._-]+/g,"_").replace(/_+/g,"_").replace(/^_|_$/g,"");
+const b64txt=s=>btoa(unescape(encodeURIComponent(s)));
+const b64file=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=ko;r.readAsDataURL(f);});
+const apiPath=p=>p.split("/").map(encodeURIComponent).join("/");
+const urlOf=p=>p.split("/").map(encodeURIComponent).join("/");
+
+/* dépôt GitHub */
+function repo(){const qs=new URLSearchParams(location.search).get("repo");if(qs&&qs.includes("/")){const[a,b]=qs.split("/");return{user:a,name:b};}
+ const h=location.hostname,p=location.pathname.split("/").filter(Boolean);if(!h.endsWith(".github.io"))return null;
+ return{user:h.split(".")[0],name:(p[0]&&!/\.html?$/.test(p[0]))?p[0]:h};}
 let TOKEN=null;try{TOKEN=localStorage.getItem("gh_token");}catch(e){}
-if(location.hash.startsWith("#t=")){TOKEN=decodeURIComponent(location.hash.slice(3));try{localStorage.setItem("gh_token",TOKEN);}catch(e){}history.replaceState(null,"",location.pathname);}
+if(location.hash.startsWith("#t=")){TOKEN=decodeURIComponent(location.hash.slice(3));try{localStorage.setItem("gh_token",TOKEN);}catch(e){}history.replaceState(null,"",location.pathname+location.search);}
 const admin=()=>!!TOKEN;
-async function gh(m,u,b){const r=repo();const res=await fetch(`https://api.github.com/repos/${r.user}/${r.name}${u}`,{method:m,headers:{Authorization:"Bearer "+TOKEN,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:b?JSON.stringify(b):undefined});
- if(!res.ok)throw new Error((await res.json().catch(()=>({}))).message||res.status);return res.status===204?null:res.json();}
-function toggleAdmin(){$("adm").hidden=!$("adm").hidden;renderAdmin();if(!$("adm").hidden)$("adm").scrollIntoView({behavior:"smooth",block:"nearest"});}
-function renderAdmin(sub){const a=$("adm");if(a.hidden&&sub===undefined)return;
- if(!admin()){a.innerHTML=`<b>Connexion propriétaire</b><div class="log">Colle ta clé GitHub. Elle reste seulement dans ce navigateur — les visiteurs ne voient rien de tout ça.</div>
-  <div class="row"><input id="tok" type="password" placeholder="ghp_…"><button class="go" onclick="login()">Connexion</button></div><div class="log" id="lg"></div>`;return;}
- const subs=[...new Set([...items.map(i=>i.subject),...phs.map(p=>p.subject)])].sort();
- a.innerHTML=`<div class="row" style="margin:0;justify-content:space-between;align-items:center"><b>✅ Mode gestion</b><button class="icbtn" style="flex:0" onclick="logout()">Déconnexion</button></div>
-  <div class="row"><select id="sub">${subs.map(s=>`<option${s===sub?" selected":""}>${esc(s)}</option>`).join("")}<option value="__new">➕ Nouvelle matière…</option></select><input id="newsub" placeholder="Nom de la nouvelle matière" hidden></div>
-  <div class="drop" id="drop">📥 Glisse tes fichiers .html ici — ou clique pour choisir</div><input type="file" id="fi" accept=".html,.htm" multiple hidden>
-  <div class="log" id="lg">Pour supprimer : survole un quiz et clique le ✕.</div>`;
- const sel=$("sub"),ns=$("newsub");sel.onchange=()=>{ns.hidden=sel.value!=="__new";if(!ns.hidden)ns.focus();};if(!subs.length){sel.value="__new";ns.hidden=false;}
- const d=$("drop"),fi=$("fi");d.onclick=()=>fi.click();fi.onchange=()=>upload([...fi.files]);
- d.ondragover=e=>{e.preventDefault();d.classList.add("on")};d.ondragleave=()=>d.classList.remove("on");d.ondrop=e=>{e.preventDefault();d.classList.remove("on");upload([...e.dataTransfer.files]);};}
-async function login(){TOKEN=$("tok").value.trim();$("lg").textContent="Vérification…";
- try{const i=await gh("GET","");if(!i.permissions||!i.permissions.push)throw new Error("cette clé ne peut pas modifier ce dépôt");try{localStorage.setItem("gh_token",TOKEN);}catch(e){}renderAdmin();draw();}
- catch(e){TOKEN=null;$("lg").textContent="❌ "+e.message;}}
-function logout(){TOKEN=null;try{localStorage.removeItem("gh_token");}catch(e){}renderAdmin();draw();}
-window.fillSlot=function(sub){$("adm").hidden=false;renderAdmin(sub);$("adm").scrollIntoView({behavior:"smooth",block:"center"});};
-const b64=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(",")[1]);r.onerror=ko;r.readAsDataURL(f);});
-async function upload(files){const sel=$("sub").value,lg=$("lg");
- const subject=(sel==="__new"?$("newsub").value:sel).trim().replace(/[\\/]+/g,"-");
- if(!subject){lg.textContent="❌ Donne un nom à la matière.";return;}
- for(const f of files){if(!/\.html?$/i.test(f.name)){lg.textContent=`⏭️ ${f.name} ignoré (pas un .html)`;continue;}
-  const p=`quiz/${subject}/${f.name.replace(/\s+/g,"_")}`;lg.textContent=`⏳ ${f.name}…`;
-  try{const old=items.find(i=>i.path===p);const body={message:"Ajout "+p,content:await b64(f)};if(old&&old.sha)body.sha=old.sha;
-   const r=await gh("PUT","/contents/"+encodeURI(p),body);const it={path:p,sha:r.content.sha,file:p.split("/").pop(),subject,title:pretty(p.split("/").pop())};
-   const t=(await f.text()).match(/<title>([^<]*)<\/title>/i);if(t&&t[1].trim())it.title=t[1].trim();
-   items=items.filter(i=>i.path!==p).concat(it);draw();lg.textContent=`✅ ${f.name} ajouté`;}
-  catch(e){lg.textContent=`❌ ${f.name} : ${e.message}`;}}
- renderAdmin();$("lg").textContent="✅ Terminé — en ligne dans environ 1 minute.";}
-window.del=async function(path,ev){ev.preventDefault();ev.stopPropagation();const it=items.find(i=>i.path===path);
- if(!confirm(`Supprimer « ${it.title} » ?`))return;
- try{await gh("DELETE","/contents/"+encodeURI(path),{message:"Suppression "+path,sha:it.sha});items=items.filter(i=>i.path!==path);draw();renderAdmin();}
- catch(e){alert("Erreur : "+e.message);}}
+async function gh(method,path,body){const r=repo();const h={Accept:"application/vnd.github+json"};if(TOKEN)h.Authorization="Bearer "+TOKEN;if(body)h["Content-Type"]="application/json";
+ const res=await fetch(`https://api.github.com/repos/${r.user}/${r.name}${path}`,{method,headers:h,body:body?JSON.stringify(body):undefined});
+ if(!res.ok){const j=await res.json().catch(()=>({}));const e=new Error(j.message||("Erreur "+res.status));e.status=res.status;throw e;}
+ return res.status===204?null:res.json();}
+
+/* état */
+let items=[],cfg={title:"",subtitle:"",exams:[],links:[],slots:[],titles:{}},cfgSha=null,fSub="all",fType="all";
+const SUBS=()=>[...new Set([...items.map(i=>i.subject),...cfg.links.map(l=>l.subject),...cfg.slots.map(s=>s.subject),...cfg.exams.map(e=>e.subject)])].filter(Boolean).sort((a,b)=>a.localeCompare(b,"fr"));
+const titleOf=it=>cfg.titles[it.path]||it.title;
+
+async function loadCfg(){
+ if(admin()){try{const j=await gh("GET","/contents/site.json");cfgSha=j.sha;Object.assign(cfg,JSON.parse(decodeURIComponent(escape(atob(j.content.replace(/\n/g,""))))));return;}catch(e){if(e.status!==404)console.warn(e);}}
+ try{const r=await fetch("site.json?"+Date.now());if(r.ok){Object.assign(cfg,await r.json());return;}}catch(e){}
+ try{const r=await fetch("emplacements.json?"+Date.now());if(r.ok)cfg.slots=(await r.json()).map(s=>({subject:s.subject,title:s.title}));}catch(e){}}
+async function saveCfg(msg){if(cfgSha===null){try{cfgSha=(await gh("GET","/contents/site.json")).sha;}catch(e){cfgSha=undefined;}}
+ const body={message:msg,content:b64txt(JSON.stringify(cfg,null,2))};if(cfgSha)body.sha=cfgSha;
+ const r=await gh("PUT","/contents/site.json",body);cfgSha=r.content.sha;}
+
 async function load(){const r=repo();
- if(!r){$("out").innerHTML='<div class="msg">Cette page liste les quiz automatiquement une fois en ligne sur GitHub Pages.</div>';return;}
+ if(!r){$("out").innerHTML='<div class="empty">Ce cahier se remplit tout seul une fois publié sur GitHub Pages.</div>';drawHead();return;}
+ await loadCfg();
  let tree=null;
- for(const br of["main","master"]){try{const res=await fetch(`https://api.github.com/repos/${r.user}/${r.name}/git/trees/${br}?recursive=1`);if(res.ok){tree=await res.json();break;}}catch(e){}}
- if(!tree){$("out").innerHTML='<div class="msg">Impossible de lire la liste des quiz. Réessaie dans une minute.</div>';return;}
- items=tree.tree.filter(x=>x.type==="blob"&&/^quiz\/.+\.html?$/i.test(x.path)).map(x=>{const p=x.path.split("/"),file=p.pop();
-  return{path:x.path,sha:x.sha,file,subject:p.length>1?p.slice(1).join(" / "):"Divers",title:pretty(file)}});
- try{const p=await fetch("emplacements.json?"+Date.now());if(p.ok)phs=await p.json();}catch(e){}
+ for(const br of["main","master"]){try{tree=await gh("GET",`/git/trees/${br}?recursive=1`);break;}catch(e){}}
+ if(!tree){$("out").innerHTML='<div class="empty">Impossible de lire le cahier pour l\'instant (limite de GitHub). Réessaie dans quelques minutes.</div>';drawHead();return;}
+ items=tree.tree.filter(x=>x.type==="blob"&&/^quiz\/[^/]+\/.+/.test(x.path)).map(x=>{const p=x.path.split("/");const file=p.pop();return{path:x.path,sha:x.sha,size:x.size,file,subject:p.slice(1).join(" / "),title:pretty(file)};});
  draw();
- await Promise.all(items.map(async it=>{try{const t=await(await fetch(it.path)).text();const m=t.match(/<title>([^<]*)<\/title>/i);if(m&&m[1].trim())it.title=m[1].trim();}catch(e){}}));
+ await Promise.all(items.filter(i=>/\.(html?|md|txt)$/i.test(i.file)).map(async it=>{try{const t=await(await fetch(urlOf(it.path))).text();
+   const m=/\.html?$/i.test(it.file)?t.match(/<title>([^<]*)<\/title>/i):t.match(/^#\s+(.+)$/m);if(m&&m[1].trim())it.title=m[1].trim();}catch(e){}}));
  draw();}
-function draw(){const q=($("q").value||"").toLowerCase();
- $("stats").innerHTML=`<span class="pill">${items.length} document${items.length>1?"s":""}</span><span class="pill">${new Set(items.map(i=>i.subject)).size} matières</span><span class="pill">100 % gratuit</span>`;
- const list=items.filter(i=>(i.title+i.file+i.subject).toLowerCase().includes(q));
- const g={};list.forEach(i=>(g[i.subject]=g[i.subject]||[]).push(i));
- phs.filter(p=>(p.subject+p.title).toLowerCase().includes(q)).forEach(p=>g[p.subject]=g[p.subject]||[]);
- const keys=Object.keys(g).sort();
- if(!keys.length){$("out").innerHTML='<div class="msg">Aucun résultat. Essaie un autre mot.</div>';return;}
- $("out").innerHTML=keys.map(s=>{const a=accent(s);
-  const cards=g[s].sort((x,y)=>x.title.localeCompare(y.title)).map(i=>{const k=kind(i.file+i.title);
-   return `<a class="card" style="--a:${a}" href="${encodeURI(i.path)}">${admin()?`<button class="del" title="Supprimer" onclick="del('${i.path.replace(/'/g,"\\'")}',event)">✕</button>`:""}
-    <div class="ic">${k[0]}</div><div class="ti">${esc(i.title)}</div><div class="me"><span class="kind">${k[1]}</span><span>${esc(i.file)}</span></div></a>`;}).join("")
-   +phs.filter(p=>p.subject===s).map(p=>`<div class="card ph" style="--a:${a}" onclick="fillSlot('${esc(p.subject)}')"><div><div class="ic">＋</div><div class="ti">${esc(p.title)}</div><div class="me" style="justify-content:center">Emplacement réservé — dépose-le ici</div></div></div>`).join("");
-  return `<section class="sec"><div class="sh"><span class="dot" style="--a:${a}"></span><h2>${esc(s)}</h2><span class="c">${g[s].length+phs.filter(p=>p.subject===s).length}</span><span class="line"></span></div><div class="g">${cards}</div></section>`;}).join("");}
+
+/* rendu */
+function drawHead(){$("ttl").textContent=cfg.title||"Cahier de révision";$("stl").textContent=cfg.subtitle||"Quiz, notes et fiches pour réussir la session.";document.title=cfg.title||"Cahier de révision";
+ $("admBtn").textContent=admin()?"Gérer ✓":"Gérer";
+ $("cnt").textContent=`${items.length} documents · ${SUBS().length} matières`;
+ const now=new Date();now.setHours(0,0,0,0);
+ const ex=cfg.exams.map(e=>({...e,dt:new Date(e.date+"T00:00")})).filter(e=>e.dt>=now).sort((a,b)=>a.dt-b.dt);
+ $("exams").innerHTML=ex.map(e=>{const d=Math.round((e.dt-now)/864e5);return `<div class="ex"><div class="d">${e.dt.getDate()}<small>${MOIS[e.dt.getMonth()]}</small></div><div class="t">${esc(e.subject)}</div><div class="s">${esc(e.title||"Examen")} · <b>${d===0?"aujourd'hui":d===1?"demain":"dans "+d+" jours"}</b></div></div>`;}).join("");
+ $("exams").style.display=ex.length?"flex":"none";
+ $("foot").textContent=repo()?`${repo().user}/${repo().name}`:"";}
+function nextExam(s){const now=new Date();now.setHours(0,0,0,0);const e=cfg.exams.filter(x=>x.subject===s).map(x=>({...x,dt:new Date(x.date+"T00:00")})).filter(x=>x.dt>=now).sort((a,b)=>a.dt-b.dt)[0];
+ if(!e)return"";const d=Math.round((e.dt-now)/864e5);return ` · examen <b>${d===0?"aujourd'hui":d===1?"demain":"dans "+d+" j"}</b>`;}
+function draw(){drawHead();const q=($("q").value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ const nq=s=>String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ const subs=SUBS();
+ $("subChips").innerHTML=[["all","Toutes"],...subs.map(s=>[s,s])].map(([k,l])=>`<button class="chip${fSub===k?" on":""}" data-s="${esc(k)}">${esc(l)}</button>`).join("");
+ $("subChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fSub=b.dataset.s;draw();});
+ $("typeChips").innerHTML=[["all","Tout"],["Entraînement","Quiz"],["Notes","Notes & fiches"],["Images","Photos"],["Liens","Liens"]].map(([k,l])=>`<button class="chip${fType===k?" on":""}" data-t="${k}">${l}</button>`).join("");
+ $("typeChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{fType=b.dataset.t;draw();});
+ const shown=subs.filter(s=>fSub==="all"||s===fSub);let html="",n=0;
+ shown.forEach(s=>{
+  let its=items.filter(i=>i.subject===s&&(!q||nq(titleOf(i)+" "+i.file).includes(q)));
+  if(fType!=="all")its=its.filter(i=>typeOf(i)[2]===fType);
+  const imgs=its.filter(i=>typeOf(i)[1]==="img"),docs=its.filter(i=>typeOf(i)[1]!=="img").sort((a,b)=>titleOf(a).localeCompare(titleOf(b),"fr"));
+  const links=(fType==="all"||fType==="Liens")?cfg.links.filter(l=>l.subject===s&&(!q||nq(l.title+" "+l.url).includes(q))):[];
+  const slots=(fType==="all"&&!q)?cfg.slots.filter(x=>x.subject===s):[];
+  if(!docs.length&&!imgs.length&&!links.length&&!slots.length)return;n++;
+  html+=`<section class="subj"><div class="sh"><span class="n">${String(n).padStart(2,"0")}</span><h2>${esc(s)}</h2><span class="c">${docs.length+imgs.length+links.length} élément${docs.length+imgs.length+links.length>1?"s":""}${nextExam(s)}</span></div>`;
+  html+=docs.map(rowDoc).join("");
+  html+=links.map(l=>`<div class="row"><span class="tag">LIEN</span><div class="ti"><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.title)}</a><span class="f">${esc(l.url.replace(/^https?:\/\//,""))}</span></div><div class="act">${admin()?`<button class="ib x" onclick="delLink(${cfg.links.indexOf(l)})">supprimer</button>`:""}</div></div>`).join("");
+  html+=slots.map(x=>`<div class="row slot"><span class="tag">À VENIR</span><div class="ti">${esc(x.title)}</div><div class="act">${admin()?`<button class="ib" onclick="openD('fichiers','${esc(s).replace(/&#39;/g,"\\'")}')">déposer</button><button class="ib x" onclick="delSlot(${cfg.slots.indexOf(x)})">retirer</button>`:""}</div></div>`).join("");
+  if(imgs.length)html+=`<div class="gal">${imgs.map(i=>`<figure><img loading="lazy" src="${urlOf(i.path)}" alt="${esc(titleOf(i))}" onclick="showImg('${esc(i.path)}')"><figcaption>${esc(titleOf(i))}</figcaption>${admin()?`<button class="ib x" title="Supprimer" onclick="delFile('${esc(i.path)}')">✕</button>`:""}</figure>`).join("")}</div>`;
+  html+=`</section>`;});
+ $("out").innerHTML=html||`<div class="empty">${items.length||cfg.links.length?"Rien ne correspond à ta recherche.":"Le cahier est vide. Clique sur « Gérer » pour ajouter tes premiers documents."}</div>`;}
+function rowDoc(i){const[tag,cls]=typeOf(i),e=ext(i.file),u=urlOf(i.path),abs=new URL(u,location.href).href,p=esc(i.path);
+ let main=`<a href="${u}"${e==="html"||e==="htm"?"":' target="_blank" rel="noopener"'}>${esc(titleOf(i))}</a>`;
+ if(e==="md"||e==="txt")main=`<button class="lk" onclick="showNote('${p}')">${esc(titleOf(i))}</button>`;
+ const acts=[];if(OFFICE.includes(e))acts.push(`<a class="ib" target="_blank" rel="noopener" href="https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(abs)}">aperçu</a>`);
+ if(e!=="html"&&e!=="htm")acts.push(`<a class="ib" href="${u}" download>télécharger</a>`);
+ if(admin()){acts.push(`<button class="ib" onclick="renameIt('${p}')">renommer</button>`);acts.push(`<button class="ib x" onclick="delFile('${p}')">supprimer</button>`);}
+ return `<div class="row"><span class="tag ${cls}">${tag}</span><div class="ti">${main}<span class="f">${esc(i.file)}${i.size?" · "+size(i.size):""}</span></div><div class="act">${acts.join("")}</div></div>`;}
+
+/* visionneuse */
+function closeV(){$("view").classList.remove("on");$("vbody").innerHTML="";}
+window.showImg=p=>{$("vbody").innerHTML=`<img src="${urlOf(p)}" alt="">`;$("view").classList.add("on");};
+function md(t){const L=esc(t).split("\n");let o="",list=null;const inl=s=>s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/`(.+?)`/g,"<code>$1</code>").replace(/\[(.+?)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+ const close=()=>{if(list){o+=`</${list}>`;list=null;}};
+ for(const l of L){let m;if(m=l.match(/^(#{1,3})\s+(.*)/)){close();o+=`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`;}
+  else if(m=l.match(/^\s*[-*]\s+(.*)/)){if(list!=="ul"){close();o+="<ul>";list="ul";}o+=`<li>${inl(m[1])}</li>`;}
+  else if(m=l.match(/^\s*\d+[.)]\s+(.*)/)){if(list!=="ol"){close();o+="<ol>";list="ol";}o+=`<li>${inl(m[1])}</li>`;}
+  else if(!l.trim())close();else{close();o+=`<p>${inl(l)}</p>`;}}
+ close();return o;}
+window.showNote=async p=>{$("vbody").innerHTML=`<div class="paperv">Chargement…</div>`;$("view").classList.add("on");
+ try{const t=await(await fetch(urlOf(p)+"?"+Date.now())).text();$("vbody").innerHTML=`<div class="paperv">${/\.md$/i.test(p)?md(t):`<pre style="white-space:pre-wrap;font-family:inherit">${esc(t)}</pre>`}</div>`;}
+ catch(e){$("vbody").innerHTML=`<div class="paperv">Impossible d'ouvrir la note.</div>`;}};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeV();closeD();}});
+
+/* gestion */
+let dTab="fichiers",dSub="";
+window.openD=(tab,sub)=>{if(tab)dTab=tab;if(sub!==undefined)dSub=sub;$("drawer").classList.add("on");$("veil").classList.add("on");renderD();};
+window.closeD=()=>{$("drawer").classList.remove("on");$("veil").classList.remove("on");};
+function subSelect(id){const s=SUBS();return `<select class="in" id="${id}">${s.map(x=>`<option${x===dSub?" selected":""}>${esc(x)}</option>`).join("")}<option value="__new"${!s.length?" selected":""}>+ Nouvelle matière…</option></select><input class="in" id="${id}N" placeholder="Nom de la nouvelle matière" style="margin-top:6px;${s.length?"display:none":""}">`;}
+function bindSub(id){const s=$(id),n=$(id+"N");s.onchange=()=>{n.style.display=s.value==="__new"?"block":"none";dSub=s.value;if(s.value==="__new")n.focus();};}
+function getSub(id){const v=$(id).value;return(v==="__new"?$(id+"N").value:v).trim().replace(/[\\/]+/g,"-");}
+function renderD(){const b=$("dbody");
+ if(!admin()){b.innerHTML=`<div class="db"><p>Connecte-toi avec ta clé GitHub pour ajouter, renommer ou supprimer des documents.</p><label class="l">Clé GitHub</label><input class="in" id="tok" type="password" placeholder="ghp_…" autocomplete="off"><p class="hint">La clé reste seulement dans ce navigateur. Les visiteurs ne voient jamais ce panneau.</p><div style="margin-top:14px"><button class="btn fill" onclick="login()">Connexion</button></div><div class="log" id="lg"></div></div>`;return;}
+ const T=[["fichiers","Fichiers"],["note","Note"],["lien","Lien"],["examens","Examens"],["slots","Réservés"],["reglages","Réglages"]];
+ let h=`<div class="tabs">${T.map(([k,l])=>`<button class="tab${dTab===k?" on":""}" onclick="dTab='${k}';renderD()">${l}</button>`).join("")}</div><div class="db">`;
+ if(dTab==="fichiers")h+=`<label class="l">Matière</label>${subSelect("fs")}<div class="drop" id="drop"><b>Glisse tes fichiers ici</b><br>ou clique pour les choisir<br><span class="hint">Quiz (.html), PDF, photos de notes, Word, PowerPoint, Excel, .md, .txt</span></div><input type="file" id="fi" multiple hidden><div class="log" id="lg"></div>`;
+ if(dTab==="note")h+=`<label class="l">Matière</label>${subSelect("ns")}<label class="l">Titre</label><input class="in" id="nt" placeholder="Ex. Résumé chapitre 3"><label class="l">Contenu</label><textarea class="in" id="nc" placeholder="# Titre&#10;- point important&#10;**gras**, *italique*"></textarea><p class="hint">Mise en forme simple : # titre, - liste, **gras**, *italique*, [lien](https://…)</p><div style="margin-top:12px"><button class="btn fill" onclick="saveNote()">Publier la note</button></div><div class="log" id="lg"></div>`;
+ if(dTab==="lien")h+=`<label class="l">Matière</label>${subSelect("ls")}<label class="l">Titre</label><input class="in" id="lt" placeholder="Ex. Vidéo sur le PIB"><label class="l">Adresse (URL)</label><input class="in" id="lu" placeholder="https://…"><div style="margin-top:12px"><button class="btn fill" onclick="addLink()">Ajouter le lien</button></div><div class="log" id="lg"></div>`;
+ if(dTab==="examens"){h+=`<label class="l">Matière</label>${subSelect("es")}<label class="l">Quoi</label><input class="in" id="et" placeholder="Ex. Examen final"><label class="l">Date</label><input class="in" id="ed" type="date"><div style="margin-top:12px"><button class="btn fill" onclick="addExam()">Ajouter</button></div><div class="log" id="lg"></div><label class="l" style="margin-top:22px">Examens enregistrés</label>`+
+  (cfg.exams.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(e=>`<div class="li"><span>${esc(e.subject)} — ${esc(e.title)} <small>${esc(e.date)}</small></span><button class="ib x" onclick="delExam(${cfg.exams.indexOf(e)})">supprimer</button></div>`).join("")||'<p class="hint">Aucun.</p>');}
+ if(dTab==="slots"){h+=`<p class="hint">Un emplacement réservé montre aux visiteurs qu'un document s'en vient.</p><label class="l">Matière</label>${subSelect("ss")}<label class="l">Titre</label><input class="in" id="st" placeholder="Ex. Quiz chapitres 4-5"><div style="margin-top:12px"><button class="btn fill" onclick="addSlot()">Réserver</button></div><div class="log" id="lg"></div><label class="l" style="margin-top:22px">Emplacements</label>`+
+  (cfg.slots.map((x,i)=>`<div class="li"><span>${esc(x.subject)} — ${esc(x.title)}</span><button class="ib x" onclick="delSlot(${i})">retirer</button></div>`).join("")||'<p class="hint">Aucun.</p>');}
+ if(dTab==="reglages")h+=`<label class="l">Titre du site</label><input class="in" id="gt" value="${esc(cfg.title||"Cahier de révision")}"><label class="l">Sous-titre</label><input class="in" id="gs" value="${esc(cfg.subtitle||"Quiz, notes et fiches pour réussir la session.")}"><div style="margin-top:12px"><button class="btn fill" onclick="saveSettings()">Enregistrer</button></div><div class="log" id="lg"></div><label class="l" style="margin-top:26px">Compte</label><button class="btn red" onclick="logout()">Déconnexion</button>`;
+ b.innerHTML=h+`</div>`;
+ ["fs","ns","ls","es","ss"].forEach(id=>{if($(id))bindSub(id);});
+ if($("drop")){const d=$("drop"),fi=$("fi");d.onclick=()=>fi.click();fi.onchange=()=>upload([...fi.files]);d.ondragover=e=>{e.preventDefault();d.classList.add("on");};d.ondragleave=()=>d.classList.remove("on");d.ondrop=e=>{e.preventDefault();d.classList.remove("on");upload([...e.dataTransfer.files]);};}}
+const log=t=>{if($("lg"))$("lg").textContent=t;};
+window.login=async()=>{TOKEN=$("tok").value.trim();log("Vérification…");
+ try{const i=await gh("GET","");if(!i.permissions||!i.permissions.push)throw new Error("cette clé ne peut pas modifier ce dépôt");try{localStorage.setItem("gh_token",TOKEN);}catch(e){}await loadCfg();renderD();draw();}
+ catch(e){TOKEN=null;log("Erreur : "+e.message);}};
+window.logout=()=>{TOKEN=null;try{localStorage.removeItem("gh_token");}catch(e){}renderD();draw();};
+async function putFile(path,content,msg){const old=items.find(i=>i.path===path);const body={message:msg,content};if(old)body.sha=old.sha;
+ const r=await gh("PUT","/contents/"+apiPath(path),body);return r.content;}
+async function upload(files){const subject=getSub("fs");if(!subject){log("Choisis ou nomme une matière.");return;}dSub=subject;const out=[];
+ for(const f of files){if(f.size>25*1048576){out.push(`✕ ${f.name} : trop gros (max 25 Mo)`);log(out.join("\n"));continue;}
+  const name=slug(f.name)||"fichier";const path=`quiz/${subject}/${name}`;out.push(`… ${f.name}`);log(out.join("\n"));
+  try{const c=await putFile(path,await b64file(f),"Ajout "+path);const it={path,sha:c.sha,size:f.size,file:name,subject,title:pretty(name)};
+   if(/\.html?$/i.test(name)){const m=(await f.text()).match(/<title>([^<]*)<\/title>/i);if(m&&m[1].trim())it.title=m[1].trim();}
+   items=items.filter(i=>i.path!==path).concat(it);out[out.length-1]=`✓ ${f.name}`;}
+  catch(e){out[out.length-1]=`✕ ${f.name} : ${e.message}`;}
+  log(out.join("\n"));draw();}
+ const slotI=cfg.slots.findIndex(x=>x.subject===subject);
+ log(out.join("\n")+"\n\nEn ligne dans environ 1 minute."+(slotI>=0?"\nTu peux retirer l'emplacement réservé dans l'onglet « Réservés ».":""));}
+window.saveNote=async()=>{const subject=getSub("ns"),t=$("nt").value.trim(),c=$("nc").value;if(!subject||!t||!c.trim()){log("Il faut une matière, un titre et du contenu.");return;}
+ const name=slug(t)+".md",path=`quiz/${subject}/${name}`,txt=c.trim().startsWith("#")?c:`# ${t}\n\n${c}`;log("Publication…");
+ try{const r=await putFile(path,b64txt(txt),"Note "+path);items=items.filter(i=>i.path!==path).concat({path,sha:r.sha,size:new Blob([txt]).size,file:name,subject,title:t});dSub=subject;draw();log("✓ Note publiée.");$("nc").value="";$("nt").value="";}
+ catch(e){log("Erreur : "+e.message);}};
+async function cfgDo(fn,msg){try{fn();await saveCfg(msg);draw();renderD();log("✓ Enregistré.");}catch(e){log("Erreur : "+e.message);}}
+window.addLink=()=>{const subject=getSub("ls"),title=$("lt").value.trim();let url=$("lu").value.trim();if(!subject||!title||!url){log("Il faut une matière, un titre et une adresse.");return;}if(!/^https?:\/\//i.test(url))url="https://"+url;dSub=subject;cfgDo(()=>cfg.links.push({subject,title,url}),"Lien ajouté");};
+window.delLink=i=>{if(confirm("Supprimer ce lien?"))cfgDo(()=>cfg.links.splice(i,1),"Lien supprimé");};
+window.addExam=()=>{const subject=getSub("es"),title=$("et").value.trim()||"Examen",date=$("ed").value;if(!subject||!date){log("Il faut une matière et une date.");return;}dSub=subject;cfgDo(()=>cfg.exams.push({subject,title,date}),"Examen ajouté");};
+window.delExam=i=>cfgDo(()=>cfg.exams.splice(i,1),"Examen supprimé");
+window.addSlot=()=>{const subject=getSub("ss"),title=$("st").value.trim();if(!subject||!title){log("Il faut une matière et un titre.");return;}dSub=subject;cfgDo(()=>cfg.slots.push({subject,title}),"Emplacement réservé");};
+window.delSlot=i=>cfgDo(()=>cfg.slots.splice(i,1),"Emplacement retiré");
+window.saveSettings=()=>cfgDo(()=>{cfg.title=$("gt").value.trim();cfg.subtitle=$("gs").value.trim();},"Réglages");
+window.renameIt=p=>{const it=items.find(i=>i.path===p);const t=prompt("Nouveau titre affiché :",titleOf(it));if(t===null)return;cfgDo(()=>{if(t.trim())cfg.titles[p]=t.trim();else delete cfg.titles[p];},"Titre modifié");};
+window.delFile=async p=>{const it=items.find(i=>i.path===p);if(!it||!confirm(`Supprimer « ${titleOf(it)} » ? C'est définitif.`))return;
+ try{await gh("DELETE","/contents/"+apiPath(p),{message:"Suppression "+p,sha:it.sha});items=items.filter(i=>i.path!==p);if(cfg.titles[p]){delete cfg.titles[p];saveCfg("Nettoyage").catch(()=>{});}draw();}
+ catch(e){alert("Erreur : "+e.message);}};
 load();
 </script></body></html>
