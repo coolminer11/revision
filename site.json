@@ -9,5 +9,23 @@
       "title": "Examen final révision"
     }
   ],
-  "titles": {}
+  "titles": {},
+  "news": [
+    {
+      "date": "2026-11-18",
+      "type": "fonction",
+      "text": "Cartes mémoire : une carte recto-verso pour chaque mot du glossaire. Pratique par cours ou par chapitre, et refais seulement celles « à revoir »."
+    },
+    {
+      "date": "2026-11-18",
+      "type": "info",
+      "text": "Glossaire : près de 80 nouveaux mots en gestion (ch. 7 à 9) et en économie (DA et OA)."
+    },
+    {
+      "date": "2026-11-17",
+      "type": "quiz",
+      "text": "Gestion, chapitres 7, 8 et 9 : RH, comptabilité, gestion financière, avec la fiche en PDF."
+    }
+  ],
+  "ideaUrl": ""
 }
