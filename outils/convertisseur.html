@@ -1,0 +1,183 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Convertisseur d'unités et notation scientifique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+[hidden]{display:none!important}
+:root{--paper:#f3efe6;--sheet:#fbf9f4;--ink:#1c1b19;--soft:#6e6a62;--rule:#d9d3c5;--red:#c23a22;--hl:#f6e27a;--ok:#2f7a3a;--no:#b3261e}
+@media(prefers-color-scheme:dark){:root{--paper:#161513;--sheet:#1e1d1a;--ink:#ece8de;--soft:#9b968b;--rule:#34312b;--red:#e2614a;--hl:#6b5b14;--ok:#5fae6a;--no:#e26a5c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+a{color:inherit}
+.back{font:500 12px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);text-decoration:none}
+.back:hover{color:var(--red)}
+header.top{border-bottom:1px solid var(--ink);padding:12px 0 14px;margin-bottom:18px}
+header.top .k{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-top:14px}
+header.top h1{font:600 clamp(1.7rem,4vw,2.4rem)/1.1 Newsreader,serif;margin:.15em 0 .2em}
+header.top p{margin:0;color:var(--soft)}
+h2{font:600 1.4rem/1.2 Newsreader,serif;margin:0 0 .5em}
+h3{font:600 1.08rem Newsreader,serif;margin:1.2em 0 .4em;padding-bottom:3px;border-bottom:1px solid var(--rule)}
+.card{background:var(--sheet);border:1px solid var(--rule);padding:18px 20px;margin-bottom:14px;min-width:0;overflow-x:auto}
+.btn{font:500 13.5px "IBM Plex Sans",sans-serif;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:7px 13px;cursor:pointer;border-radius:0}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.fill{background:var(--ink);color:var(--paper)}.btn.fill:hover{background:var(--red);border-color:var(--red)}
+.btn.on{background:var(--ink);color:var(--paper)}
+input,select,textarea{font:15px "IBM Plex Sans",sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-bottom:2px solid var(--ink);padding:8px 10px;border-radius:0;max-width:100%}
+input:focus,select:focus{outline:none;border-bottom-color:var(--red)}
+.mono{font-family:"IBM Plex Mono",monospace}
+.mut{color:var(--soft);font-size:13px}
+.lab{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);display:block;margin:10px 0 4px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--rule);margin:0 0 16px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 0 9px;font:500 12.5px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--red)}
+.form{border:1px solid var(--rule);background:var(--paper);padding:8px 12px;margin:6px 0;font:14px "IBM Plex Mono",monospace;overflow-x:auto}
+.warn{background:var(--hl);border-left:3px solid #b8860b;padding:8px 12px;margin:10px 0;font-size:14px}
+footer.f{margin-top:30px;padding-top:12px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--soft)}
+table.t{width:100%;border-collapse:collapse;font-size:14px}table.t td,table.t th{border-bottom:1px solid var(--rule);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{font:500 11px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+
+.wrap{max-width:980px}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.cats button{border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:6px 11px;font:500 13px "IBM Plex Sans",sans-serif;cursor:pointer}
+.cats button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.row3{display:grid;grid-template-columns:1.2fr 1fr auto 1fr;gap:10px;align-items:end}
+.row3 input,.row3 select{width:100%}
+.swap{height:41px;width:44px;font-size:18px}
+.out{margin-top:16px;padding:14px 16px;border:1px solid var(--rule);background:var(--paper)}
+.out .big{font:600 clamp(1.4rem,4vw,2rem)/1.2 Newsreader,serif;word-break:break-word}
+.out .sub{font:14px "IBM Plex Mono",monospace;color:var(--soft);margin-top:4px;word-break:break-word}
+.opt{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:12px;font-size:14px}
+.opt label{display:flex;gap:6px;align-items:center}
+.opt input[type=number]{width:70px}
+.all td:last-child{font-family:"IBM Plex Mono",monospace;text-align:right;white-space:nowrap}
+.all tr.hl td{background:var(--hl)}
+.digits{display:flex;flex-wrap:wrap;gap:3px;margin:12px 0}
+.digits span{font:600 1.5rem "IBM Plex Mono",monospace;padding:4px 7px;border:1px solid var(--rule);min-width:30px;text-align:center}
+.digits span.sig{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.digits span.amb{background:var(--hl)}
+.digits span.pt{border-color:transparent;padding:4px 1px;min-width:0}
+ul.ex{margin:6px 0;padding-left:18px;font-size:14px}ul.ex li{margin:3px 0}
+.ops{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end;max-width:560px}
+.ops input{width:100%}
+@media(max-width:640px){.row3{grid-template-columns:1fr 1fr}.row3 .v{grid-column:1/-1}.swap{display:none}}
+</style></head><body><div class="wrap">
+<a class="back" href="../">← Cahier de révision</a>
+<header class="top"><div class="k">Outil · Sciences</div><h1>Convertisseur d'unités et notation scientifique</h1><p>Convertis n'importe quelle unité avec le calcul affiché, écris en notation scientifique et compte tes chiffres significatifs.</p></header>
+<nav class="tabs" id="tabs"><button data-t="u" class="on">Unités</button><button data-t="n">Notation scientifique</button><button data-t="c">Chiffres significatifs</button><button data-t="p">Préfixes SI</button></nav>
+<section id="t-u"></section><section id="t-n" hidden></section><section id="t-c" hidden></section><section id="t-p" hidden></section>
+<footer class="f">Tu peux écrire les nombres avec une virgule ou un point, avec des espaces, ou en notation scientifique : 3,2e5 · 3,2×10^5 · 3,2 x 10^-4. Facteurs de conversion exacts selon les définitions officielles (pouce = 2,54 cm, livre = 0,453 592 37 kg, etc.).</footer>
+</div>
+<script>
+"use strict";
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const SUP=s=>String(s).replace(/[-0-9]/g,d=>d==="-"?"⁻":"⁰¹²³⁴⁵⁶⁷⁸⁹"[d]);
+/* ---------- nombres ---------- */
+function parseNum(raw){let s=String(raw).trim().replace(/[\s  ]/g,"").replace(/[−–]/g,"-").replace(/,/g,".");if(!s)return null;
+ let mant=s,exp=0,isSci=false;const m1=s.match(/^(.+?)(?:[x×*·]10\^?\(?([+-]?\d+)\)?|[eE]([+-]?\d+))$/);if(m1){mant=m1[1];exp=+(m1[2]??m1[3]);isSci=true;}
+ const m=mant.match(/^([+-]?)(\d*)(?:\.(\d*))?$/);if(!m||(!m[2]&&!m[3]))return null;
+ const int=m[2]||"",dec=m[3],v=Number((m[1]||"")+(int||"0")+"."+(dec||"0")+"e"+exp);
+ const t=(int+(dec||"")).replace(/^0+/,"");let sig,amb=false;
+ if(dec!==undefined||isSci){sig=dec!==undefined?t.length:int.replace(/^0+/,"").length;if(!sig)sig=1;}
+ else{const ti=int.replace(/^0+/,"");sig=ti.replace(/0+$/,"").length||1;amb=ti.length>sig;}
+ return{v,sig,amb,sigMax:amb?int.replace(/^0+/,"").length:sig,dec:(dec?dec.length:0)-exp};}
+const nf=(v,max=10)=>v.toLocaleString("fr-CA",{maximumFractionDigits:max,useGrouping:true});
+function sci(v,n){if(v===0)return"0";const e=Math.floor(Math.log10(Math.abs(v)));let m=v/Math.pow(10,e);let ms=n?Number(m.toPrecision(n)):Number(m.toPrecision(12));let ee=e;if(Math.abs(ms)>=10){ms/=10;ee++;}
+ let str=n?Math.abs(ms).toFixed(Math.max(0,n-1)):String(Math.abs(ms));return(v<0?"−":"")+str.replace(".",",")+(ee!==0?" × 10"+SUP(ee):"");}
+function eng(v,n){if(v===0)return"0";let e=Math.floor(Math.log10(Math.abs(v)));e=Math.floor(e/3)*3;const m=v/Math.pow(10,e);const ms=n?Number(m.toPrecision(n)):Number(m.toPrecision(12));return String(ms).replace(".",",").replace("-","−")+(e?" × 10"+SUP(e):"");}
+function roundSig(v,n){if(v===0)return 0;return Number(v.toPrecision(n));}
+function dec(v,n){/* decimal string with n sig figs, keeping trailing zeros */if(v===0)return"0";const e=Math.floor(Math.log10(Math.abs(Number(v.toPrecision(n)))));
+ if(e>15||e<-7)return sci(v,n);if(e>=n&&/0$/.test(String(Math.round(Math.abs(roundSig(v,n))))))return sci(v,n);const d=Math.max(0,n-1-e);let s=Math.abs(roundSig(v,n)).toFixed(d);const [a,b]=s.split(".");return(v<0?"−":"")+Number(a).toLocaleString("fr-CA")+(b?","+b:"");}
+const show=v=>{if(v===0)return"0";const a=Math.abs(v);if(a>=1e15||a<1e-6)return sci(v);return nf(Number(v.toPrecision(12)),12);};
+/* ---------- unités ---------- */
+const U={
+"Longueur":[["nm","nanomètre",1e-9],["µm","micromètre",1e-6],["mm","millimètre",1e-3],["cm","centimètre",1e-2],["dm","décimètre",0.1],["m","mètre",1],["km","kilomètre",1e3],["Å","angström",1e-10],["po","pouce",0.0254],["pi","pied",0.3048],["vg","verge",0.9144],["mi","mille",1609.344],["M","mille marin",1852],["UA","unité astronomique",1.495978707e11],["al","année-lumière",9.4607304725808e15]],
+"Masse":[["µg","microgramme",1e-9],["mg","milligramme",1e-6],["g","gramme",1e-3],["kg","kilogramme",1],["t","tonne",1000],["oz","once",0.028349523125],["lb","livre",0.45359237],["u","unité de masse atomique",1.66053906660e-27]],
+"Temps":[["ns","nanoseconde",1e-9],["µs","microseconde",1e-6],["ms","milliseconde",1e-3],["s","seconde",1],["min","minute",60],["h","heure",3600],["j","jour",86400],["sem","semaine",604800],["an","année (365,25 j)",31557600]],
+"Aire":[["mm²","millimètre carré",1e-6],["cm²","centimètre carré",1e-4],["m²","mètre carré",1],["ha","hectare",1e4],["km²","kilomètre carré",1e6],["po²","pouce carré",6.4516e-4],["pi²","pied carré",0.09290304],["acre","acre",4046.8564224]],
+"Volume":[["mm³","millimètre cube",1e-9],["mL","millilitre",1e-6],["cm³","centimètre cube",1e-6],["cL","centilitre",1e-5],["dL","décilitre",1e-4],["L","litre",1e-3],["dm³","décimètre cube",1e-3],["m³","mètre cube",1],["oz liq.","once liquide (US)",2.95735295625e-5],["gal US","gallon américain",3.785411784e-3],["gal imp.","gallon impérial",4.54609e-3]],
+"Vitesse":[["m/s","mètre par seconde",1],["km/h","kilomètre par heure",1/3.6],["cm/s","centimètre par seconde",0.01],["mi/h","mille par heure",0.44704],["pi/s","pied par seconde",0.3048],["nd","nœud",1852/3600]],
+"Accélération":[["m/s²","mètre par seconde carrée",1],["cm/s²","centimètre par seconde carrée",0.01],["g","accélération terrestre (g)",9.80665],["km/h/s","km/h par seconde",1/3.6]],
+"Force":[["N","newton",1],["kN","kilonewton",1e3],["dyn","dyne",1e-5],["kgf","kilogramme-force",9.80665],["lbf","livre-force",4.4482216152605]],
+"Énergie":[["J","joule",1],["kJ","kilojoule",1e3],["MJ","mégajoule",1e6],["cal","calorie",4.184],["kcal","kilocalorie (Calorie)",4184],["Wh","wattheure",3600],["kWh","kilowattheure",3.6e6],["eV","électronvolt",1.602176634e-19],["BTU","BTU",1055.05585262]],
+"Puissance":[["W","watt",1],["kW","kilowatt",1e3],["MW","mégawatt",1e6],["ch","cheval-vapeur",735.49875],["hp","horsepower",745.69987158227]],
+"Pression":[["Pa","pascal",1],["hPa","hectopascal",100],["kPa","kilopascal",1e3],["MPa","mégapascal",1e6],["bar","bar",1e5],["atm","atmosphère",101325],["mmHg","millimètre de mercure",133.322387415],["torr","torr",101325/760],["psi","livre par pouce carré",6894.757293168]],
+"Température":[["°C","degré Celsius"],["K","kelvin"],["°F","degré Fahrenheit"]],
+"Masse volumique":[["kg/m³","kilogramme par mètre cube",1],["g/L","gramme par litre",1],["g/mL","gramme par millilitre",1000],["g/cm³","gramme par centimètre cube",1000],["kg/L","kilogramme par litre",1000]],
+"Quantité de matière":[["µmol","micromole",1e-6],["mmol","millimole",1e-3],["mol","mole",1],["kmol","kilomole",1e3]],
+"Fréquence":[["Hz","hertz",1],["kHz","kilohertz",1e3],["MHz","mégahertz",1e6],["GHz","gigahertz",1e9],["tr/min","tour par minute",1/60]],
+"Angle":[["rad","radian",1],["°","degré",Math.PI/180],["gon","grade",Math.PI/200],["tr","tour",2*Math.PI]],
+"Charge électrique":[["C","coulomb",1],["mC","millicoulomb",1e-3],["µC","microcoulomb",1e-6],["e","charge élémentaire",1.602176634e-19],["Ah","ampère-heure",3600],["mAh","milliampère-heure",3.6]],
+"Données":[["bit","bit",0.125],["o","octet",1],["ko","kilooctet",1e3],["Mo","mégaoctet",1e6],["Go","gigaoctet",1e9],["To","téraoctet",1e12],["Kio","kibioctet",1024],["Mio","mébioctet",1048576],["Gio","gibioctet",1073741824]]};
+const DEF={"Longueur":["km","m"],"Masse":["kg","g"],"Temps":["h","s"],"Aire":["m²","cm²"],"Volume":["L","mL"],"Vitesse":["km/h","m/s"],"Accélération":["g","m/s²"],"Force":["kN","N"],"Énergie":["kcal","kJ"],"Puissance":["ch","kW"],"Pression":["atm","kPa"],"Température":["°C","°F"],"Masse volumique":["g/cm³","kg/m³"],"Quantité de matière":["mmol","mol"],"Fréquence":["tr/min","Hz"],"Angle":["°","rad"],"Charge électrique":["mAh","C"],"Données":["Go","Mio"]};
+let cat="Longueur";
+const toK=(v,u)=>u==="K"?v:u==="°C"?v+273.15:(v-32)*5/9+273.15,fromK=(k,u)=>u==="K"?k:u==="°C"?k-273.15:(k-273.15)*9/5+32;
+function conv(v,a,b){if(cat==="Température")return fromK(toK(v,a),b);const L=U[cat],fa=L.find(x=>x[0]===a)[2],fb=L.find(x=>x[0]===b)[2];return v*fa/fb;}
+function ratio(a,b){const L=U[cat],fa=L.find(x=>x[0]===a)[2],fb=L.find(x=>x[0]===b)[2];return fa/fb;}
+function uiU(){const L=U[cat],[a,b]=DEF[cat];
+ $("t-u").innerHTML=`<div class="cats">${Object.keys(U).map(c=>`<button class="${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("")}</div>
+ <div class="card"><div class="row3"><div class="v"><label class="lab" for="uv">Valeur</label><input id="uv" value="${cat==="Température"?"25":"1"}" inputmode="decimal" autocomplete="off"></div>
+ <div><label class="lab" for="ua">De</label><select id="ua">${L.map(u=>`<option value="${esc(u[0])}"${u[0]===a?" selected":""}>${esc(u[1])} (${esc(u[0])})</option>`).join("")}</select></div>
+ <button class="btn swap" id="usw" title="Inverser">⇄</button>
+ <div><label class="lab" for="ub">Vers</label><select id="ub">${L.map(u=>`<option value="${esc(u[0])}"${u[0]===b?" selected":""}>${esc(u[1])} (${esc(u[0])})</option>`).join("")}</select></div></div>
+ <div class="opt"><label><input type="checkbox" id="usig" checked> Arrondir selon les chiffres significatifs de la donnée</label><label>ou forcer <input type="number" id="un" min="1" max="15" placeholder="—"> chiffres sig.</label></div>
+ <div class="out" id="uout"></div></div><div class="card"><h3 style="margin-top:0">Tous les équivalents</h3><table class="t all" id="uall"></table></div>`;
+ $("t-u").querySelectorAll(".cats button").forEach(x=>x.onclick=()=>{cat=x.dataset.c;uiU();});
+ ["uv","ua","ub","usig","un"].forEach(id=>$(id).addEventListener("input",calcU));$("usw").onclick=()=>{const t=$("ua").value;$("ua").value=$("ub").value;$("ub").value=t;calcU();};calcU();}
+function calcU(){const p=parseNum($("uv").value),a=$("ua").value,b=$("ub").value,o=$("uout");
+ if(!p){o.innerHTML=`<p class="mut">Écris un nombre (ex. 3,5 ou 2,1e-3 ou 6,02×10^23).</p>`;$("uall").innerHTML="";return;}
+ const r=conv(p.v,a,b),force=parseInt($("un").value),n=force>0?force:($("usig").checked?p.sigMax:null);
+ const L=U[cat],na=L.find(x=>x[0]===a)[1],nb=L.find(x=>x[0]===b)[1];
+ let how="";if(cat==="Température"){how=a===b?"":({"°C>K":`K = °C + 273,15 → ${show(p.v)} + 273,15`,"K>°C":`°C = K − 273,15 → ${show(p.v)} − 273,15`,"°C>°F":`°F = °C × 9/5 + 32 → ${show(p.v)} × 1,8 + 32`,"°F>°C":`°C = (°F − 32) × 5/9 → (${show(p.v)} − 32) ÷ 1,8`,"K>°F":`°F = (K − 273,15) × 9/5 + 32`,"°F>K":`K = (°F − 32) × 5/9 + 273,15`})[a+">"+b]+" = "+show(r);}
+ else{const k=ratio(a,b);how=`1 ${a} = ${show(k)} ${b}\n${show(p.v)} ${a} × ${show(k)} ${b}/${a} = ${show(r)} ${b}`;}
+ o.innerHTML=`<div class="big">${n?dec(r,n):show(r)} ${esc(b)}</div><div class="sub">Notation scientifique : ${sci(r,n)} ${esc(b)}</div>
+ <div class="form" style="white-space:pre-wrap;margin-top:10px">${esc(how)}</div>
+ <p class="mut">${esc(show(p.v))} ${esc(na)}${p.v>1||p.v<-1?"s":""} → ${esc(nb)}${Math.abs(r)>=2?"s":""}${n?` · arrondi à ${n} chiffre${n>1?"s":""} significatif${n>1?"s":""}${p.amb&&!force?" (les zéros à la fin d'un entier sont ambigus : on les a comptés comme significatifs)":""}`:""}</p>`;
+ $("uall").innerHTML=L.map(u=>{const v=conv(p.v,a,u[0]);return `<tr class="${u[0]===b?"hl":""}"><td>${esc(u[1])} (${esc(u[0])})</td><td>${n?dec(v,n):show(v)}</td></tr>`;}).join("");}
+/* ---------- notation scientifique ---------- */
+function uiN(){$("t-n").innerHTML=`<div class="card"><label class="lab" for="nv">Nombre</label><input id="nv" value="0,000 045 6" style="width:100%;max-width:420px" inputmode="decimal" autocomplete="off"><div class="out" id="nout"></div></div>
+ <div class="card"><h3 style="margin-top:0">Comment ça marche</h3><ul class="ex"><li>La notation scientifique s'écrit <b>a × 10ⁿ</b>, avec <b>1 ≤ a &lt; 10</b>.</li><li>Grand nombre → la virgule se déplace vers la <b>gauche</b> → exposant <b>positif</b> (45 600 = 4,56 × 10⁴).</li><li>Petit nombre (moins que 1) → la virgule se déplace vers la <b>droite</b> → exposant <b>négatif</b> (0,000 456 = 4,56 × 10⁻⁴).</li><li>Tous les chiffres de <b>a</b> sont significatifs : 4,560 × 10⁴ a 4 chiffres significatifs.</li><li>Notation <b>ingénieur</b> : l'exposant est un multiple de 3 (lien direct avec les préfixes k, M, m, µ…).</li></ul>
+ <h3>Opérations en notation scientifique</h3><ul class="ex"><li><b>Multiplier</b> : on multiplie les a et on <b>additionne</b> les exposants : (2 × 10³)(3 × 10⁴) = 6 × 10⁷</li><li><b>Diviser</b> : on divise les a et on <b>soustrait</b> les exposants : (8 × 10⁵) ÷ (2 × 10²) = 4 × 10³</li><li><b>Puissance</b> : (10³)² = 10⁶</li><li><b>Additionner</b> : il faut d'abord mettre le même exposant : 3 × 10⁴ + 2 × 10³ = 3 × 10⁴ + 0,2 × 10⁴ = 3,2 × 10⁴</li></ul></div>`;
+ $("nv").oninput=calcN;calcN();}
+function calcN(){const p=parseNum($("nv").value),o=$("nout");if(!p){o.innerHTML=`<p class="mut">Écris un nombre.</p>`;return;}
+ const v=p.v;if(v===0){o.innerHTML=`<div class="big">0</div>`;return;}const e=Math.floor(Math.log10(Math.abs(Number(v.toPrecision(p.sig)))));
+ o.innerHTML=`<div class="big">${sci(v,p.sig)}</div><div class="sub">Notation décimale : ${dec(v,p.sig)}</div><div class="sub">Notation ingénieur : ${eng(v,p.sig)}</div><div class="sub">Chiffres significatifs : ${p.sig}${p.amb?" (ambigu : zéros à la fin d'un entier)":""}</div>
+ <div class="form" style="margin-top:10px">${e===0?"La virgule ne bouge pas : exposant 0.":`On déplace la virgule de ${Math.abs(e)} rang${Math.abs(e)>1?"s":""} vers la ${e>0?"gauche":"droite"} → exposant ${e>0?"positif":"négatif"} : 10${SUP(e)}`}</div>`;}
+/* ---------- chiffres significatifs ---------- */
+function uiC(){$("t-c").innerHTML=`<div class="card"><label class="lab" for="cv">Nombre à analyser</label><input id="cv" value="0,004 050" style="width:100%;max-width:420px" autocomplete="off"><div id="cout"></div></div>
+ <div class="card"><h3 style="margin-top:0">Arrondir</h3><div class="opt" style="margin-top:0"><input id="rv" value="3,14159" style="width:180px"><label>à <input type="number" id="rn" value="3" min="1" max="15"> chiffres significatifs</label></div><div class="out" id="rout"></div></div>
+ <div class="card"><h3 style="margin-top:0">Calculer avec les bons chiffres significatifs</h3><div class="ops"><div><label class="lab">Donnée 1</label><input id="oa" value="12,52"></div><div><label class="lab">Opération</label><select id="oo"><option value="*">×</option><option value="/">÷</option><option value="+">+</option><option value="-">−</option></select></div><div><label class="lab">Donnée 2</label><input id="ob" value="2,1"></div></div><div class="out" id="oout"></div></div>
+ <div class="card"><h3 style="margin-top:0">Les règles</h3><ul class="ex"><li>Tous les chiffres <b>non nuls</b> sont significatifs (2,45 → 3).</li><li>Les zéros <b>entre</b> deux chiffres non nuls sont significatifs (1 005 → 4).</li><li>Les zéros <b>au début</b> ne sont jamais significatifs (0,0034 → 2).</li><li>Les zéros <b>à la fin</b> sont significatifs s'il y a une <b>virgule</b> (2,500 → 4).</li><li>Les zéros à la fin d'un <b>entier sans virgule</b> sont ambigus (1 200 → 2, 3 ou 4). Utilise la notation scientifique pour être clair : 1,20 × 10³ → 3.</li><li><b>× et ÷</b> : le résultat garde le <b>plus petit nombre de chiffres significatifs</b> des données.</li><li><b>+ et −</b> : le résultat garde le <b>plus petit nombre de décimales</b> des données.</li><li>Les nombres <b>exacts</b> (comptés ou définis, ex. 12 œufs, 1 m = 100 cm) ont une infinité de chiffres significatifs.</li></ul></div>`;
+ ["cv"].forEach(i=>$(i).oninput=calcC);["rv","rn"].forEach(i=>$(i).oninput=calcR);["oa","oo","ob"].forEach(i=>$(i).addEventListener("input",calcO));calcC();calcR();calcO();}
+function calcC(){const raw=$("cv").value.trim(),p=parseNum(raw),o=$("cout");if(!p){o.innerHTML=`<p class="mut">Écris un nombre.</p>`;return;}
+ let s=raw.replace(/[\s  ]/g,"").replace(/^[+\-−]/,""),expo="";const mm=s.match(/^(.*?)(?:[eE]|[x×*·]10\^?)(.*)$/);if(mm){s=mm[1];expo=mm[2];}
+ const hasPt=/[.,]/.test(s);const ch=[...s];let seen=false;const digIdx=ch.map((c,i)=>/\d/.test(c)?i:-1).filter(i=>i>=0);const lastNZ=Math.max(...digIdx.filter(i=>ch[i]!=="0"),-1);
+ const why=[];const html=ch.map((c,i)=>{if(!/\d/.test(c))return `<span class="pt">${c===","||c==="."?",":c}</span>`;
+  if(c!=="0"){seen=true;return `<span class="sig" title="non nul">${c}</span>`;}
+  if(!seen)return `<span title="zéro au début : pas significatif">${c}</span>`;
+  if(i<lastNZ)return `<span class="sig" title="zéro entre deux chiffres : significatif">${c}</span>`;
+  if(hasPt||expo)return `<span class="sig" title="zéro à la fin avec virgule : significatif">${c}</span>`;
+  return `<span class="amb" title="zéro à la fin d'un entier : ambigu">${c}</span>`;}).join("");
+ const lead=/^0[.,]?0*|^[.,]0*/.test(s)&&/^[0.,]+[1-9]/.test(s),mid=/[1-9]0+[1-9]/.test(s.replace(/[.,]/g,"")),tail=/[1-9][.,]?\d*0$/.test(s)||/[.,]0+$/.test(s);
+ if(lead)why.push("Les zéros au début ne comptent pas : ils servent juste à placer la virgule.");if(mid)why.push("Les zéros entre deux chiffres non nuls comptent.");
+ if(tail)why.push(hasPt||expo?"Les zéros à la fin comptent, parce qu'il y a une virgule.":"Les zéros à la fin d'un entier sans virgule sont ambigus (en jaune). Ici, on ne les compte pas.");
+ o.innerHTML=`<div class="digits">${html}${expo?`<span class="pt">× 10${SUP(expo.replace(/[()^]/g,""))}</span>`:""}</div><div class="big" style="font:600 1.4rem Newsreader,serif">${p.sig} chiffre${p.sig>1?"s":""} significatif${p.sig>1?"s":""}${p.amb?" (ou plus)":""}</div>
+ <ul class="ex">${why.map(w=>`<li>${w}</li>`).join("")}<li>En notation scientifique : ${sci(p.v,p.sig)}</li></ul><p class="mut">Noir = significatif · blanc = pas significatif · jaune = ambigu. Survole un chiffre pour voir pourquoi.</p>`;}
+function calcR(){const p=parseNum($("rv").value),n=parseInt($("rn").value),o=$("rout");if(!p||!(n>0)){o.innerHTML="";return;}
+ o.innerHTML=`<div class="big" style="font-size:1.5rem">${dec(p.v,n)}</div><div class="sub">${sci(p.v,n)}</div><p class="mut">On garde ${n} chiffre${n>1?"s":""} significatif${n>1?"s":""}; si le chiffre suivant est 5 ou plus, on arrondit vers le haut.</p>`;}
+function calcO(){const a=parseNum($("oa").value),b=parseNum($("ob").value),op=$("oo").value,o=$("oout");if(!a||!b){o.innerHTML=`<p class="mut">Écris deux nombres.</p>`;return;}
+ const sym={"*":"×","/":"÷","+":"+","-":"−"}[op];let r,txt,res;
+ if(op==="*"||op==="/"){r=op==="*"?a.v*b.v:a.v/b.v;const n=Math.min(a.sig,b.sig);res=dec(r,n);txt=`× et ÷ : on garde le plus petit nombre de chiffres significatifs → min(${a.sig}, ${b.sig}) = ${n}`;}
+ else{r=op==="+"?a.v+b.v:a.v-b.v;const d=Math.min(a.dec,b.dec);if(d>0){res=(Math.round(r*Math.pow(10,d))/Math.pow(10,d)).toLocaleString("fr-CA",{minimumFractionDigits:d,maximumFractionDigits:d});}else{const q=Math.pow(10,-d),rr=Math.round(r/q)*q;res=rr.toLocaleString("fr-CA")+(d<0?" (arrondi aux "+(["","dizaines","centaines","milliers"][-d]||"10^"+(-d))+")":"");}
+  txt=`+ et − : on garde le plus petit nombre de décimales → min(${Math.max(0,a.dec)}, ${Math.max(0,b.dec)}) = ${Math.max(0,d)}`;}
+ o.innerHTML=`<div class="sub">Calculatrice : ${show(a.v)} ${sym} ${show(b.v)} = ${show(r)}</div><div class="big" style="font-size:1.6rem;margin-top:4px">Réponse : ${res}</div><p class="mut">${txt}</p>`;}
+/* ---------- préfixes ---------- */
+function uiP(){const P=[["quetta","Q",30],["ronna","R",27],["yotta","Y",24],["zetta","Z",21],["exa","E",18],["péta","P",15],["téra","T",12,"1 To de stockage"],["giga","G",9,"processeur de 3 GHz"],["méga","M",6,"une chanson de 5 Mo"],["kilo","k",3,"1 km = 1 000 m"],["hecto","h",2,"1 hPa = 100 Pa"],["déca","da",1,"1 dam = 10 m"],["(aucun)","",0,"mètre, gramme, litre…"],["déci","d",-1,"1 dL = 0,1 L"],["centi","c",-2,"1 cm = 0,01 m"],["milli","m",-3,"1 mg = 0,001 g"],["micro","µ",-6,"cellule ≈ 10 µm"],["nano","n",-9,"virus ≈ 100 nm"],["pico","p",-12,""],["femto","f",-15,""],["atto","a",-18,""],["zepto","z",-21,""],["yocto","y",-24,""],["ronto","r",-27,""],["quecto","q",-30,""]];
+ $("t-p").innerHTML=`<div class="card"><p class="mut" style="margin-top:0">Les préfixes en gras sont ceux qui reviennent le plus souvent en classe.</p><table class="t"><tr><th>Préfixe</th><th>Symbole</th><th>Facteur</th><th>En décimal</th><th>Exemple</th></tr>${P.map(([n,s,e,x])=>{const common=[12,9,6,3,2,1,-1,-2,-3,-6,-9,-12].includes(e);const d=e>=0?(e<=12?Number("1e"+e).toLocaleString("fr-CA"):"1 suivi de "+e+" zéros"):(e>=-12?"0,"+"0".repeat(-e-1)+"1":"—");return `<tr${common?' style="font-weight:600"':""}><td>${n}</td><td class="mono">${s||"—"}</td><td class="mono">10${SUP(e)}</td><td class="mono">${d}</td><td class="mut">${x||""}</td></tr>`;}).join("")}</table>
+ <p class="mut">Truc pour le kilo, l'hecto, le déca : « <b>K</b>ing <b>H</b>enry <b>D</b>ied <b>U</b>nexpectedly <b>D</b>rinking <b>C</b>hocolate <b>M</b>ilk » → k, h, da, unité, d, c, m. Chaque pas = × 10 ou ÷ 10.</p></div>`;}
+/* ---------- onglets ---------- */
+$("tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("tabs").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));["u","n","c","p"].forEach(t=>$("t-"+t).hidden=t!==b.dataset.t);});
+uiU();uiN();uiC();uiP();
+
+</script></body></html>

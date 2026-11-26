@@ -1,0 +1,348 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tableau périodique interactif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+[hidden]{display:none!important}
+:root{--paper:#f3efe6;--sheet:#fbf9f4;--ink:#1c1b19;--soft:#6e6a62;--rule:#d9d3c5;--red:#c23a22;--hl:#f6e27a;--ok:#2f7a3a;--no:#b3261e}
+@media(prefers-color-scheme:dark){:root{--paper:#161513;--sheet:#1e1d1a;--ink:#ece8de;--soft:#9b968b;--rule:#34312b;--red:#e2614a;--hl:#6b5b14;--ok:#5fae6a;--no:#e26a5c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+a{color:inherit}
+.back{font:500 12px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--soft);text-decoration:none}
+.back:hover{color:var(--red)}
+header.top{border-bottom:1px solid var(--ink);padding:12px 0 14px;margin-bottom:18px}
+header.top .k{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-top:14px}
+header.top h1{font:600 clamp(1.7rem,4vw,2.4rem)/1.1 Newsreader,serif;margin:.15em 0 .2em}
+header.top p{margin:0;color:var(--soft)}
+h2{font:600 1.4rem/1.2 Newsreader,serif;margin:0 0 .5em}
+h3{font:600 1.08rem Newsreader,serif;margin:1.2em 0 .4em;padding-bottom:3px;border-bottom:1px solid var(--rule)}
+.card{background:var(--sheet);border:1px solid var(--rule);padding:18px 20px;margin-bottom:14px;min-width:0;overflow-x:auto}
+.btn{font:500 13.5px "IBM Plex Sans",sans-serif;border:1px solid var(--ink);background:transparent;color:var(--ink);padding:7px 13px;cursor:pointer;border-radius:0}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.fill{background:var(--ink);color:var(--paper)}.btn.fill:hover{background:var(--red);border-color:var(--red)}
+.btn.on{background:var(--ink);color:var(--paper)}
+input,select,textarea{font:15px "IBM Plex Sans",sans-serif;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-bottom:2px solid var(--ink);padding:8px 10px;border-radius:0;max-width:100%}
+input:focus,select:focus{outline:none;border-bottom-color:var(--red)}
+.mono{font-family:"IBM Plex Mono",monospace}
+.mut{color:var(--soft);font-size:13px}
+.lab{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);display:block;margin:10px 0 4px}
+.tabs{display:flex;gap:18px;border-bottom:1px solid var(--rule);margin:0 0 16px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 0 9px;font:500 12.5px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--red)}
+.form{border:1px solid var(--rule);background:var(--paper);padding:8px 12px;margin:6px 0;font:14px "IBM Plex Mono",monospace;overflow-x:auto}
+.warn{background:var(--hl);border-left:3px solid #b8860b;padding:8px 12px;margin:10px 0;font-size:14px}
+footer.f{margin-top:30px;padding-top:12px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--soft)}
+table.t{width:100%;border-collapse:collapse;font-size:14px}table.t td,table.t th{border-bottom:1px solid var(--rule);padding:6px 8px;text-align:left;vertical-align:top}
+table.t th{font:500 11px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px}
+.bar .grow{flex:1;min-width:200px}
+.scroller{overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.pt{display:grid;grid-template-columns:repeat(18,minmax(52px,1fr));gap:3px;min-width:980px;position:relative}
+.el{position:relative;aspect-ratio:1/1.08;border:1px solid rgba(0,0,0,.12);padding:3px 4px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:transform .12s,box-shadow .12s,opacity .2s;user-select:none;overflow:hidden}
+.el:hover,.el:focus{transform:scale(1.12);z-index:3;box-shadow:0 4px 14px rgba(0,0,0,.25);outline:none}
+.el .z{font:500 10px "IBM Plex Mono",monospace;opacity:.85}
+.el .s{font:600 clamp(15px,1.7vw,21px)/1 Newsreader,serif;text-align:center}
+.el .n{font-size:9px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.el .m{font:400 8.5px "IBM Plex Mono",monospace;text-align:center;opacity:.85}
+.el.dim{opacity:.18}.el.sel{outline:3px solid var(--ink);outline-offset:1px;z-index:2}
+.el.ph{cursor:default;background:transparent!important;border:1px dashed var(--rule);color:var(--soft);justify-content:center;align-items:center;font:500 10px "IBM Plex Mono",monospace}
+.el.ph:hover{transform:none;box-shadow:none}
+.glab{font:500 10px "IBM Plex Mono",monospace;color:var(--soft);text-align:center;align-self:end;padding-bottom:2px}
+.plab{font:500 10px "IBM Plex Mono",monospace;color:var(--soft);display:flex;align-items:center;justify-content:flex-end;padding-right:3px}
+.inset{grid-column:3/13;grid-row:2/5;min-width:0;overflow:hidden;background:var(--sheet);border:1px solid var(--rule);padding:8px 14px;display:flex;gap:14px;align-items:center;margin:0 6px 6px}
+.inset .big{width:96px;height:104px;flex:0 0 auto;border:1px solid rgba(0,0,0,.15);display:flex;flex-direction:column;justify-content:space-between;padding:5px 7px}
+.inset .big .s{font:600 40px/1 Newsreader,serif;text-align:center}.inset .big .z{font:500 12px "IBM Plex Mono",monospace}.inset .big .m{font:400 10px "IBM Plex Mono",monospace;text-align:center}
+.inset .info{font-size:13px;line-height:1.45;min-width:0}.inset .info b{font:600 1.2rem Newsreader,serif}
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.leg button{border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:4px 9px 4px 6px;font:500 12px "IBM Plex Sans",sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.leg button i{width:14px;height:14px;display:inline-block;border:1px solid rgba(0,0,0,.2)}
+.leg button.off{opacity:.4}
+.grad{display:flex;align-items:center;gap:8px;font:500 12px "IBM Plex Mono",monospace;color:var(--soft);margin:12px 0}
+.grad span.g{flex:0 1 260px;height:12px;border:1px solid var(--rule)}
+.fiche{display:grid;grid-template-columns:260px 1fr;gap:22px}
+.fiche .tile{border:1px solid rgba(0,0,0,.15);padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;aspect-ratio:1/1.05}
+.fiche .tile .s{font:600 76px/1 Newsreader,serif;text-align:center}.fiche .tile .z{font:500 15px "IBM Plex Mono",monospace}.fiche .tile .nm{text-align:center;font-size:17px}.fiche .tile .m{text-align:center;font:400 13px "IBM Plex Mono",monospace}
+.props{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:0 18px}
+.props div{padding:7px 0;border-bottom:1px solid var(--rule)}
+.props dt{font:500 10.5px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--soft)}
+.props dd{margin:2px 0 0;font-size:14.5px}
+.bohr{display:block;margin:12px auto 0;max-width:260px;width:100%}
+.mm .res{font:600 1.6rem Newsreader,serif;margin:10px 0 6px}
+.qz{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.qz .ask{font:600 1.25rem Newsreader,serif}
+.el.good{outline:3px solid var(--ok);z-index:2}.el.bad{outline:3px solid var(--no);z-index:2}
+@media(max-width:760px){.fiche{grid-template-columns:1fr}.fiche .tile{max-width:240px;margin:0 auto;width:100%}}
+</style></head><body><div class="wrap">
+<a class="back" href="../">← Cahier de révision</a>
+<header class="top"><div class="k">Outil · Chimie</div><h1>Tableau périodique interactif</h1><p>Les 118 éléments : clique sur un élément pour voir sa fiche complète. Colorie le tableau selon une propriété pour voir les tendances.</p></header>
+
+<div class="bar">
+ <div class="grow"><label class="lab" for="q">Chercher</label><input id="q" placeholder="Nom, symbole ou numéro (ex. fer, Na, 79)" style="width:100%"></div>
+ <div><label class="lab" for="mode">Colorier par</label><select id="mode">
+  <option value="cat">Famille (catégorie)</option><option value="phase">État à 25 °C</option><option value="block">Bloc (s, p, d, f)</option>
+  <option value="en">Électronégativité</option><option value="mass">Masse atomique</option><option value="ie">Énergie d'ionisation</option>
+  <option value="melt">Point de fusion</option><option value="boil">Point d'ébullition</option><option value="dens">Masse volumique (solides et liquides)</option><option value="year">Année de découverte</option><option value="nat">Origine (naturel / synthétique)</option></select></div>
+ <div><button class="btn" id="qzBtn">Quiz : trouve l'élément</button></div>
+</div>
+<div id="legend"></div>
+<div class="card qz" id="qzBox" hidden></div>
+<div class="scroller"><div class="pt" id="pt"></div></div>
+<p class="mut">Sur cellulaire, glisse le tableau de côté. Astuce : flèches du clavier pour passer d'un élément à l'autre.</p>
+
+<div class="card" id="fiche"><p class="mut">Clique sur un élément pour afficher sa fiche.</p></div>
+
+<div class="card mm"><h2>Calculer une masse molaire</h2><p class="mut">Écris une formule chimique : H2O, H2SO4, Ca(OH)2, CuSO4·5H2O, 2NaCl…</p>
+ <input id="mmIn" placeholder="Ex. C6H12O6" style="width:100%;max-width:420px;font:16px 'IBM Plex Mono',monospace"><div id="mmOut"></div></div>
+
+<div class="card"><h2>Les tendances à retenir</h2><table class="t">
+<tr><th>Propriété</th><th>Dans une période (→)</th><th>Dans un groupe (↓)</th></tr>
+<tr><td>Rayon atomique</td><td>diminue</td><td>augmente</td></tr>
+<tr><td>Électronégativité</td><td>augmente</td><td>diminue</td></tr>
+<tr><td>Énergie d'ionisation</td><td>augmente</td><td>diminue</td></tr>
+<tr><td>Caractère métallique</td><td>diminue</td><td>augmente</td></tr></table>
+<p class="mut">Le fluor (F) est l'élément le plus électronégatif; le césium et le francium, les moins. Les gaz nobles ont les énergies d'ionisation les plus élevées de leur période.</p></div>
+<footer class="f">Valeurs usuelles de référence (masses atomiques IUPAC abrégées; températures à 1 atm). Les valeurs entre crochets sont pour l'isotope le plus stable des éléments radioactifs. Pour les éléments très lourds, plusieurs propriétés sont inconnues ou seulement prédites. Si ton cours exige une valeur précise, prends celle de ton manuel.</footer>
+</div>
+<script>
+/* Z|symbole|nom|masse|cat|EN|état|fusion°C|ébullition°C|densité|EI1 kJ/mol|année|découverte|états d'oxydation|utilisations
+   cat: am alcalin, at alcalino-terreux, mt métal de transition, mp métal pauvre, md métalloïde, nm non-métal, ha halogène, gn gaz noble, la lanthanide, ac actinide, in inconnu
+   état: s, l, g, ? ; densité en g/cm³ (solides/liquides) ou g/L (gaz) ; vide = inconnu */
+const PT_RAW=`1|H|Hydrogène|1.008|nm|2.20|g|-259.16|-252.88|0.08988|1312|1766|Henry Cavendish|+1, −1|Ammoniac, carburant des fusées, piles à combustible
+2|He|Hélium|4.0026|gn||g||-268.93|0.1786|2372|1868|Pierre Janssen, Norman Lockyer|0|Ballons, refroidissement des aimants d'IRM, plongée
+3|Li|Lithium|6.94|am|0.98|s|180.50|1330|0.534|520|1817|Johan August Arfwedson|+1|Batteries lithium-ion, médicaments
+4|Be|Béryllium|9.0122|at|1.57|s|1287|2469|1.85|900|1798|Louis-Nicolas Vauquelin|+2|Alliages légers, fenêtres de rayons X
+5|B|Bore|10.81|md|2.04|s|2076|3927|2.34|801|1808|Gay-Lussac, Thénard, Davy|+3|Verre Pyrex, détergents, aimants
+6|C|Carbone|12.011|nm|2.55|s||3642|2.267|1086||Connu depuis l'Antiquité|+4, −4, +2|Base de la vie, acier, diamant, graphite
+7|N|Azote|14.007|nm|3.04|g|-210.0|-195.80|1.2506|1402|1772|Daniel Rutherford|−3, +3, +5|78 % de l'air, engrais, azote liquide
+8|O|Oxygène|15.999|nm|3.44|g|-218.79|-182.96|1.429|1314|1774|Joseph Priestley, Carl Wilhelm Scheele|−2|Respiration, combustion, médecine
+9|F|Fluor|18.998|ha|3.98|g|-219.67|-188.11|1.696|1681|1886|Henri Moissan|−1|Dentifrice (fluorure), Téflon
+10|Ne|Néon|20.180|gn||g|-248.59|-246.05|0.9002|2081|1898|William Ramsay, Morris Travers|0|Enseignes lumineuses, lasers
+11|Na|Sodium|22.990|am|0.93|s|97.79|882.94|0.968|496|1807|Humphry Davy|+1|Sel de table (NaCl), lampes de rue
+12|Mg|Magnésium|24.305|at|1.31|s|650|1091|1.738|738|1755|Joseph Black|+2|Alliages légers, feux d'artifice, chlorophylle
+13|Al|Aluminium|26.982|mp|1.61|s|660.32|2470|2.70|578|1825|Hans Christian Ørsted|+3|Canettes, avions, papier d'aluminium
+14|Si|Silicium|28.085|md|1.90|s|1414|3265|2.329|787|1824|Jöns Jacob Berzelius|+4, −4|Puces électroniques, panneaux solaires, verre
+15|P|Phosphore|30.974|nm|2.19|s|44.15|280.5|1.823|1012|1669|Hennig Brand|+5, +3, −3|Engrais, allumettes, ADN
+16|S|Soufre|32.06|nm|2.58|s|115.21|444.6|2.07|1000||Connu depuis l'Antiquité|−2, +4, +6|Acide sulfurique, caoutchouc vulcanisé
+17|Cl|Chlore|35.45|ha|3.16|g|-101.5|-34.04|3.2|1251|1774|Carl Wilhelm Scheele|−1, +1, +5, +7|Eau potable, piscines, PVC
+18|Ar|Argon|39.95|gn||g|-189.34|-185.85|1.784|1521|1894|Lord Rayleigh, William Ramsay|0|Soudure, ampoules, fenêtres isolantes
+19|K|Potassium|39.098|am|0.82|s|63.5|759|0.89|419|1807|Humphry Davy|+1|Engrais, nerfs et muscles, bananes
+20|Ca|Calcium|40.078|at|1.00|s|842|1484|1.55|590|1808|Humphry Davy|+2|Os et dents, ciment, craie
+21|Sc|Scandium|44.956|mt|1.36|s|1541|2836|2.985|633|1879|Lars Fredrik Nilson|+3|Alliages d'aluminium (vélos), lampes
+22|Ti|Titane|47.867|mt|1.54|s|1668|3287|4.506|659|1791|William Gregor|+4, +3|Prothèses, avions, peinture blanche
+23|V|Vanadium|50.942|mt|1.63|s|1910|3407|6.0|651|1801|Andrés Manuel del Río|+5, +4, +3, +2|Aciers d'outils, batteries
+24|Cr|Chrome|51.996|mt|1.66|s|1907|2671|7.19|653|1797|Louis-Nicolas Vauquelin|+3, +6, +2|Acier inoxydable, chromage
+25|Mn|Manganèse|54.938|mt|1.55|s|1246|2061|7.21|717|1774|Johan Gottlieb Gahn|+2, +4, +7|Acier, piles alcalines
+26|Fe|Fer|55.845|mt|1.83|s|1538|2862|7.874|762||Connu depuis l'Antiquité|+2, +3|Acier, hémoglobine du sang
+27|Co|Cobalt|58.933|mt|1.88|s|1495|2927|8.90|760|1735|Georg Brandt|+2, +3|Batteries, pigment bleu, vitamine B12
+28|Ni|Nickel|58.693|mt|1.91|s|1455|2730|8.908|737|1751|Axel Fredrik Cronstedt|+2|Pièces de monnaie, acier inox, batteries
+29|Cu|Cuivre|63.546|mt|1.90|s|1084.62|2562|8.96|745||Connu depuis l'Antiquité|+2, +1|Fils électriques, tuyaux, bronze
+30|Zn|Zinc|65.38|mt|1.65|s|419.53|907|7.14|906|1746|Andreas Sigismund Marggraf|+2|Galvanisation, laiton, crème solaire
+31|Ga|Gallium|69.723|mp|1.81|s|29.76|2400|5.91|579|1875|Paul-Émile Lecoq de Boisbaudran|+3|DEL, semi-conducteurs (fond dans la main)
+32|Ge|Germanium|72.630|md|2.01|s|938.25|2833|5.323|762|1886|Clemens Winkler|+4, +2|Fibres optiques, électronique
+33|As|Arsenic|74.922|md|2.18|s||615|5.727|947|1250|Albert le Grand|+3, +5, −3|Semi-conducteurs, autrefois poison
+34|Se|Sélénium|78.971|nm|2.55|s|221|685|4.81|941|1817|Jöns Jacob Berzelius|−2, +4, +6|Cellules photoélectriques, shampoing antipelliculaire
+35|Br|Brome|79.904|ha|2.96|l|-7.2|58.8|3.1028|1140|1826|Antoine-Jérôme Balard|−1, +1, +5|Ignifugeants, désinfection
+36|Kr|Krypton|83.798|gn|3.00|g|-157.37|-153.42|3.749|1351|1898|William Ramsay, Morris Travers|0, +2|Éclairage, fenêtres isolantes
+37|Rb|Rubidium|85.468|am|0.82|s|39.30|688|1.532|403|1861|Robert Bunsen, Gustav Kirchhoff|+1|Horloges atomiques
+38|Sr|Strontium|87.62|at|0.95|s|777|1377|2.64|550|1790|Adair Crawford|+2|Feux d'artifice rouges
+39|Y|Yttrium|88.906|mt|1.22|s|1526|2930|4.472|600|1794|Johan Gadolin|+3|DEL, lasers, supraconducteurs
+40|Zr|Zirconium|91.224|mt|1.33|s|1855|4409|6.52|640|1789|Martin Heinrich Klaproth|+4|Réacteurs nucléaires, zircons (bijoux)
+41|Nb|Niobium|92.906|mt|1.6|s|2477|4744|8.57|652|1801|Charles Hatchett|+5, +3|Aimants supraconducteurs, aciers
+42|Mo|Molybdène|95.95|mt|2.16|s|2623|4639|10.28|684|1778|Carl Wilhelm Scheele|+6, +4|Aciers résistants, lubrifiants
+43|Tc|Technétium|98|mt|1.9|s|2157|4265|11|702|1937|Carlo Perrier, Emilio Segrè|+7, +4|Imagerie médicale (premier élément artificiel)
+44|Ru|Ruthénium|101.07|mt|2.2|s|2334|4150|12.45|710|1844|Karl Ernst Claus|+3, +4, +8|Contacts électriques, catalyseurs
+45|Rh|Rhodium|102.91|mt|2.28|s|1964|3695|12.41|720|1803|William Hyde Wollaston|+3|Pots catalytiques, bijoux
+46|Pd|Palladium|106.42|mt|2.20|s|1554.9|2963|12.023|804|1803|William Hyde Wollaston|+2, +4|Pots catalytiques, électronique
+47|Ag|Argent|107.87|mt|1.93|s|961.78|2162|10.49|731||Connu depuis l'Antiquité|+1|Bijoux, miroirs, électronique
+48|Cd|Cadmium|112.41|mt|1.69|s|321.07|767|8.65|868|1817|Friedrich Stromeyer|+2|Batteries Ni-Cd, pigments (toxique)
+49|In|Indium|114.82|mp|1.78|s|156.60|2072|7.31|558|1863|Ferdinand Reich, Theodor Richter|+3|Écrans tactiles (ITO)
+50|Sn|Étain|118.71|mp|1.96|s|231.93|2602|7.265|709||Connu depuis l'Antiquité|+2, +4|Soudure, boîtes de conserve, bronze
+51|Sb|Antimoine|121.76|md|2.05|s|630.63|1635|6.697|834||Connu depuis l'Antiquité|+3, +5, −3|Ignifugeants, alliages de plomb
+52|Te|Tellure|127.60|md|2.1|s|449.51|988|6.24|869|1782|Franz-Joseph Müller von Reichenstein|−2, +4, +6|Panneaux solaires, alliages
+53|I|Iode|126.90|ha|2.66|s|113.7|184.3|4.933|1008|1811|Bernard Courtois|−1, +5, +7|Désinfectant, sel iodé, thyroïde
+54|Xe|Xénon|131.29|gn|2.6|g|-111.75|-108.10|5.894|1170|1898|William Ramsay, Morris Travers|0, +2, +4, +6|Phares au xénon, anesthésie
+55|Cs|Césium|132.91|am|0.79|s|28.44|671|1.93|376|1860|Robert Bunsen, Gustav Kirchhoff|+1|Horloges atomiques (définition de la seconde)
+56|Ba|Baryum|137.33|at|0.89|s|727|1845|3.51|503|1808|Humphry Davy|+2|Radiographie digestive, feux d'artifice verts
+57|La|Lanthane|138.91|la|1.10|s|920|3464|6.162|538|1839|Carl Gustaf Mosander|+3|Lentilles de caméras, batteries hybrides
+58|Ce|Cérium|140.12|la|1.12|s|795|3443|6.770|534|1803|Berzelius, Hisinger, Klaproth|+3, +4|Pierres à briquet, polissage du verre
+59|Pr|Praséodyme|140.91|la|1.13|s|935|3520|6.77|527|1885|Carl Auer von Welsbach|+3|Aimants, verres de soudeur
+60|Nd|Néodyme|144.24|la|1.14|s|1024|3074|7.01|533|1885|Carl Auer von Welsbach|+3|Aimants puissants (écouteurs, moteurs)
+61|Pm|Prométhium|145|la|1.13|s|1042|3000|7.26|540|1945|Marinsky, Glendenin, Coryell|+3|Piles nucléaires, peinture luminescente
+62|Sm|Samarium|150.36|la|1.17|s|1072|1900|7.52|545|1879|Paul-Émile Lecoq de Boisbaudran|+3, +2|Aimants samarium-cobalt
+63|Eu|Europium|151.96|la|1.2|s|826|1529|5.264|547|1901|Eugène-Anatole Demarçay|+3, +2|Écrans, encre anti-contrefaçon des billets
+64|Gd|Gadolinium|157.25|la|1.20|s|1312|3273|7.90|593|1880|Jean Charles Galissard de Marignac|+3|Agent de contraste pour l'IRM
+65|Tb|Terbium|158.93|la|1.2|s|1356|3230|8.23|566|1843|Carl Gustaf Mosander|+3, +4|Lampes fluorescentes vertes
+66|Dy|Dysprosium|162.50|la|1.22|s|1407|2567|8.54|573|1886|Paul-Émile Lecoq de Boisbaudran|+3|Aimants de voitures électriques
+67|Ho|Holmium|164.93|la|1.23|s|1461|2720|8.79|581|1878|Delafontaine, Soret, Cleve|+3|Lasers médicaux, aimants
+68|Er|Erbium|167.26|la|1.24|s|1529|2868|9.066|589|1843|Carl Gustaf Mosander|+3|Fibres optiques (amplificateurs), lasers
+69|Tm|Thulium|168.93|la|1.25|s|1545|1950|9.32|597|1879|Per Teodor Cleve|+3|Rayons X portables, lasers
+70|Yb|Ytterbium|173.05|la|1.1|s|824|1196|6.90|603|1878|Jean Charles Galissard de Marignac|+3, +2|Horloges atomiques, lasers
+71|Lu|Lutécium|174.97|la|1.27|s|1652|3402|9.841|524|1907|Georges Urbain|+3|Catalyseurs, imagerie médicale (TEP)
+72|Hf|Hafnium|178.49|mt|1.3|s|2233|4603|13.31|659|1923|Dirk Coster, George de Hevesy|+4|Barres de contrôle nucléaires, puces
+73|Ta|Tantale|180.95|mt|1.5|s|3017|5458|16.69|761|1802|Anders Gustaf Ekeberg|+5|Condensateurs de cellulaires, implants
+74|W|Tungstène|183.84|mt|2.36|s|3422|5555|19.25|770|1783|Frères Elhuyar|+6, +4|Filaments d'ampoules, outils de coupe
+75|Re|Rhénium|186.21|mt|1.9|s|3186|5596|21.02|760|1925|Noddack, Tacke, Berg|+7, +4|Moteurs d'avion, catalyseurs
+76|Os|Osmium|190.23|mt|2.2|s|3033|5012|22.59|840|1803|Smithson Tennant|+4, +8|Pointes de stylos; élément le plus dense
+77|Ir|Iridium|192.22|mt|2.20|s|2446|4428|22.56|880|1803|Smithson Tennant|+3, +4|Bougies d'allumage, étalons de mesure
+78|Pt|Platine|195.08|mt|2.28|s|1768.3|3825|21.45|870|1735|Antonio de Ulloa|+2, +4|Pots catalytiques, bijoux, chimiothérapie
+79|Au|Or|196.97|mt|2.54|s|1064.18|2970|19.3|890||Connu depuis l'Antiquité|+3, +1|Bijoux, électronique, réserves monétaires
+80|Hg|Mercure|200.59|mt|2.00|l|-38.83|356.73|13.534|1007||Connu depuis l'Antiquité|+2, +1|Anciens thermomètres, lampes (toxique)
+81|Tl|Thallium|204.38|mp|1.62|s|304|1473|11.85|589|1861|William Crookes|+1, +3|Électronique, autrefois mort-aux-rats (toxique)
+82|Pb|Plomb|207.2|mp|2.33|s|327.46|1749|11.34|716||Connu depuis l'Antiquité|+2, +4|Batteries d'auto, protection contre les rayons X
+83|Bi|Bismuth|208.98|mp|2.02|s|271.4|1564|9.78|703|1753|Claude François Geoffroy|+3|Médicaments pour l'estomac, cosmétiques
+84|Po|Polonium|209|mp|2.0|s|254|962|9.196|812|1898|Pierre et Marie Curie|+4, +2|Éliminateurs d'électricité statique
+85|At|Astate|210|ha|2.2|s|302||||1940|Corson, MacKenzie, Segrè|−1, +1|Recherche en radiothérapie (très rare)
+86|Rn|Radon|222|gn|2.2|g|-71|-61.7|9.73|1037|1899|Ernest Rutherford, Robert Owens|0, +2|Gaz radioactif à surveiller dans les sous-sols
+87|Fr|Francium|223|am|0.79|s||||393|1939|Marguerite Perey|+1|Recherche seulement (extrêmement rare)
+88|Ra|Radium|226|at|0.9|s|700|1737|5.5|509|1898|Pierre et Marie Curie|+2|Autrefois peinture lumineuse, radiothérapie
+89|Ac|Actinium|227|ac|1.1|s|1050|3198|10|499|1899|André-Louis Debierne|+3|Radiothérapie ciblée
+90|Th|Thorium|232.04|ac|1.3|s|1750|4788|11.7|587|1829|Jöns Jacob Berzelius|+4|Combustible nucléaire possible, alliages
+91|Pa|Protactinium|231.04|ac|1.5|s|1568|4027|15.37|568|1913|Kasimir Fajans, Oswald Göhring|+5, +4|Recherche seulement
+92|U|Uranium|238.03|ac|1.38|s|1132.2|4131|19.1|598|1789|Martin Heinrich Klaproth|+6, +4|Combustible des centrales nucléaires
+93|Np|Neptunium|237|ac|1.36|s|639|4174|20.45|605|1940|Edwin McMillan, Philip Abelson|+5, +4|Détecteurs de neutrons
+94|Pu|Plutonium|244|ac|1.28|s|639.4|3228|19.85|585|1940|Glenn Seaborg et coll.|+4, +3, +6|Réacteurs, sondes spatiales
+95|Am|Américium|243|ac|1.13|s|1176|2011|12|578|1944|Glenn Seaborg et coll.|+3|Détecteurs de fumée
+96|Cm|Curium|247|ac|1.28|s|1340|3110|13.51|581|1944|Glenn Seaborg et coll.|+3|Sources d'énergie de sondes spatiales
+97|Bk|Berkélium|247|ac|1.3|s|986||14.78|601|1949|Glenn Seaborg et coll.|+3, +4|Recherche seulement
+98|Cf|Californium|251|ac|1.3|s|900||15.1|608|1950|Glenn Seaborg et coll.|+3|Démarrage de réacteurs, détection de métaux
+99|Es|Einsteinium|252|ac|1.3|s|860||8.84|619|1952|Albert Ghiorso et coll.|+3|Recherche seulement
+100|Fm|Fermium|257|ac|1.3|?||||627|1952|Albert Ghiorso et coll.|+3|Recherche seulement
+101|Md|Mendélévium|258|ac|1.3|?||||635|1955|Albert Ghiorso et coll.|+3, +2|Recherche seulement
+102|No|Nobélium|259|ac|1.3|?||||642|1966|Institut de Doubna|+2, +3|Recherche seulement
+103|Lr|Lawrencium|266|ac|1.3|?||||479|1961|Albert Ghiorso et coll.|+3|Recherche seulement
+104|Rf|Rutherfordium|267|in||?||||580|1964|Doubna et Berkeley|+4|Recherche seulement (synthétique)
+105|Db|Dubnium|268|in||?|||||1968|Doubna et Berkeley|+5|Recherche seulement (synthétique)
+106|Sg|Seaborgium|269|in||?|||||1974|Berkeley et Doubna|+6|Recherche seulement (synthétique)
+107|Bh|Bohrium|270|in||?|||||1981|GSI (Darmstadt)|+7|Recherche seulement (synthétique)
+108|Hs|Hassium|269|in||?|||||1984|GSI (Darmstadt)|+8|Recherche seulement (synthétique)
+109|Mt|Meitnérium|278|in||?|||||1982|GSI (Darmstadt)||Recherche seulement (synthétique)
+110|Ds|Darmstadtium|281|in||?|||||1994|GSI (Darmstadt)||Recherche seulement (synthétique)
+111|Rg|Roentgenium|282|in||?|||||1994|GSI (Darmstadt)||Recherche seulement (synthétique)
+112|Cn|Copernicium|285|in||?|||||1996|GSI (Darmstadt)|+2|Recherche seulement (synthétique)
+113|Nh|Nihonium|286|in||?|||||2004|RIKEN (Japon)||Recherche seulement (synthétique)
+114|Fl|Flérovium|289|in||?|||||1998|Institut de Doubna||Recherche seulement (synthétique)
+115|Mc|Moscovium|290|in||?|||||2003|Doubna et Livermore||Recherche seulement (synthétique)
+116|Lv|Livermorium|293|in||?|||||2000|Doubna et Livermore||Recherche seulement (synthétique)
+117|Ts|Tennesse|294|in||?|||||2010|Doubna, Oak Ridge, Vanderbilt||Recherche seulement (synthétique)
+118|Og|Oganesson|294|in||?|||||2002|Doubna et Livermore||Recherche seulement (synthétique)`;
+
+"use strict";
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const CAT={am:["Métaux alcalins","#c0392b",1],at:["Métaux alcalino-terreux","#e07b39",1],mt:["Métaux de transition","#e9c46a",0],mp:["Métaux pauvres","#8ab17d",0],md:["Métalloïdes","#2a9d8f",1],nm:["Non-métaux","#5b8fc7",1],ha:["Halogènes","#1f4e79",1],gn:["Gaz nobles","#3d405b",1],la:["Lanthanides","#b5838d",1],ac:["Actinides","#8d6e63",1],in:["Propriétés inconnues","#cfcac0",0]};
+const PH={s:["Solide","#8d6e63",1],l:["Liquide","#2a9d8f",1],g:["Gaz","#9ec5e8",0],"?":["Inconnu","#cfcac0",0]};
+const BL={s:["Bloc s","#c0392b",1],p:["Bloc p","#5b8fc7",1],d:["Bloc d","#e9c46a",0],f:["Bloc f","#8ab17d",0]};
+const NAT={n:["Naturel","#8ab17d",0],t:["Traces naturelles","#e9c46a",0],y:["Synthétique","#c0392b",1]};
+const num=v=>v===""||v==null?null:Number(v);
+const E=PT_RAW.split("\n").map(l=>{const f=l.split("|");return{z:+f[0],s:f[1],n:f[2],m:Number(f[3]),cat:f[4],en:num(f[5]),ph:f[6],melt:num(f[7]),boil:num(f[8]),dens:num(f[9]),ie:num(f[10]),year:num(f[11]),by:f[12],ox:f[13],use:f[14]};});
+const RADIO=z=>z===43||z===61||z>=84;
+const STABLEMASS=z=>RADIO(z)&&![90,91,92].includes(z);
+function pos(z){const P=[[1,2],[3,10],[11,18],[19,36],[37,54],[55,86],[87,118]];let p=P.findIndex(([a,b])=>z>=a&&z<=b)+1,st=P[p-1][0],i=z-st;
+ if(p===1)return{p,g:z===1?1:18,r:1,c:z===1?1:18};
+ if(p<=3)return{p,g:i<2?i+1:i+10,r:p,c:i<2?i+1:i+10};
+ if(p<=5)return{p,g:i+1,r:p,c:i+1};
+ if(i<2)return{p,g:i+1,r:p,c:i+1};
+ if(i<=16)return{p,g:null,r:p+3,c:i+1,f:true};
+ return{p,g:i-13,r:p,c:i-13};}
+const ORDER=["1s","2s","2p","3s","3p","4s","3d","4p","5s","4d","5p","6s","4f","5d","6p","7s","5f","6d","7p"],CAP={s:2,p:6,d:10,f:14},LI={s:0,p:1,d:2,f:3};
+const EXC={24:{"3d":5,"4s":1},29:{"3d":10,"4s":1},41:{"4d":4,"5s":1},42:{"4d":5,"5s":1},44:{"4d":7,"5s":1},45:{"4d":8,"5s":1},46:{"4d":10,"5s":0},47:{"4d":10,"5s":1},57:{"4f":0,"5d":1},58:{"4f":1,"5d":1},64:{"4f":7,"5d":1},78:{"5d":9,"6s":1},79:{"5d":10,"6s":1},89:{"5f":0,"6d":1},90:{"5f":0,"6d":2},91:{"5f":2,"6d":1},92:{"5f":3,"6d":1},93:{"5f":4,"6d":1},96:{"5f":7,"6d":1},103:{"6d":0,"7p":1}};
+const NOBLE=[2,10,18,36,54,86];
+function conf(z){const c={};let r=z;for(const o of ORDER){if(r<=0)break;const k=Math.min(CAP[o[1]],r);c[o]=k;r-=k;}Object.assign(c,EXC[z]||{});for(const k in c)if(!c[k])delete c[k];return c;}
+const sortSub=a=>a.sort((x,y)=>(+x[0]-+y[0])||(LI[x[1]]-LI[y[1]]));
+const SUP=s=>String(s).replace(/\d/g,d=>"⁰¹²³⁴⁵⁶⁷⁸⁹"[d]);
+function confStr(z,short){const c=conf(z);if(!short)return sortSub(Object.keys(c)).map(k=>k+SUP(c[k])).join(" ");
+ const core=NOBLE.filter(n=>n<z).pop();if(!core)return confStr(z,false);const cc=conf(core),rest={};for(const k in c){const v=c[k]-(cc[k]||0);if(v>0)rest[k]=v;}
+ return "["+E[core-1].s+"] "+sortSub(Object.keys(rest)).map(k=>k+SUP(rest[k])).join(" ");}
+function shells(z){const c=conf(z),sh=[];for(const k in c){const n=+k[0];sh[n-1]=(sh[n-1]||0)+c[k];}return Array.from(sh,v=>v||0);}
+function block(e){const p=pos(e.z);if(p.f)return(e.z===71||e.z===103)?"d":"f";if(e.z===2)return"s";const g=p.g;return g<=2?"s":g>=13?"p":"d";}
+function valence(e){const p=pos(e.z);if(e.z===2)return 2;if(p.f||!p.g)return null;if(p.g<=2)return p.g;if(p.g>=13)return p.g-10;return null;}
+const nat=z=>z>=93?"y":(z===43||z===61)?"t":"n";
+const fmt=(v,d=3)=>v==null?"—":Number(v).toLocaleString("fr-CA",{maximumFractionDigits:d});
+const massTxt=e=>STABLEMASS(e.z)?"["+e.m+"]":fmt(e.m,4);
+const groupTxt=e=>{const p=pos(e.z);return p.f?"Bloc f ("+(e.z<89?"lanthanides":"actinides")+")":String(p.g);};
+
+/* couleurs */
+const NUMF={en:["en","Électronégativité (Pauling)",""],mass:["m","Masse atomique","u"],ie:["ie","1re énergie d'ionisation","kJ/mol"],melt:["melt","Point de fusion","°C"],boil:["boil","Point d'ébullition","°C"],dens:["dens","Masse volumique","g/cm³"],year:["year","Année de découverte",""]};
+const ramp=t=>{const a=[246,231,200],b=[122,30,16];const c=a.map((x,i)=>Math.round(x+(b[i]-x)*t));return `rgb(${c})`;};
+let mode="cat",hidden=new Set(),sel=null,quiz=null;
+function valOf(e,k){const f=NUMF[k][0];let v=e[f];if(k==="dens"&&e.ph==="g")return null;if(k==="year"&&v==null&&e.by.startsWith("Connu"))return null;return v;}
+function colorOf(e){
+ if(mode==="cat")return CAT[e.cat];if(mode==="phase")return PH[e.ph]||PH["?"];if(mode==="block")return BL[block(e)];if(mode==="nat")return NAT[nat(e.z)];
+ const v=valOf(e,mode);if(v==null)return["—","#dcd7cc",0];const vs=E.map(x=>valOf(x,mode)).filter(x=>x!=null);let lo=Math.min(...vs),hi=Math.max(...vs);
+ if(mode==="year"){lo=1660;}const t=Math.max(0,Math.min(1,(v-lo)/(hi-lo)));return["",ramp(t),t>.5?1:0];}
+function keyOf(e){return mode==="cat"?e.cat:mode==="phase"?e.ph:mode==="block"?block(e):mode==="nat"?nat(e.z):null;}
+function drawLegend(){const L={cat:CAT,phase:PH,block:BL,nat:NAT}[mode];
+ if(L){$("legend").innerHTML=`<div class="leg">${Object.entries(L).map(([k,[n,c]])=>`<button data-k="${k}" class="${hidden.has(k)?"off":""}"><i style="background:${c}"></i>${n}</button>`).join("")}${hidden.size?'<button id="legAll">Tout afficher</button>':""}</div>`;
+  $("legend").querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;hidden.has(k)?hidden.delete(k):hidden.add(k);draw();});if($("legAll"))$("legAll").onclick=()=>{hidden.clear();draw();};}
+ else{const vs=E.map(x=>valOf(x,mode)).filter(x=>x!=null);let lo=Math.min(...vs);const hi=Math.max(...vs);if(mode==="year")lo=1660;const u=NUMF[mode][2];
+  $("legend").innerHTML=`<div class="grad"><span>${fmt(lo,2)} ${u}</span><span class="g" style="background:linear-gradient(90deg,${ramp(0)},${ramp(.5)},${ramp(1)})"></span><span>${fmt(hi,2)} ${u}</span><span>· gris = inconnu${mode==="dens"?" ou gaz":""}${mode==="year"?" ou connu depuis l'Antiquité":""}</span></div>`;}}
+function cellHTML(e){const [, bg, w]=colorOf(e);const q=($("q").value||"").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+ const nm=e.n.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");const match=!q||nm.includes(q)||e.s.toLowerCase()===q||String(e.z)===q||(q.length>1&&e.s.toLowerCase().startsWith(q));
+ const k=keyOf(e),dim=(k&&hidden.has(k))||!match;const p=pos(e.z);
+ return `<div class="el${dim?" dim":""}${sel===e.z?" sel":""}" tabindex="0" data-z="${e.z}" style="grid-row:${p.r+1};grid-column:${p.c};background:${bg};color:${w?"#fff":"#1c1b19"}" title="${esc(e.n)}"><span class="z">${e.z}</span><span class="s">${e.s}</span><span class="n">${esc(e.n)}</span><span class="m">${STABLEMASS(e.z)?"["+e.m+"]":fmt(e.m,3)}</span></div>`;}
+function draw(){drawLegend();let h="";
+ for(let g=1;g<=18;g++)h+=`<div class="glab" style="grid-row:1;grid-column:${g}">${g}</div>`;
+ h+=`<div class="inset" id="inset"></div>`;
+ h+=E.map(cellHTML).join("");
+ h+=`<div class="el ph" style="grid-row:7;grid-column:3">57–71</div><div class="el ph" style="grid-row:8;grid-column:3">89–103</div><div style="grid-row:9;grid-column:1;height:12px"></div>`;
+ $("pt").innerHTML=h;
+ $("pt").querySelectorAll(".el[data-z]").forEach(d=>{const z=+d.dataset.z;d.onclick=()=>pick(z);d.onmouseenter=()=>preview(z);d.onfocus=()=>preview(z);});
+ preview(sel||26);}
+function preview(z){const e=E[z-1],[,bg,w]=colorOf(e);$("inset").innerHTML=`<div class="big" style="background:${bg};color:${w?"#fff":"#1c1b19"}"><span class="z">${e.z}</span><span class="s">${e.s}</span><span class="m">${massTxt(e)}</span></div>
+ <div class="info"><b>${esc(e.n)}</b> · ${CAT[e.cat][0].replace(/s$/,"").replace("Métaux","Métal").replace("Propriétés inconnue","Propriétés inconnues")}<br><span class="mono" style="font-size:12px">${confStr(z,true)}</span><br>Électronégativité : ${fmt(e.en,2)} · État : ${(PH[e.ph]||PH["?"])[0]}<br><span class="mut">${esc(e.use)}</span></div>`;}
+function bohr(z){const sh=shells(z),R=24,step=Math.min(17,100/sh.length);const S=2*(R+step*sh.length)+16,C=S/2;let g=`<svg class="bohr" viewBox="0 0 ${S} ${S}"><circle cx="${C}" cy="${C}" r="${R-6}" fill="var(--red)"/><text x="${C}" y="${C+4}" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#fff">${z}+</text>`;
+ sh.forEach((n,i)=>{const r=R+step*(i+1);g+=`<circle cx="${C}" cy="${C}" r="${r}" fill="none" stroke="var(--rule)"/>`;for(let k=0;k<n;k++){const a=2*Math.PI*k/n-Math.PI/2;g+=`<circle cx="${(C+r*Math.cos(a)).toFixed(1)}" cy="${(C+r*Math.sin(a)).toFixed(1)}" r="${n>18?1.8:2.6}" fill="var(--ink)"/>`;}});return g+"</svg>";}
+function pick(z,noScroll){if(quiz&&!noScroll)return quizAns(z);sel=z;const e=E[z-1],p=pos(z),[,bg,w]=colorOf(e),sh=shells(z),v=valence(e);
+ document.querySelectorAll(".el.sel").forEach(x=>x.classList.remove("sel"));const c=document.querySelector(`.el[data-z="${z}"]`);if(c)c.classList.add("sel");preview(z);
+ const u=e.ph==="g"?"g/L":"g/cm³";
+ const P=[["Numéro atomique (Z)",e.z+(e.z>1?" protons, ":" proton, ")+e.z+(e.z>1?" électrons":" électron")+" (atome neutre)"],["Symbole",e.s],["Masse atomique",massTxt(e)+" u"+(STABLEMASS(e.z)?" (isotope le plus stable)":"")],["Masse molaire",(STABLEMASS(e.z)?"≈ "+e.m:fmt(e.m,4))+" g/mol"],
+ ["Neutrons (isotope courant)",STABLEMASS(e.z)?"≈ "+(Math.round(e.m)-e.z)+" (isotope "+Math.round(e.m)+")":"≈ "+(Math.round(e.m)-e.z)],["Famille",CAT[e.cat][0]],["Groupe",groupTxt(e)],["Période",p.p],["Bloc",block(e)],
+ ["Configuration électronique",confStr(z,false)],["Notation abrégée",confStr(z,true)],["Électrons par couche",sh.join(", ")],["Électrons de valence",v==null?"variable (métal de transition / bloc f)":v],
+ ["Électronégativité (Pauling)",e.en==null?(e.cat==="gn"?"— (gaz noble)":"inconnue"):fmt(e.en,2)],["1re énergie d'ionisation",e.ie==null?"inconnue":fmt(e.ie,0)+" kJ/mol"],["États d'oxydation courants",e.ox||"inconnus"],
+ ["État à 25 °C",(PH[e.ph]||PH["?"])[0]],["Point de fusion",e.melt==null?(e.z===6||e.z===33?"se sublime (pas de fusion à 1 atm)":e.z===2?"ne gèle pas à 1 atm":"inconnu"):fmt(e.melt,2)+" °C"],["Point d'ébullition",e.boil==null?"inconnu":fmt(e.boil,2)+" °C"+(e.z===6||e.z===33?" (sublimation)":"")],
+ ["Masse volumique",e.dens==null?"inconnue":fmt(e.dens,4)+" "+u],["Radioactif",RADIO(z)?"Oui":"Non"+(z===83?" (en pratique; très faiblement radioactif)":"")],["Origine",NAT[nat(z)][0]],
+ ["Découverte",(e.year?e.year+" · ":"")+e.by],["Utilisations",e.use]];
+ $("fiche").innerHTML=`<div class="fiche"><div><div class="tile" style="background:${bg};color:${w?"#fff":"#1c1b19"}"><span class="z">${e.z}</span><span class="s">${e.s}</span><span class="nm">${esc(e.n)}</span><span class="m">${massTxt(e)}</span></div>${bohr(z)}<p class="mut" style="text-align:center">Modèle de Bohr : ${sh.join(" · ")}</p></div>
+ <div><h2>${esc(e.n)} <span class="mut mono">(${e.s})</span></h2><dl class="props">${P.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+ <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="pick(${z>1?z-1:118})">← ${esc(E[(z>1?z-1:118)-1].n)}</button><button class="btn" onclick="pick(${z<118?z+1:1})">${esc(E[(z<118?z+1:1)-1].n)} →</button></div></div></div>`;
+ if(!noScroll&&window.innerWidth<760)$("fiche").scrollIntoView({behavior:"smooth",block:"start"});}
+window.pick=pick;
+document.addEventListener("keydown",ev=>{if(/INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)||!sel||quiz)return;
+ const p=pos(sel);let t=null;const at=(r,c)=>E.find(e=>{const q=pos(e.z);return q.r===r&&q.c===c;});
+ if(ev.key==="ArrowRight")t=sel<118?sel+1:null;else if(ev.key==="ArrowLeft")t=sel>1?sel-1:null;
+ else if(ev.key==="ArrowDown"){for(let r=p.r+1;r<=10&&!t;r++){const e=at(r,p.c);if(e)t=e.z;}}else if(ev.key==="ArrowUp"){for(let r=p.r-1;r>=1&&!t;r--){const e=at(r,p.c);if(e)t=e.z;}}
+ if(t){ev.preventDefault();pick(t);document.querySelector(`.el[data-z="${t}"]`).focus({preventScroll:true});}});
+$("q").oninput=draw;$("mode").onchange=()=>{mode=$("mode").value;hidden.clear();draw();if(sel)pick(sel,true);};
+
+/* quiz */
+function quizNew(){const pool=E.filter(e=>e.z<=86);const e=pool[Math.floor(Math.random()*pool.length)];quiz.t=e.z;quiz.tries=0;
+ $("qzBox").innerHTML=`<span class="ask">Où est : ${esc(e.n)}?</span><span class="mut">Score ${quiz.ok}/${quiz.n} · série ${quiz.streak}</span><button class="btn" onclick="quizStop()">Arrêter</button>`;}
+function quizAns(z){const c=document.querySelector(`.el[data-z="${z}"]`);if(z===quiz.t){if(quiz.tries===0){quiz.ok++;quiz.streak++;}quiz.n++;c.classList.add("good");setTimeout(()=>{c.classList.remove("good");quizNew();},500);}
+ else{quiz.tries++;quiz.streak=0;c.classList.add("bad");setTimeout(()=>c.classList.remove("bad"),500);if(quiz.tries>=2){const t=document.querySelector(`.el[data-z="${quiz.t}"]`);t.classList.add("good");setTimeout(()=>{t.classList.remove("good");quiz.n++;quizNew();},1100);}}}
+window.quizStop=()=>{quiz=null;$("qzBox").hidden=true;$("qzBtn").classList.remove("on");};
+$("qzBtn").onclick=()=>{if(quiz)return quizStop();quiz={ok:0,n:0,streak:0};$("qzBox").hidden=false;$("qzBtn").classList.add("on");quizNew();$("qzBox").scrollIntoView({behavior:"smooth",block:"nearest"});};
+
+/* masse molaire */
+const SYM=Object.fromEntries(E.map(e=>[e.s,e]));
+function parseF(str){let s=str.replace(/\s+/g,"").replace(/[·•*]/g,".").replace(/[₀-₉]/g,d=>"₀₁₂₃₄₅₆₇₈₉".indexOf(d));if(!s)return null;
+ const parts=s.split(".");const tot={};
+ for(const part of parts){let m=part.match(/^(\d+)(.*)$/),k=1,body=part;if(m){k=+m[1];body=m[2];}let i=0;
+  const grp=()=>{const c={};while(i<body.length){const ch=body[i];
+    if(ch==="("||ch==="["){i++;const inner=grp();if(body[i]!==")"&&body[i]!=="]")throw"Parenthèse non fermée";i++;let n=readN();for(const x in inner)c[x]=(c[x]||0)+inner[x]*n;}
+    else if(ch===")"||ch==="]")return c;
+    else if(/[A-Z]/.test(ch)){let sy=ch;i++;if(i<body.length&&/[a-z]/.test(body[i])){if(SYM[sy+body[i]]){sy+=body[i];i++;}}if(!SYM[sy])throw"Élément inconnu : "+sy;const n=readN();c[sy]=(c[sy]||0)+n;}
+    else throw"Caractère non reconnu : « "+ch+" » (les symboles commencent par une majuscule)";}return c;};
+  const readN=()=>{let d="";while(i<body.length&&/\d/.test(body[i]))d+=body[i++];return d?+d:1;};
+  const c=grp();if(i<body.length)throw"Parenthèse fermante en trop";for(const x in c)tot[x]=(tot[x]||0)+c[x]*k;}
+ return tot;}
+$("mmIn").oninput=()=>{const v=$("mmIn").value;if(!v.trim()){$("mmOut").innerHTML="";return;}
+ try{const c=parseF(v);const rows=Object.entries(c).map(([s,n])=>({s,n,m:SYM[s].m,t:SYM[s].m*n}));const M=rows.reduce((a,r)=>a+r.t,0);
+  $("mmOut").innerHTML=`<div class="res">M = ${fmt(M,3)} g/mol</div><table class="t"><tr><th>Élément</th><th>Nombre</th><th>Masse atomique</th><th>Sous-total</th><th>% massique</th></tr>${rows.map(r=>`<tr><td>${esc(SYM[r.s].n)} (${r.s})</td><td>${r.n}</td><td>${fmt(r.m,3)}</td><td>${fmt(r.t,3)}</td><td>${fmt(r.t/M*100,2)} %</td></tr>`).join("")}</table>
+  <div class="form">${rows.map(r=>r.n+" × "+fmt(r.m,3)).join(" + ")} = ${fmt(M,3)} g/mol</div>`;}
+ catch(e){$("mmOut").innerHTML=`<p class="mut" style="color:var(--no)">${esc(e)}</p>`;}};
+draw();pick(1,true);
+
+</script></body></html>
